@@ -1,0 +1,22 @@
+{% extends 'shared/base.html' %}
+{% load static %}
+{% block content %}
+
+<section>
+    <form action="{% url 'login' %}" method="POST">
+        {% csrf_token %}
+        <div>
+            {% for field in form.visible_fields %}
+            <div>
+                <label for="{{ field.id_for_label }}">{{field.label}}
+                {{ field }}
+            </div>
+            {% endfor %}
+        </div>
+        <div>
+            <button type="submit">Logar</button>
+        </div>
+    </form>
+</section>
+
+{% endblock %}
