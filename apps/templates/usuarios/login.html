@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
 
-<section>
+<div class="pagina">
     <form action="{% url 'login' %}" method="POST">
         {% csrf_token %}
         <div>
@@ -17,6 +17,8 @@
             <button type="submit">Logar</button>
         </div>
     </form>
-</section>
+</div>
 
 {% endblock %}
+
+<script src="{% static 'styles/menu.js' %}"></script>

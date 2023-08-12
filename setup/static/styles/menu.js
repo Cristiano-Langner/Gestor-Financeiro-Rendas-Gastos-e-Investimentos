@@ -1,19 +1,28 @@
-var menuItem = document.querySelectorAll('.item-menu')
+document.addEventListener('DOMContentLoaded', function() {
+    var menuItem = document.querySelectorAll('.item-menu');
+    var currentPage = window.location.pathname;
 
-function selectLink(){
-    menuItem.forEach((item)=>
-        item.classList.remove('ativo')
-    )
-    this.classList.add('ativo')
-}
+    function markActiveMenu() {
+        menuItem.forEach((item) => {
+            var link = item.querySelector('a');
+            if (link.getAttribute('href') === currentPage) {
+                item.classList.add('ativo');
+            }
+        });
+    }
 
-menuItem.forEach((item)=>
-    item.addEventListener('click', selectLink)
-)
+    markActiveMenu();
 
-var btnExp = document.querySelector('#btn-exp')
-var menuSide = document.querySelector('.menu-lateral')
+    var btnExp = document.querySelector('#btn-exp');
+    var menuSide = document.querySelector('.menu-lateral');
+    var pagina = document.querySelector('.pagina');
 
-btnExp.addEventListener('click', function(){
-    menuSide.classList.toggle('expandir')
-})
+    btnExp.addEventListener('click', function() {
+        menuSide.classList.toggle('expandir');
+        if (menuSide.classList.contains('expandir')) {
+            pagina.style.marginLeft = '300px';
+        } else {
+            pagina.style.marginLeft = '140px';
+        }
+    });
+});

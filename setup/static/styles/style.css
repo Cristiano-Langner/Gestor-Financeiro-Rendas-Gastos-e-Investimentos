@@ -26,6 +26,11 @@ nav.menu-lateral.expandir{
     width: 230px;
 }
 
+.pagina {
+    margin-left: 140px;
+    transition: margin-left 0.5s ease;
+}
+
 .btn-expandir{
     width: 100%;
     padding-left: 10px;

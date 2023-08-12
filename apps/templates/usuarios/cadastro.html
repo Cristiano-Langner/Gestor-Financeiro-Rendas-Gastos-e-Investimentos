@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
 
-<section>
+<div class="pagina">
     <form action="{% url 'cadastro' %}" method="POST">
         {% csrf_token %}
         <div>
@@ -17,6 +17,6 @@
             <button type="submit">Cadastrar</button>
         </div>
     </form>
-</section>
+</div>
 
 {% endblock %}

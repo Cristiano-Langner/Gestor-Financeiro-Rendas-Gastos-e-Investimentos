@@ -50,3 +50,9 @@ def logout(request):
     auth.logout(request)
     messages.success(request, 'Logout efetuado com sucesso!')
     return redirect('login')
+
+def config(request):
+    if not request.user.is_authenticated:
+        messages.error(request, 'Usuário não logado')
+        return redirect('login')
+    return render(request, 'usuarios/config.html')
