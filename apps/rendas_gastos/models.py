@@ -52,11 +52,16 @@ class BaseTransaction(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_created_by')
     modified_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_modified_by')
     
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.created_by = get_user()
-        self.modified_by = get_user()
+    def save(self, user=None, *args, **kwargs):
+        self.created_by = user
+        self.modified_by = user
         super().save(*args, **kwargs)
+        
+    def update_modified_by(self, user=None, *args, **kwargs):
+        self.modified_by = user
+        super().save(*args, **kwargs)
+        
+
     class Meta:
         abstract = True
         

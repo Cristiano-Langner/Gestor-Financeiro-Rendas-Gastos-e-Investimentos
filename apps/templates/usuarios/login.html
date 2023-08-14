@@ -2,12 +2,12 @@
 {% load static %}
 {% block content %}
 
-<div class="pagina">
+<div style="margin-left: 500px;">
     <form action="{% url 'login' %}" method="POST">
         {% csrf_token %}
-        <div>
+        <div class"coluna">
             {% for field in form.visible_fields %}
-            <div>
+            <div class="formulario">
                 <label for="{{ field.id_for_label }}">{{field.label}}
                 {{ field }}
             </div>

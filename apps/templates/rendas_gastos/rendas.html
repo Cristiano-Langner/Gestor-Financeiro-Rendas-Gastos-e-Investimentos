@@ -2,23 +2,47 @@
 {% load static %}
 {% block content %}
 
-<div class="pagina">
+<div style="margin-left: 300px;">
     <form action="{% url 'rendas' %}" method="POST">
         {% csrf_token %}
-        <div>
-            {% for field in form.visible_fields %}
-            <div>
-                <label for="{{ field.id_for_label }}">{{field.label}}
-                {{ field.as_widget }}
+        <div class="formulario-grid">
+            <div class="coluna">
+                {% for field in form.visible_fields|slice:":3" %}
+                <div class="formulario">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field.as_widget }}
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
+            <div class="coluna">
+                {% for field in form.visible_fields|slice:"3:" %}
+                <div class="formulario">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field.as_widget }}
+                </div>
+                {% endfor %}
+            </div>
         </div>
         <div>
             <button type="submit">Cadastrar renda</button>
         </div>
     </form>
+    <form method="get">
+        <label for="selected_month">Selecione o mês:</label>
+        <input type="month" id="selected_month" name="selected_month">
+        <button type="submit" style="margin-bottom: 0px;">Filtrar</button>
+    </form>
+    <h2 class="titulo-lista">Rendas Cadastradas</h2>
+    <ul class="lista-rendas">
+        {% for renda in rendas_cadastradas %}
+        <li class="item-renda">
+            <span class="valor-renda">R$ {{ renda.valor|floatformat:2 }}</span>
+            <span class="descricao-renda">{{ renda.descricao }}</span>
+            <span class="data-renda">{{ renda.data|date:"d-m-Y" }}</span>
+        </li>
+        {% endfor %}
+        <li class="item-renda"><span>Total: R$ {{ total_rendas|floatformat:2 }}</span></li>
+    </ul>
 </div>
 
 {% endblock %}
-
-<script src="{% static 'styles/menu.js' %}"></script>

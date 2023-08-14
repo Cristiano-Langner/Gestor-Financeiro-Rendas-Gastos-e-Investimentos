@@ -1,7 +1,32 @@
 {% extends 'shared/base.html' %}
 {% load static %}
-{% block content %}    
-<div class="pagina">
-    
+{% block content %}
+
+<div style="margin-left: 300px;">
+    <form action="{% url 'gastos' %}" method="POST">
+        {% csrf_token %}
+        <div class="formulario-grid">
+            <div class="coluna">
+                {% for field in form.visible_fields|slice:":3" %}
+                <div class="formulario">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field.as_widget }}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="coluna">
+                {% for field in form.visible_fields|slice:"3:" %}
+                <div class="formulario">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field.as_widget }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div>
+            <button type="submit">Cadastrar gasto</button>
+        </div>
+    </form>
 </div>
+
 {% endblock %}
