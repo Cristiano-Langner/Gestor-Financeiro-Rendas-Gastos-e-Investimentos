@@ -145,10 +145,10 @@ button[type="submit"]:hover {
 }
 
 .lista-rendas {
-    list-style-type: none;
-    margin-top: 10px;
-    padding-left: 0;
-    max-width: 500px;
+    width: 100%;
+    max-width: 800px;
+    margin: 10px 0;
+    padding: 10px;
 }
 
 .item-renda {
@@ -165,15 +165,15 @@ button[type="submit"]:hover {
     font-weight: bold;
 }
 
-.item-renda .data-renda {
-    font-size: 14px;
-}
-
 .valor-renda,
 .descricao-renda,
-.data-renda
+.data-renda,
+.categoria-renda,
+.pagamento-renda,
 .total-renda {
     margin-right: 50px;
     display: flex;
     align-items: center;
+    min-height: 15px;
+    flex: 0 0 100px;
 }

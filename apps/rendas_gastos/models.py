@@ -66,7 +66,7 @@ class BaseTransaction(models.Model):
         abstract = True
         
 class Rendas(BaseTransaction):
-    categoria = models.CharField(max_length=100, choices=OpcoesRendas.choices, default=OpcoesRendas.OUTROS)
+    categoria_renda = models.CharField(max_length=100, choices=OpcoesRendas.choices, default=OpcoesRendas.OUTROS)
     
     def __str__(self):
         return f"Rendas [descricao={self.descricao}]"
@@ -74,7 +74,7 @@ class Rendas(BaseTransaction):
         verbose_name_plural = "Rendas"
         
 class Gastos(BaseTransaction):
-    categoria = models.CharField(max_length=100, choices=OpcoesGastos.choices, default=OpcoesGastos.OUTROS)
+    categoria_gasto = models.CharField(max_length=100, choices=OpcoesGastos.choices, default=OpcoesGastos.OUTROS)
     
     def __str__(self):
         return f"Gastos [descricao={self.descricao}]"

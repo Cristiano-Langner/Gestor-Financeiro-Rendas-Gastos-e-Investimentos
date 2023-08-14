@@ -27,6 +27,53 @@
             <button type="submit">Cadastrar gasto</button>
         </div>
     </form>
+    <form method="get" style="display: flex;">
+        <div style="margin-right: 20px;">
+            <label for="selected_month">Selecione o mês:</label>
+            <input type="month" id="selected_month" name="selected_month">
+        </div>
+
+        <div>
+            <label for="selected_category">Selecione a categoria:</label>
+            <select id="selected_category" name="selected_category">
+                <option value="">Todas as categorias</option>
+                {% for category in opcoes_gastos %}
+                    <option value="{{ category.0 }}">{{ category.1 }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" style="margin-top: 10px;">Filtrar</button>
+    </form>
+    <h2 class="titulo-lista">Gastos Cadastradas</h2>
+    <ul class="lista-rendas">
+        {% for gasto in page_obj %}
+        <li class="item-renda">
+            <span class="valor-gasto">R$ {{ gasto.valor|floatformat:2 }}</span>
+            <span class="descricao-gasto">{{ gasto.descricao }}</span>
+            <span class="categoria-gasto">{{ gasto.categoria_gasto }}</span>
+            <span class="data-gasto">{{ gasto.data|date:"d-m-Y" }}</span>
+        </li>
+        {% endfor %}
+        <li class="item-renda"><span>Total: R$ {{ total_gastos|floatformat:2 }}</span></li>
+    </ul>
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; primeira</a>
+                <a href="?page={{ page_obj.previous_page_number }}">anterior</a>
+            {% endif %}
+
+            <span class="current-page">
+                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">próxima</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">última &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
 </div>
 
 {% endblock %}

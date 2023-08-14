@@ -2,8 +2,8 @@ from django import forms
 from apps.rendas_gastos.models import MetodoPagamento, OpcoesGastos, OpcoesRendas
 
 class BaseRendasGastos(forms.Form):
-    valor_renda=forms.DecimalField(
-        label='Valor da renda', 
+    valor=forms.DecimalField(
+        label='Valor: ', 
         required=True, 
         widget=forms.NumberInput(
             attrs={
@@ -13,8 +13,8 @@ class BaseRendasGastos(forms.Form):
             }
         )
     )
-    descricao_renda=forms.CharField(
-        label='descricao', 
+    descricao=forms.CharField(
+        label='Descrição: ', 
         required=True, 
         max_length=100,
         widget=forms.TextInput(
@@ -24,8 +24,8 @@ class BaseRendasGastos(forms.Form):
             }
         ),
     )
-    data_renda = forms.DateField(
-        label='Data da renda',
+    data = forms.DateField(
+        label='Data',
         required=True,
         widget=forms.DateInput(
             attrs={
@@ -35,8 +35,8 @@ class BaseRendasGastos(forms.Form):
             }
         )
     )
-    metodo_pagamento_renda = forms.ChoiceField(
-        label='Método de pagamento',
+    metodo_pagamento = forms.ChoiceField(
+        label='Método de pagamento: ',
         choices=MetodoPagamento.choices,
         required=True,
         widget=forms.Select(
@@ -48,7 +48,7 @@ class BaseRendasGastos(forms.Form):
     
 class RendasForm(BaseRendasGastos):
     categoria_renda = forms.ChoiceField(
-        label='Categoria da renda',
+        label='Categoria: ',
         choices=OpcoesRendas.choices,
         required=True,
         widget=forms.Select(
@@ -60,7 +60,7 @@ class RendasForm(BaseRendasGastos):
     
 class GastosForm(BaseRendasGastos):
     categoria_gasto = forms.ChoiceField(
-        label='Categoria do gasto',
+        label='Categoria: ',
         choices=OpcoesGastos.choices,
         required=True,
         widget=forms.Select(

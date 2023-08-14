@@ -27,22 +27,59 @@
             <button type="submit">Cadastrar renda</button>
         </div>
     </form>
-    <form method="get">
-        <label for="selected_month">Selecione o mês:</label>
-        <input type="month" id="selected_month" name="selected_month">
-        <button type="submit" style="margin-bottom: 0px;">Filtrar</button>
+    <form method="get" style="display: flex;">
+        <div style="margin-right: 20px;">
+            <label for="selected_month">Selecione o mês:</label>
+            <input type="month" id="selected_month" name="selected_month">
+        </div>
+        
+        <div>
+            <label for="selected_category">Selecione a categoria:</label>
+            <select id="selected_category" name="selected_category">
+                <option value="">Todas as categorias</option>
+                {% for category in opcoes_rendas %}
+                    <option value="{{ category.0 }}">{{ category.1 }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <button type="submit" style="margin-top: 10px;">Filtrar</button>
     </form>
+
     <h2 class="titulo-lista">Rendas Cadastradas</h2>
     <ul class="lista-rendas">
-        {% for renda in rendas_cadastradas %}
+        {% for renda in page_obj %}
         <li class="item-renda">
             <span class="valor-renda">R$ {{ renda.valor|floatformat:2 }}</span>
             <span class="descricao-renda">{{ renda.descricao }}</span>
+            <span class="categoria-renda">{{ renda.categoria_renda }}</span>
+            <span class="pagamento-renda">{{ renda.metodo_pagamento }}</span>
             <span class="data-renda">{{ renda.data|date:"d-m-Y" }}</span>
+            <form action="{% url 'delete_renda' renda.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="delete-button" onclick="return confirm('Tem certeza que deseja deletar essa renda?')">X</button>
+            </form>
         </li>
         {% endfor %}
         <li class="item-renda"><span>Total: R$ {{ total_rendas|floatformat:2 }}</span></li>
     </ul>
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; primeira</a>
+                <a href="?page={{ page_obj.previous_page_number }}">anterior</a>
+            {% endif %}
+
+            <span class="current-page">
+                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">próxima</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">última &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
 </div>
 
 {% endblock %}
