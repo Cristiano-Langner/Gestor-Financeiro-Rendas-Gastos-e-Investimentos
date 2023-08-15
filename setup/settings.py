@@ -30,7 +30,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = [str(os.environ.get('APP_URL'))]
 
-
 # Application definition
 
 INSTALLED_APPS = [
