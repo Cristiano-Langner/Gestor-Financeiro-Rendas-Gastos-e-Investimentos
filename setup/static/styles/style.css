@@ -84,96 +84,175 @@ ul li.item-menu a .icon > i{
     margin-left: 10px;
 }
 
-.formulario{
-    margin-bottom: 15px;
-    max-width: 300px;
+.form-cadastro {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f5f5f5;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.formulario-grid {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-}
-
-.coluna {
-    flex: 1;
-}
-
-label {
+.form-cadastro label {
     display: block;
     font-weight: bold;
     margin-bottom: 5px;
 }
 
-input[type="text"],
-select {
+.form-cadastro input[type="text"],
+.form-cadastro input[type="number"],
+.form-cadastro select {
     width: 100%;
     padding: 8px;
+    margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    font-size: 14px;
+    background-color: white;
 }
 
-input[type="number"],
-input[type="password"],
-input[type="date"] {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-}
-
-button[type="submit"] {
+.form-cadastro button[type="submit"] {
     background-color: #007bff;
-    color: #fff;
+    color: white;
+    padding: 10px 20px;
     border: none;
     border-radius: 4px;
-    padding: 10px 20px;
-    font-size: 16px;
     cursor: pointer;
-    margin-bottom: 40px;
+    transition: background-color 0.3s ease;
 }
 
-button[type="submit"]:hover {
+.form-cadastro input[type="date"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
+}
+
+.form-cadastro input[type="date"]::-webkit-inner-spin-button,
+.form-cadastro input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.form-cadastro input[type="date"]::-webkit-clear-button {
+    display: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.filter-form {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f5f5f5;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.filter-form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    flex: 1;
+}
+
+.filter-form input[type="month"],
+.filter-form select {
+    flex: 2;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
+}
+
+.filter-form button[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.filter-form button[type="submit"]:hover {
     background-color: #0056b3;
 }
 
-.titulo-lista {
-    font-size: 20px;
-    margin-top: 20px;
+.item-list {
+    list-style-type: none;
+    padding: 0;
 }
 
-.lista-rendas {
-    width: 100%;
-    max-width: 800px;
+.item-list li {
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 5px;
     margin: 10px 0;
     padding: 10px;
-}
-
-.item-renda {
-    background-color: #f5f5f5;
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-bottom: 5px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.item-renda span {
-    font-weight: bold;
+.item-list li span {
+    flex: 1;
 }
 
-.valor-renda,
-.descricao-renda,
-.data-renda,
-.categoria-renda,
-.pagamento-renda,
-.total-renda {
-    margin-right: 50px;
-    display: flex;
-    align-items: center;
-    min-height: 15px;
-    flex: 0 0 100px;
+.item-list li form {
+    margin-left: 10px;
+}
+
+.item-list li form button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.item-list li form button:hover {
+    background-color: #c82333;
+}
+
+.footer-content {
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+.footer-links li {
+    display: inline-block;
+    margin-right: 15px;
+}
+
+.footer-links li:last-child {
+    margin-right: 0;
+}
+
+.footer-links a {
+    text-decoration: none;
+    color: #fff;
+    transition: color 0.3s;
+}
+
+.footer-links a:hover {
+    color: #ff9900;
 }

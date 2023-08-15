@@ -2,21 +2,21 @@
 {% load static %}
 {% block content %}
 
-<div style="margin-left: 300px;">
-    <form action="{% url 'rendas' %}" method="POST">
+<div class="pagina">
+    <form action="{% url 'rendas' %}" method="POST" class="form-cadastro">
         {% csrf_token %}
-        <div class="formulario-grid">
-            <div class="coluna">
+        <div>
+            <div>
                 {% for field in form.visible_fields|slice:":3" %}
-                <div class="formulario">
+                <div>
                     <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                     {{ field.as_widget }}
                 </div>
                 {% endfor %}
             </div>
-            <div class="coluna">
+            <div>
                 {% for field in form.visible_fields|slice:"3:" %}
-                <div class="formulario">
+                <div>
                     <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                     {{ field.as_widget }}
                 </div>
@@ -27,8 +27,8 @@
             <button type="submit">Cadastrar renda</button>
         </div>
     </form>
-    <form method="get" style="display: flex;">
-        <div style="margin-right: 20px;">
+    <form method="get" class="filter-form">
+        <div>
             <label for="selected_month">Selecione o mês:</label>
             <input type="month" id="selected_month" name="selected_month">
         </div>
@@ -43,34 +43,34 @@
             </select>
         </div>
         
-        <button type="submit" style="margin-top: 10px;">Filtrar</button>
+        <button type="submit">Filtrar</button>
     </form>
 
-    <h2 class="titulo-lista">Rendas Cadastradas</h2>
-    <ul class="lista-rendas">
+    <h2>Rendas Cadastradas</h2>
+    <ul class="item-list">
         {% for renda in page_obj %}
         <li class="item-renda">
-            <span class="valor-renda">R$ {{ renda.valor|floatformat:2 }}</span>
-            <span class="descricao-renda">{{ renda.descricao }}</span>
-            <span class="categoria-renda">{{ renda.categoria_renda }}</span>
-            <span class="pagamento-renda">{{ renda.metodo_pagamento }}</span>
-            <span class="data-renda">{{ renda.data|date:"d-m-Y" }}</span>
+            <span>R$ {{ renda.valor|floatformat:2 }}</span>
+            <span>{{ renda.descricao }}</span>
+            <span>{{ renda.categoria_renda }}</span>
+            <span>{{ renda.metodo_pagamento }}</span>
+            <span>{{ renda.data|date:"d-m-Y" }}</span>
             <form action="{% url 'delete_renda' renda.id %}" method="post">
                 {% csrf_token %}
-                <button type="submit" class="delete-button" onclick="return confirm('Tem certeza que deseja deletar essa renda?')">X</button>
+                <button type="submit" onclick="return confirm('Tem certeza que deseja deletar essa renda?')">X</button>
             </form>
         </li>
         {% endfor %}
-        <li class="item-renda"><span>Total: R$ {{ total_rendas|floatformat:2 }}</span></li>
+        <li><span>Total: R$ {{ total_rendas|floatformat:2 }}</span></li>
     </ul>
-    <div class="pagination">
-        <span class="step-links">
+    <div>
+        <span>
             {% if page_obj.has_previous %}
                 <a href="?page=1">&laquo; primeira</a>
                 <a href="?page={{ page_obj.previous_page_number }}">anterior</a>
             {% endif %}
 
-            <span class="current-page">
+            <span>
                 Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
             </span>
 

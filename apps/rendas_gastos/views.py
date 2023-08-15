@@ -118,3 +118,9 @@ def delete_renda(request, renda_id):
     renda.delete()
     messages.success(request, 'Renda deletada com sucesso!')
     return redirect('rendas')
+
+def delete_gasto(request, gasto_id):
+    gasto = get_object_or_404(Gastos, pk=gasto_id)
+    gasto.delete()
+    messages.success(request, 'Gasto deletado com sucesso!')
+    return redirect('gastos')
