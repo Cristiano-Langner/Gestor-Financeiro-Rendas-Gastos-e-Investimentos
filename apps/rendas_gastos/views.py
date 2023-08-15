@@ -43,11 +43,11 @@ def rendas(request):
     selected_payment = request.GET.get('selected_category')
     if selected_month:
         selected_month_date = datetime.strptime(selected_month, '%Y-%m')
-        rendas_cadastradas = Rendas.objects.filter(data__year=selected_month_date.year, data__month=selected_month_date.month)
-        total_rendas = Rendas.objects.filter(data__year=selected_month_date.year, data__month=selected_month_date.month).aggregate(total=Sum('valor'))['total']
+        rendas_cadastradas = Rendas.objects.filter(data__year=selected_month_date.year, data__month=selected_month_date.month, created_by=request.user)
+        total_rendas = rendas_cadastradas.filter(data__year=selected_month_date.year, data__month=selected_month_date.month).aggregate(total=Sum('valor'))['total']
     else:
-        rendas_cadastradas = Rendas.objects.all()
-        total_rendas = Rendas.objects.aggregate(total=Sum('valor'))['total']
+        rendas_cadastradas = Rendas.objects.filter(created_by=request.user)
+        total_rendas = rendas_cadastradas.aggregate(total=Sum('valor'))['total']
     if selected_category:
         categorias_cadastradas = Rendas.objects.filter(categoria_renda=selected_category)
     else:
@@ -95,11 +95,11 @@ def gastos(request):
     selected_category = request.GET.get('selected_category')
     if selected_month:
         selected_month_date = datetime.strptime(selected_month, '%Y-%m')
-        gastos_cadastrados = Gastos.objects.filter(data__year=selected_month_date.year, data__month=selected_month_date.month)
-        total_gastos = Gastos.objects.filter(data__year=selected_month_date.year, data__month=selected_month_date.month).aggregate(total=Sum('valor'))['total']
+        gastos_cadastrados = Gastos.objects.filter(data__year=selected_month_date.year, data__month=selected_month_date.month, created_by=request.user)
+        total_gastos = gastos_cadastrados.filter(data__year=selected_month_date.year, data__month=selected_month_date.month).aggregate(total=Sum('valor'))['total']
     else:
-        gastos_cadastrados = Gastos.objects.all()
-        total_gastos = Gastos.objects.aggregate(total=Sum('valor'))['total']
+        gastos_cadastrados = Gastos.objects.filter(created_by=request.user)
+        total_gastos = gastos_cadastrados.aggregate(total=Sum('valor'))['total']
     if selected_category:
         categorias_cadastradas = Gastos.objects.filter(categoria_gasto=selected_category)
     else:
