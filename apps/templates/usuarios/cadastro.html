@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="pagina">
-    <form action="{% url 'cadastro' %}" method="POST">
+    <form action="{% url 'cadastro' %}" method="POST" class="form-cadastro">
         {% csrf_token %}
         <div>
             {% for field in form.visible_fields %}

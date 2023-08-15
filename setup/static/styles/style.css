@@ -27,6 +27,7 @@ nav.menu-lateral.expandir{
 }
 
 .pagina {
+    margin: 20px auto 0;
     margin-left: 140px;
     transition: margin-left 0.5s ease;
 }
@@ -141,6 +142,24 @@ ul li.item-menu a .icon > i{
     display: none;
     -webkit-appearance: none;
     appearance: none;
+}
+
+.form-cadastro input[type="password"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
+}
+
+.form-cadastro input[type="email"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
 }
 
 .filter-form {

@@ -2,12 +2,12 @@
 {% load static %}
 {% block content %}
 
-<div style="margin-left: 500px;">
-    <form action="{% url 'login' %}" method="POST">
+<div class="pagina">
+    <form action="{% url 'login' %}" method="POST" class="form-cadastro">
         {% csrf_token %}
-        <div class"coluna">
+        <div>
             {% for field in form.visible_fields %}
-            <div class="formulario">
+            <div>
                 <label for="{{ field.id_for_label }}">{{field.label}}
                 {{ field }}
             </div>
@@ -17,6 +17,9 @@
             <button type="submit">Logar</button>
         </div>
     </form>
+    <div style="margin-left: 410px;">
+        <p>Não tem uma conta ainda? <a href="{% url 'cadastro' %}">Cadastrar</a></p>
+    </div>
 </div>
 
 {% endblock %}
