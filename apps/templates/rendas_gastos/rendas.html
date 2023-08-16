@@ -27,6 +27,7 @@
             <button type="submit">Cadastrar renda</button>
         </div>
     </form>
+    
     <form method="get" class="filter-form">
         <div>
             <label for="selected_month">Mês:</label>
@@ -90,6 +91,50 @@
             {% endif %}
         </span>
     </div>
+
+    <div class="graficos-container">
+        <div class="grafico">
+            <h2 style="margin-left: 80px;">Gráfico de Rendas</h2>
+            <canvas id="grafico-rendas"></canvas>
+        </div>
+        <div class="grafico">
+            <h2 style="margin-left: 80px;">Gráfico Categorias</h2>
+            <canvas id="grafico-categorias"></canvas>
+        </div>
+    </div>
+
 </div>
+
+<script>
+    var rendasData = {
+        labels: [{% for categoria in grafico_renda.0 %}'{{ categoria.categoria_renda }}',{% endfor %}],
+        datasets: [{
+            data: [{% for categoria in grafico_renda.0 %}{{ categoria.total }},{% endfor %}],
+            backgroundColor: [
+                'red',
+                'green',
+                'blue',
+                'orange',
+                'purple',
+                'yellow',
+            ]
+        }]
+    };
+    var categoriasData = {
+        labels: [{% for pagamento in grafico_renda.1 %}'{{ pagamento.categoria_renda }}',{% endfor %}],
+        datasets: [{
+            data: [{% for pagamento in grafico_renda.1 %}{{ pagamento.contagem }},{% endfor %}],
+            backgroundColor: [
+                'red',
+                'green',
+                'blue',
+                'orange',
+                'purple',
+                'yellow',
+            ]
+        }]
+    };
+</script>
+<script src="{% static 'styles/grafico.js' %}"></script>
 
 {% endblock %}

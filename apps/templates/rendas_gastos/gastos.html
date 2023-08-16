@@ -27,14 +27,15 @@
             <button type="submit">Cadastrar gasto</button>
         </div>
     </form>
+
     <form method="get" class="filter-form">
         <div>
-            <label for="selected_month">Selecione o mês:</label>
+            <label for="selected_month">Mês:</label>
             <input type="month" id="selected_month" name="selected_month">
         </div>
 
         <div>
-            <label for="selected_category">Selecione a categoria:</label>
+            <label for="selected_category">Categoria:</label>
             <select id="selected_category" name="selected_category">
                 <option value="">Todas as categorias</option>
                 {% for category in opcoes_gastos %}
@@ -43,8 +44,19 @@
             </select>
         </div>
 
+        <div>
+            <label for="selected_payment">Pagamento:</label>
+            <select id="selected_payment" name="selected_payment">
+                <option value="">Todos pagamento</option>
+                {% for payment in opcoes_pagamentos %}
+                    <option value="{{ payment.0 }}">{{ payment.1 }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
         <button type="submit">Filtrar</button>
     </form>
+
     <h2>Gastos Cadastrados</h2>
     <ul class="item-list">
         {% for gasto in page_obj %}
@@ -52,10 +64,11 @@
             <span>R$ {{ gasto.valor|floatformat:2 }}</span>
             <span>{{ gasto.descricao }}</span>
             <span>{{ gasto.categoria_gasto }}</span>
+            <span>{{ gasto.metodo_pagamento }}</span>
             <span>{{ gasto.data|date:"d-m-Y" }}</span>
             <form action="{% url 'delete_gasto' gasto.id %}" method="post">
                 {% csrf_token %}
-                <button type="submit" onclick="return confirm('Tem certeza que deseja deletar essa renda?')">X</button>
+                <button type="submit" onclick="return confirm('Tem certeza que deseja deletar esse gasto?')">X</button>
             </form>
         </li>
         {% endfor %}
@@ -78,6 +91,51 @@
             {% endif %}
         </span>
     </div>
+
+    <div class="graficos-container">
+        <div class="grafico">
+            <h2 style="margin-left: 80px;">Gráfico de Gastos</h2>
+            <canvas id="grafico-gastos"></canvas>
+        </div>
+        <div class="grafico">
+            <h2 style="margin-left: 80px;">Gráfico Categorias</h2>
+            <canvas id="grafico-categorias-gastos"></canvas>
+        </div>
+    </div>
+    
 </div>
+
+
+<script>
+    var gastosData = {
+        labels: [{% for categoria in grafico_gasto.0 %}'{{ categoria.categoria_gasto }}',{% endfor %}],
+        datasets: [{
+            data: [{% for categoria in grafico_gasto.0 %}{{ categoria.total }},{% endfor %}],
+            backgroundColor: [
+                'red',
+                'green',
+                'blue',
+                'orange',
+                'purple',
+                'yellow',
+            ]
+        }]
+    };
+    var categoriasgastosData = {
+        labels: [{% for pagamento in grafico_gasto.1 %}'{{ pagamento.categoria_gasto }}',{% endfor %}],
+        datasets: [{
+            data: [{% for pagamento in grafico_gasto.1 %}{{ pagamento.contagem }},{% endfor %}],
+            backgroundColor: [
+                'red',
+                'green',
+                'blue',
+                'orange',
+                'purple',
+                'yellow',
+            ]
+        }]
+    };
+</script>
+<script src="{% static 'styles/grafico_gastos.js' %}"></script>
 
 {% endblock %}
