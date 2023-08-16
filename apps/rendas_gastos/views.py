@@ -40,30 +40,27 @@ def rendas(request):
             form = RendasForm()
     selected_month = request.GET.get('selected_month')
     selected_category = request.GET.get('selected_category')
-    selected_payment = request.GET.get('selected_category')
+    selected_payment = request.GET.get('selected_payment')
+    rendas_cadastradas = Rendas.objects.filter(created_by=request.user)
+    
     if selected_month:
         selected_month_date = datetime.strptime(selected_month, '%Y-%m')
-        rendas_cadastradas = Rendas.objects.filter(data__year=selected_month_date.year, data__month=selected_month_date.month, created_by=request.user)
+        rendas_cadastradas = rendas_cadastradas.filter(data__year=selected_month_date.year, data__month=selected_month_date.month, created_by=request.user)
         total_rendas = rendas_cadastradas.filter(data__year=selected_month_date.year, data__month=selected_month_date.month).aggregate(total=Sum('valor'))['total']
     else:
-        rendas_cadastradas = Rendas.objects.filter(created_by=request.user)
         total_rendas = rendas_cadastradas.aggregate(total=Sum('valor'))['total']
     if selected_category:
-        categorias_cadastradas = Rendas.objects.filter(categoria_renda=selected_category)
-    else:
-        categorias_cadastradas = OpcoesRendas.values
+        rendas_cadastradas = rendas_cadastradas.filter(categoria_renda=selected_category)
     if selected_payment:
-        pagamentos_cadastrados = Rendas.objects.filter(metodo_pagamento=selected_payment)
-    else:
-        pagamentos_cadastrados = MetodoPagamento.values
+        rendas_cadastradas = rendas_cadastradas.filter(metodo_pagamento=selected_payment)
         
+    rendas_cadastradas = rendas_cadastradas.order_by('-data')
     paginator = Paginator(rendas_cadastradas, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
     return render(request, 'rendas_gastos/rendas.html', {'form': form, 'rendas_cadastradas': rendas_cadastradas,
-                    'total_rendas': total_rendas, 'categorias_cadastradas': categorias_cadastradas,
-                    'opcoes_rendas': OpcoesRendas.choices, 'pagamentos_cadastrados': pagamentos_cadastrados,
+                    'total_rendas': total_rendas, 'opcoes_rendas': OpcoesRendas.choices,
                     'opcoes_pagamentos': MetodoPagamento.choices, 'page_obj': page_obj})
 
 def gastos(request):

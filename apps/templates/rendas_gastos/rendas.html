@@ -29,12 +29,12 @@
     </form>
     <form method="get" class="filter-form">
         <div>
-            <label for="selected_month">Selecione o mês:</label>
+            <label for="selected_month">Mês:</label>
             <input type="month" id="selected_month" name="selected_month">
         </div>
         
         <div>
-            <label for="selected_category">Selecione a categoria:</label>
+            <label for="selected_category">Categoria:</label>
             <select id="selected_category" name="selected_category">
                 <option value="">Todas as categorias</option>
                 {% for category in opcoes_rendas %}
@@ -43,6 +43,16 @@
             </select>
         </div>
         
+        <div>
+            <label for="selected_payment">Pagamento:</label>
+            <select id="selected_payment" name="selected_payment">
+                <option value="">Todos pagamento</option>
+                {% for payment in opcoes_pagamentos %}
+                    <option value="{{ payment.0 }}">{{ payment.1 }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
         <button type="submit">Filtrar</button>
     </form>
 
