@@ -63,7 +63,7 @@
         <li class="item-renda">
             <span>R$ {{ gasto.valor|floatformat:2 }}</span>
             <span>{{ gasto.descricao }}</span>
-            <span>{{ gasto.categoria_gasto }}</span>
+            <span>{{ gasto.categoria }}</span>
             <span>{{ gasto.metodo_pagamento }}</span>
             <span>{{ gasto.data|date:"d-m-Y" }}</span>
             <form action="{% url 'delete_gasto' gasto.id %}" method="post">

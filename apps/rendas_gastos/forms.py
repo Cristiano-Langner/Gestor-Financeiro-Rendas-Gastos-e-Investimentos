@@ -47,7 +47,7 @@ class BaseRendasGastos(forms.Form):
     )
     
 class RendasForm(BaseRendasGastos):
-    categoria_renda = forms.ChoiceField(
+    categoria = forms.ChoiceField(
         label='Categoria: ',
         choices=OpcoesRendas.choices,
         required=True,
@@ -59,7 +59,7 @@ class RendasForm(BaseRendasGastos):
     )
     
 class GastosForm(BaseRendasGastos):
-    categoria_gasto = forms.ChoiceField(
+    categoria = forms.ChoiceField(
         label='Categoria: ',
         choices=OpcoesGastos.choices,
         required=True,

@@ -7,64 +7,68 @@ from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect
 from apps.rendas_gastos.forms import GastosForm, RendasForm, OpcoesRendas, OpcoesGastos, MetodoPagamento
 from apps.rendas_gastos.models import Rendas, Gastos
+from apps.rendas_gastos.utils import check_authentication
 
 def index(request):
-    if not request.user.is_authenticated:
-        messages.error(request, 'Usuário não logado')
+    if not check_authentication(request):
         return redirect('login')
     return render(request, 'index.html')
 
-def rendas(request):
-    if not request.user.is_authenticated:
-        messages.error(request, 'Usuário não logado')
-        return redirect('login')
+def process_form(request, form_class, created_class, reditect_name, success_message):
+    if request.method == 'POST':
+        form = form_class(request.POST)
+        if form.is_valid():
+            novo = created_class.objects.create(**form.cleaned_data, created_by=request.user)
+            novo.save(user=request.user)
+            messages.success(request, success_message)
+            return redirect(reditect_name)
     else:
-        if request.method == 'POST':
-            form = RendasForm(request.POST)
-            if form.is_valid():
-                valor = form['valor'].value()
-                descricao = form['descricao'].value()
-                data = form['data'].value()
-                pagamento = form['metodo_pagamento'].value()
-                categoria = form['categoria_renda'].value()
-                nova_renda = Rendas.objects.create(
-                    valor=valor,
-                    descricao=descricao,
-                    data=data,
-                    metodo_pagamento=pagamento,
-                    categoria_renda=categoria,
-                )
-                nova_renda.save(user=request.user)
-                messages.success(request, 'Renda registrada com sucesso!')
-                return redirect('rendas')
-        else:
-            form = RendasForm()
+        form = form_class()
+    return form
+
+def graph(categorias_ref, name_cadastrado_categoria):
+    totais = []
+    for categoria in categorias_ref:
+        total_categoria = name_cadastrado_categoria.filter(categoria=categoria[0]).aggregate(total=Sum('valor'))['total']
+        totais.append({
+        'categoria': categoria[1],
+        'total': total_categoria if total_categoria else 0
+        })
+    total_categoria = name_cadastrado_categoria.values('categoria').annotate(contagem=Count('categoria'))
+    grafico = [totais, list(total_categoria)]
+    return grafico
+
+def filter_selections(request, name_cadastrado_categoria):
     selected_month = request.GET.get('selected_month')
     selected_category = request.GET.get('selected_category')
     selected_payment = request.GET.get('selected_payment')
-    rendas_cadastradas = Rendas.objects.filter(created_by=request.user)
-    
-    categorias_renda = OpcoesRendas.choices
-    totais_renda = []
-    for categoria in categorias_renda:
-        total_categoria = rendas_cadastradas.filter(categoria_renda=categoria[0]).aggregate(total=Sum('valor'))['total']
-        totais_renda.append({
-        'categoria_renda': categoria[1],
-        'total': total_categoria if total_categoria else 0
-        })
-    total_categoria = rendas_cadastradas.values('categoria_renda').annotate(contagem=Count('categoria_renda'))
-    grafico_renda = [totais_renda, list(total_categoria)]
+    filters ={'created_by': request.user}
     
     if selected_month:
         selected_month_date = datetime.strptime(selected_month, '%Y-%m')
-        rendas_cadastradas = rendas_cadastradas.filter(data__year=selected_month_date.year, data__month=selected_month_date.month, created_by=request.user)
-        total_rendas = rendas_cadastradas.filter(data__year=selected_month_date.year, data__month=selected_month_date.month).aggregate(total=Sum('valor'))['total']
-    else:
-        total_rendas = rendas_cadastradas.aggregate(total=Sum('valor'))['total']
+        filters['data__year'] = selected_month_date.year
+        filters['data__month'] = selected_month_date.month
     if selected_category:
-        rendas_cadastradas = rendas_cadastradas.filter(categoria_renda=selected_category)
+        filters['categoria'] = selected_category
     if selected_payment:
-        rendas_cadastradas = rendas_cadastradas.filter(metodo_pagamento=selected_payment)
+        filters['metodo_pagamento'] = selected_payment
+        
+    name_cadastrado_categoria = name_cadastrado_categoria.filter(**filters)
+    total = name_cadastrado_categoria.aggregate(total=Sum('valor'))['total']
+    return total, name_cadastrado_categoria
+
+def rendas(request):
+    if not check_authentication(request):
+        return redirect('login')
+    else:
+        form = process_form(request, RendasForm, Rendas, 'rendas', 'Renda registrada com sucesso!')
+    
+    rendas_cadastradas = Rendas.objects.filter(created_by=request.user)
+    categorias_renda = OpcoesRendas.choices
+    
+    grafico_renda = graph(categorias_renda, rendas_cadastradas)
+    
+    total_rendas, rendas_cadastradas = filter_selections(request, rendas_cadastradas)
         
     rendas_cadastradas = rendas_cadastradas.order_by('-data')
     paginator = Paginator(rendas_cadastradas, 10)
@@ -76,58 +80,18 @@ def rendas(request):
                     'opcoes_pagamentos': MetodoPagamento.choices, 'page_obj': page_obj})
 
 def gastos(request):
-    if not request.user.is_authenticated:
-        messages.error(request, 'Usuário não logado')
+    if not check_authentication(request):
         return redirect('login')
     else:
-        if request.method == 'POST':
-            form = GastosForm(request.POST)
-            if form.is_valid():
-                valor = form['valor'].value()
-                descricao = form['descricao'].value()
-                data = form['data'].value()
-                pagamento = form['metodo_pagamento'].value()
-                categoria = form['categoria_gasto'].value()
-                novo_gasto = Gastos.objects.create(
-                    valor=valor,
-                    descricao=descricao,
-                    data=data,
-                    metodo_pagamento=pagamento,
-                    categoria_gasto=categoria,
-                )
-                novo_gasto.save(user=request.user)
-                messages.success(request, 'Gasto registrado com sucesso!')
-                return redirect('gastos')
-        else:
-            form = GastosForm()
-    selected_month = request.GET.get('selected_month')
-    selected_category = request.GET.get('selected_category')
-    selected_payment = request.GET.get('selected_payment')
+        form = process_form(request, GastosForm, Gastos, 'gastos', 'Gasto registrado com sucesso!')
+    
     gastos_cadastrados = Gastos.objects.filter(created_by=request.user)
+    categorias = OpcoesGastos.choices
     
-    categorias_gasto = OpcoesGastos.choices
-    totais_gasto = []
-    for categoria in categorias_gasto:
-        total_categoria_gasto = gastos_cadastrados.filter(categoria_gasto=categoria[0]).aggregate(total=Sum('valor'))['total']
-        totais_gasto.append({
-        'categoria_gasto': categoria[1],
-        'total': total_categoria_gasto if total_categoria_gasto else 0
-        })
-    total_categoria_gasto = gastos_cadastrados.values('categoria_gasto').annotate(contagem=Count('categoria_gasto'))
-    grafico_gasto = [totais_gasto, list(total_categoria_gasto)]
+    grafico_gasto = graph(categorias, gastos_cadastrados)
     
+    total_gastos, gastos_cadastrados = filter_selections(request, gastos_cadastrados)
     
-    if selected_month:
-        selected_month_date = datetime.strptime(selected_month, '%Y-%m')
-        gastos_cadastrados = gastos_cadastrados.filter(data__year=selected_month_date.year, data__month=selected_month_date.month, created_by=request.user)
-        total_gastos = gastos_cadastrados.filter(data__year=selected_month_date.year, data__month=selected_month_date.month).aggregate(total=Sum('valor'))['total']
-    else:
-        total_gastos = gastos_cadastrados.aggregate(total=Sum('valor'))['total']
-    if selected_category:
-        gastos_cadastrados = gastos_cadastrados.filter(categoria_gasto=selected_category)
-    if selected_payment:
-        gastos_cadastrados = gastos_cadastrados.filter(metodo_pagamento=selected_payment)
-        
     gastos_cadastrados = gastos_cadastrados.order_by('-data')
     paginator = Paginator(gastos_cadastrados, 10)
     page_number = request.GET.get('page')

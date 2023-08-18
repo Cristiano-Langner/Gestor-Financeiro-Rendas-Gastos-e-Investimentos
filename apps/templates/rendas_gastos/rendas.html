@@ -63,7 +63,7 @@
         <li class="item-renda">
             <span>R$ {{ renda.valor|floatformat:2 }}</span>
             <span>{{ renda.descricao }}</span>
-            <span>{{ renda.categoria_renda }}</span>
+            <span>{{ renda.categoria }}</span>
             <span>{{ renda.metodo_pagamento }}</span>
             <span>{{ renda.data|date:"d-m-Y" }}</span>
             <form action="{% url 'delete_renda' renda.id %}" method="post">
