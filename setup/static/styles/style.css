@@ -276,27 +276,6 @@ ul li.item-menu a .icon > i{
     color: #ff9900;
 }
 
-#grafico-rendas,
-#grafico-categorias,
-#grafico-gastos,
-#grafico-categorias-gastos {
-    max-width: 400px;
-    max-height: 400px;
-    width: 100%;
-    height: auto;
-}
-
-.graficos-container {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 40px;
-}
-
-.grafico {
-    width: 48%;
-    margin-bottom: 40px;
-}
-
 .container {
     display: flex;
     justify-content: space-around;

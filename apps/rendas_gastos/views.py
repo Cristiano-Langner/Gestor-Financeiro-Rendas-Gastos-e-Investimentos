@@ -22,15 +22,13 @@ def rendas(request):
     else:
         form = process_form(request, RendasForm, Rendas, 'rendas', 'Renda registrada com sucesso!')
     rendas_cadastradas = Rendas.objects.filter(created_by=request.user)
-    categorias_renda = OpcoesRendas.choices
-    grafico_renda = graph(categorias_renda, rendas_cadastradas)
     total_rendas, rendas_cadastradas = filter_selections(request, rendas_cadastradas)
     rendas_cadastradas = rendas_cadastradas.order_by('-data')
     paginator = Paginator(rendas_cadastradas, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'rendas_gastos/rendas.html', {'form': form, 'rendas_cadastradas': rendas_cadastradas,
-                    'total_rendas': total_rendas, 'opcoes_rendas': OpcoesRendas.choices, 'grafico_renda': grafico_renda,
+                    'total_rendas': total_rendas, 'opcoes_rendas': OpcoesRendas.choices, 
                     'opcoes_pagamentos': MetodoPagamento.choices, 'page_obj': page_obj})
 
 def gastos(request):
@@ -39,15 +37,13 @@ def gastos(request):
     else:
         form = process_form(request, GastosForm, Gastos, 'gastos', 'Gasto registrado com sucesso!')
     gastos_cadastrados = Gastos.objects.filter(created_by=request.user)
-    categorias = OpcoesGastos.choices
-    grafico_gasto = graph(categorias, gastos_cadastrados)
     total_gastos, gastos_cadastrados = filter_selections(request, gastos_cadastrados)
     gastos_cadastrados = gastos_cadastrados.order_by('-data')
     paginator = Paginator(gastos_cadastrados, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'rendas_gastos/gastos.html', {'form': form, 'gastos_cadastrados': gastos_cadastrados,
-                    'total_gastos': total_gastos, 'opcoes_gastos': OpcoesGastos.choices, 'grafico_gasto': grafico_gasto,
+                    'total_gastos': total_gastos, 'opcoes_gastos': OpcoesGastos.choices,
                     'opcoes_pagamentos': MetodoPagamento.choices, 'page_obj': page_obj})
 
 def process_form(request, form_class, created_class, reditect_name, success_message):
@@ -57,22 +53,9 @@ def process_form(request, form_class, created_class, reditect_name, success_mess
             novo = created_class.objects.create(**form.cleaned_data, created_by=request.user)
             novo.save(user=request.user)
             messages.success(request, success_message)
-            return redirect(reditect_name)
     else:
         form = form_class()
     return form
-
-def graph(categorias_ref, name_cadastrado_categoria):
-    totais = []
-    for categoria in categorias_ref:
-        total_categoria = name_cadastrado_categoria.filter(categoria=categoria[0]).aggregate(total=Sum('valor'))['total']
-        totais.append({
-        'categoria': categoria[1],
-        'total': total_categoria if total_categoria else 0
-        })
-    total_categoria = name_cadastrado_categoria.values('categoria').annotate(contagem=Count('categoria'))
-    grafico = [totais, list(total_categoria)]
-    return grafico
 
 def filter_selections(request, name_cadastrado_categoria):
     selected_month = request.GET.get('selected_month')
@@ -103,7 +86,7 @@ def rendas_gastos_view(request):
     context = {
         'renda_mes': renda_mes,
         'gasto_total': gasto_mes,
-        'saldo': saldo,
+        'saldo': saldo, 
     }
     return context
 
