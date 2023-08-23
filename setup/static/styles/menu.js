@@ -21,17 +21,8 @@ document.addEventListener('DOMContentLoaded', function() {
         menuSide.classList.toggle('expandir');
         if (menuSide.classList.contains('expandir')) {
             pagina.style.marginLeft = '300px';
-            localStorage.setItem('menuExpanded', 'true');
         } else {
             pagina.style.marginLeft = '140px';
-            localStorage.setItem('menuExpanded', 'false');
         }
     });
-
-    var isMenuExpanded = localStorage.getItem('menuExpanded');
-    console.log('Estado do menu:', isMenuExpanded);
-    if (isMenuExpanded === 'true') {
-        menuSide.classList.add('expandir');
-        pagina.style.marginLeft = '300px';
-    }
 });

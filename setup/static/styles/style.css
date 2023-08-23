@@ -28,7 +28,6 @@ nav.menu-lateral.expandir{
 
 .pagina {
     margin: 20px auto 0;
-    margin-left: 140px;
     transition: margin-left 0.5s ease;
 }
 

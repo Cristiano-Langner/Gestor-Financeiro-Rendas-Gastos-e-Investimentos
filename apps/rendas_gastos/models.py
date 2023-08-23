@@ -2,7 +2,6 @@ from django.db import models
 from decimal import Decimal
 from datetime import date
 from django.contrib.auth.models import User
-from django.contrib.auth import get_user
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 class MetodoPagamento(models.TextChoices):

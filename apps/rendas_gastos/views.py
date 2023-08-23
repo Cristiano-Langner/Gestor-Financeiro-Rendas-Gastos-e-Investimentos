@@ -3,7 +3,6 @@ from django.contrib import messages
 from datetime import datetime
 from django.db.models import Sum
 from django.core.paginator import Paginator
-from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect
 from apps.rendas_gastos.forms import GastosForm, RendasForm, OpcoesRendas, OpcoesGastos, MetodoPagamento
 from apps.rendas_gastos.models import Rendas, Gastos
