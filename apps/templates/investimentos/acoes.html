@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="pagina">
-    <form action="{% url 'fiis' %}" method="POST" class="form-cadastro">
+    <form action="{% url 'acoes' %}" method="POST" class="form-cadastro">
         {% csrf_token %}
         <div>
             <div>
@@ -38,7 +38,7 @@
             <label for="selected_category">Categoria:</label>
             <select id="selected_category" name="selected_category">
                 <option value="">Todas as categorias</option>
-                {% for category in opcoes_fiis %}
+                {% for category in opcoes_acoes %}
                     <option value="{{ category.0 }}">{{ category.1 }}</option>
                 {% endfor %}
             </select>
@@ -47,20 +47,20 @@
         <button type="submit">Filtrar</button>
     </form>
 
-    <h2>Fiis cadastrados</h2>
+    <h2>Ações cadastrados</h2>
     <ul class="item-list">
-        {% for fii in page_obj %}
+        {% for acao in page_obj %}
         <li class="item-fii">
-            <span>R$ {{ fii.valor|floatformat:2 }}</span>
-            <span>{{ fii.categoria }}</span>
-            <span>{{ fii.data|date:"d-m-Y" }}</span>
-            <form action="{% url 'delete_fii' fii.id %}" method="post">
+            <span>R$ {{ acao.valor|floatformat:2 }}</span>
+            <span>{{ acao.categoria }}</span>
+            <span>{{ acao.data|date:"d-m-Y" }}</span>
+            <form action="{% url 'delete_acao' acao.id %}" method="post">
                 {% csrf_token %}
-                <button type="submit" onclick="return confirm('Tem certeza que deseja deletar esse fii?')">X</button>
+                <button type="submit" onclick="return confirm('Tem certeza que deseja deletar essa ação?')">X</button>
             </form>
         </li>
         {% endfor %}
-        <li><span>Total: R$ {{ total_fiis|floatformat:2 }}</span></li>
+        <li><span>Total: R$ {{ total_acoes|floatformat:2 }}</span></li>
     </ul>
     <div>
         <span>

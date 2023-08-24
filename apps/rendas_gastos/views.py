@@ -1,9 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from datetime import datetime
 from django.db.models import Sum
 from django.core.paginator import Paginator
-from django.shortcuts import get_object_or_404, redirect
 from apps.rendas_gastos.forms import GastosForm, RendasForm, OpcoesRendas, OpcoesGastos, MetodoPagamento
 from apps.rendas_gastos.models import Rendas, Gastos
 from apps.rendas_gastos.utils import check_authentication
@@ -19,7 +18,7 @@ def rendas(request):
     if not check_authentication(request):
         return redirect('login')
     else:
-        form = process_form(request, RendasForm, Rendas, 'rendas', 'Renda registrada com sucesso!')
+        form = process_form(request, RendasForm, Rendas, 'Renda registrada com sucesso!')
     rendas_cadastradas = Rendas.objects.filter(created_by=request.user)
     total_rendas, rendas_cadastradas = filter_selections(request, rendas_cadastradas)
     rendas_cadastradas = rendas_cadastradas.order_by('-data')
@@ -45,7 +44,7 @@ def gastos(request):
                     'total_gastos': total_gastos, 'opcoes_gastos': OpcoesGastos.choices,
                     'opcoes_pagamentos': MetodoPagamento.choices, 'page_obj': page_obj})
 
-def process_form(request, form_class, created_class, reditect_name, success_message):
+def process_form(request, form_class, created_class, success_message):
     if request.method == 'POST':
         form = form_class(request.POST)
         if form.is_valid():

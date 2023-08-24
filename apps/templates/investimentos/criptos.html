@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="pagina">
-    <form action="{% url 'fiis' %}" method="POST" class="form-cadastro">
+    <form action="{% url 'criptos' %}" method="POST" class="form-cadastro">
         {% csrf_token %}
         <div>
             <div>
@@ -24,7 +24,7 @@
             </div>
         </div>
         <div>
-            <button type="submit">Cadastrar Fii</button>
+            <button type="submit">Cadastrar Cripto</button>
         </div>
     </form>
     
@@ -38,7 +38,7 @@
             <label for="selected_category">Categoria:</label>
             <select id="selected_category" name="selected_category">
                 <option value="">Todas as categorias</option>
-                {% for category in opcoes_fiis %}
+                {% for category in opcoes_criptos %}
                     <option value="{{ category.0 }}">{{ category.1 }}</option>
                 {% endfor %}
             </select>
@@ -47,16 +47,16 @@
         <button type="submit">Filtrar</button>
     </form>
 
-    <h2>Fiis cadastrados</h2>
+    <h2>Criptos cadastradas</h2>
     <ul class="item-list">
-        {% for fii in page_obj %}
+        {% for cripto in page_obj %}
         <li class="item-fii">
-            <span>R$ {{ fii.valor|floatformat:2 }}</span>
-            <span>{{ fii.categoria }}</span>
-            <span>{{ fii.data|date:"d-m-Y" }}</span>
-            <form action="{% url 'delete_fii' fii.id %}" method="post">
+            <span>R$ {{ cripto.valor|floatformat:2 }}</span>
+            <span>{{ cripto.categoria }}</span>
+            <span>{{ cripto.data|date:"d-m-Y" }}</span>
+            <form action="{% url 'delete_cripto' cripto.id %}" method="post">
                 {% csrf_token %}
-                <button type="submit" onclick="return confirm('Tem certeza que deseja deletar esse fii?')">X</button>
+                <button type="submit" onclick="return confirm('Tem certeza que deseja deletar essa cripto?')">X</button>
             </form>
         </li>
         {% endfor %}

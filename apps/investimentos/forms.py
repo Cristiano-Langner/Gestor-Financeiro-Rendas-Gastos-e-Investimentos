@@ -1,5 +1,5 @@
 from django import forms
-from apps.investimentos.models import OpcoesAcoes, OpcoesBdrs, OpcoesCriptos, OpcoesFiis
+from apps.investimentos.models import OpcoesAcoes, OpcoesBdrs, OpcoesCriptos, OpcoesFiis, OpcoesRendaFixa
 
 class BaseInvestimentos(forms.Form):
     nome=forms.CharField(
@@ -14,7 +14,7 @@ class BaseInvestimentos(forms.Form):
         ),
     )
     ticker=forms.CharField(
-        label='Nome: ', 
+        label='Ticker: ',
         required=True, 
         max_length=10,
         widget=forms.TextInput(
@@ -35,7 +35,7 @@ class BaseInvestimentos(forms.Form):
             }
         )
     )
-    quantidade = forms.PositiveIntegerField(
+    quantidade = forms.IntegerField(
         label='Quantidade: ',
         required=True,
         widget=forms.NumberInput(
@@ -108,6 +108,18 @@ class CriptosForm(BaseInvestimentos):
     categoria = forms.ChoiceField(
         label='Categoria: ',
         choices=OpcoesCriptos.choices,
+        required=True,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }
+        )
+    )
+    
+class RendaFixaForm(BaseInvestimentos):
+    categoria = forms.ChoiceField(
+        label='Categoria: ',
+        choices=OpcoesRendaFixa.choices,
         required=True,
         widget=forms.Select(
             attrs={

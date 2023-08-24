@@ -2,6 +2,21 @@
 {% load static %}
 {% block content %}    
 <div class="pagina">
-    
+
+    <div class="container">
+        <div class="box">
+            <h2>Rendas do mês</h2>
+            <p>Total: R$ {{ renda_mes|floatformat:2 }}</p>
+            <p>Saldo: <span class="{% if saldo >= 0 %}positive{% else %}negative{% endif %}">
+                R$ {{ saldo|floatformat:2 }}
+                </span>
+            </p>
+        </div>
+        <div class="box">
+            <h2>Gastos do mês</h2>
+            <p>Valor Total: R$ {{ gasto_total|floatformat:2 }}</p>
+        </div>
+    </div>
+
 </div>
 {% endblock %}

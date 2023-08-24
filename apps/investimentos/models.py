@@ -46,6 +46,20 @@ class OpcoesCriptos(models.TextChoices):
     PRIVACY_COIN = "Privacy coin"
     OUTROS = "Outros"
     
+class OpcoesRendaFixa(models.TextChoices):
+    TESOURO_SELIC = "Tesouro Selic"
+    TESOURO_PREFIXADO = "Tesouro Prefixado"
+    TESOURO_IPCA = "Tesouro IPCA"
+    CDB = "CDB"
+    LCI = "LCI"
+    LCA = "LCA"
+    LC = "LC"
+    DEBENTURES = "Debêntures"
+    FUNDOS_RF = "Fundos de Renda Fixa"
+    CRI = "CRI"
+    CRA = "CRA"
+    OUTROS = "Outros"
+    
 class BaseTransaction(models.Model):
     nome = models.CharField(max_length=30,null=False,blank=False)
     ticker = models.CharField(max_length=10,null=False,blank=False)
@@ -56,48 +70,60 @@ class BaseTransaction(models.Model):
     data = models.DateField(null=False, blank=False, validators=[MaxValueValidator(date.today())], default=date.today())
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_created_by')
     modified_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_modified_by')
-    
     def save(self, user=None, *args, **kwargs):
         self.created_by = user
         self.modified_by = user
         super().save(*args, **kwargs)
-        
     def update_modified_by(self, user=None, *args, **kwargs):
         self.modified_by = user
         super().save(*args, **kwargs)
-        
-
+    def clean_ticker(self):
+        ticker = self.cleaned_data['ticker']
+        return ticker.upper()
     class Meta:
         abstract = True
-        
+
 class Acoes(BaseTransaction):
     categoria = models.CharField(max_length=100, choices=OpcoesAcoes.choices, default=OpcoesAcoes.OUTROS)
-    
     def __str__(self):
         return f"Ações [ticker={self.ticker}]"
     class Meta:
         verbose_name_plural = "Ações"
-        
+
 class Fiis(BaseTransaction):
     categoria = models.CharField(max_length=100, choices=OpcoesFiis.choices, default=OpcoesFiis.OUTROS)
-    
     def __str__(self):
         return f"Fundos Imobiliários [ticker={self.ticker}]"
     class Meta:
         verbose_name_plural = "Fundos Imobiliários"
-        
+
 class Bdrs(BaseTransaction):
     categoria = models.CharField(max_length=100, choices=OpcoesBdrs.choices, default=OpcoesBdrs.OUTROS)
-    
     def __str__(self):
         return f"Brazilian Depositary Receipts [ticker={self.ticker}]"
     class Meta:
         verbose_name_plural = "Brazilian Depositary Receipts"
-        
+
 class Criptos(BaseTransaction):
     categoria = models.CharField(max_length=100, choices=OpcoesCriptos.choices, default=OpcoesCriptos.OUTROS)
-    
     def __str__(self):
         return f"Criptos [ticker={self.ticker}]"
     class Meta:
         verbose_name_plural = "Criptos"
+
+class RendaFixa(BaseTransaction):
+    categoria = models.CharField(max_length=100, choices=OpcoesRendaFixa.choices, default=OpcoesRendaFixa.OUTROS)
+    def __str__(self):
+        return f"Renda Fixa [ticker={self.ticker}]"
+    class Meta:
+        verbose_name_plural = "Renda Fixa"
+
+class HistoricoCompra(models.Model):
+    ticker = models.CharField(max_length=10)
+    valor = models.DecimalField(max_digits=10, decimal_places=2)
+    quantidade = models.PositiveIntegerField()
+    data = models.DateField()
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_created_by')
+    modified_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_modified_by')
+    def __str__(self):
+        return f"{self.ticker} - {self.quantidade} - {self.data}"
