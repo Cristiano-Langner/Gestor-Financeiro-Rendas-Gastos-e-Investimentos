@@ -5,16 +5,58 @@
 
     <div class="container">
         <div class="box">
-            <h2>Rendas do mês</h2>
-            <p>Total: R$ {{ renda_mes|floatformat:2 }}</p>
-            <p>Saldo: <span class="{% if saldo >= 0 %}positive{% else %}negative{% endif %}">
-                R$ {{ saldo|floatformat:2 }}
+            <h2>Ações</h2>
+            <p>Capital aplicado: R$ {{ investido_acoes|floatformat:2 }}</p>
+            <p>Dividendos: R$ {{ dividendo_acoes|floatformat:2 }}</p>
+            <p>Total acumulado: <span class="{% if total_acoes >= 0 %}positive{% else %}negative{% endif %}">
+                R$ {{ total_acoes|floatformat:2 }}
                 </span>
             </p>
+            <a href="{% url 'acoes' %}">Cadastrar ou editar ação</a></p>
         </div>
         <div class="box">
-            <h2>Gastos do mês</h2>
-            <p>Valor Total: R$ {{ gasto_total|floatformat:2 }}</p>
+            <h2>Fundos Imobiliários</h2>
+            <p>Capital aplicado: R$ {{ investido_fiis|floatformat:2 }}</p>
+            <p>Dividendos: R$ {{ dividendo_fiis|floatformat:2 }}</p>
+            <p>Total acumulado: <span class="{% if total_fiis >= 0 %}positive{% else %}negative{% endif %}">
+                R$ {{ total_fiis|floatformat:2 }}
+                </span>
+            </p>
+            <a href="{% url 'fiis' %}">Cadastrar ou editar fii</a></p>
+        </div>
+    </div>
+    <div class="container">
+        <div class="box">
+            <h2>BDRs</h2>
+            <p>Capital aplicado: R$ {{ investido_bdrs|floatformat:2 }}</p>
+            <p>Dividendos: R$ {{ dividendo_bdrs|floatformat:2 }}</p>
+            <p>Total acumulado: <span class="{% if total_bdrs >= 0 %}positive{% else %}negative{% endif %}">
+                R$ {{ total_bdrs|floatformat:2 }}
+                </span>
+            </p>
+            <a href="{% url 'bdrs' %}">Cadastrar ou editar bdr</a></p>
+        </div>
+        <div class="box">
+            <h2>Cripto Moedas</h2>
+            <p>Capital aplicado: R$ {{ investido_criptos|floatformat:2 }}</p>
+            <p>Stacking: R$ {{ dividendo_criptos|floatformat:2 }}</p>
+            <p>Total acumulado: <span class="{% if total_criptos >= 0 %}positive{% else %}negative{% endif %}">
+                R$ {{ total_criptos|floatformat:2 }}
+                </span>
+            </p>
+            <a href="{% url 'criptos' %}">Cadastrar ou editar cripto</a></p>
+        </div>
+    </div>
+    <div class="container">
+        <div class="box">
+            <h2>Renda Fixa</h2>
+            <p>Capital aplicado: R$ {{ investido_rendasfixa|floatformat:2 }}</p>
+            <p>Dividendos: R$ {{ dividendo_rendasfixa|floatformat:2 }}</p>
+            <p>Total acumulado: <span class="{% if total_rendasfixa >= 0 %}positive{% else %}negative{% endif %}">
+                R$ {{ total_rendasfixa|floatformat:2 }}
+                </span>
+            </p>
+            <a href="{% url 'rendasfixa' %}">Cadastrar ou editar renda fixa</a></p>
         </div>
     </div>
 

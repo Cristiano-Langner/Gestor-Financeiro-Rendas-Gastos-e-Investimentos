@@ -5,24 +5,7 @@
 <div class="pagina">
     <form action="{% url 'fiis' %}" method="POST" class="form-cadastro">
         {% csrf_token %}
-        <div>
-            <div>
-                {% for field in form.visible_fields|slice:":3" %}
-                <div>
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field.as_widget }}
-                </div>
-                {% endfor %}
-            </div>
-            <div>
-                {% for field in form.visible_fields|slice:"3:" %}
-                <div>
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field.as_widget }}
-                </div>
-                {% endfor %}
-            </div>
-        </div>
+        {% include 'shared/cadastro_template.html' %}
         <div>
             <button type="submit">Cadastrar Fii</button>
         </div>
@@ -62,24 +45,7 @@
         {% endfor %}
         <li><span>Total: R$ {{ total_fiis|floatformat:2 }}</span></li>
     </ul>
-    <div>
-        <span>
-            {% if page_obj.has_previous %}
-                <a href="?page=1">&laquo; primeira</a>
-                <a href="?page={{ page_obj.previous_page_number }}">anterior</a>
-            {% endif %}
-
-            <span>
-                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
-            </span>
-
-            {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}">próxima</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}">última &raquo;</a>
-            {% endif %}
-        </span>
-    </div>
-
+    {% include 'shared/pagination.html' %}
 </div>
 
 {% endblock %}

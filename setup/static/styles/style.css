@@ -28,6 +28,7 @@ nav.menu-lateral.expandir{
 
 .pagina {
     margin: 20px auto 0;
+    margin-left: 140px;
     transition: margin-left 0.5s ease;
 }
 
@@ -159,6 +160,19 @@ ul li.item-menu a .icon > i{
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: white;
+}
+
+.form-columns {
+    display: flex;
+}
+
+.form-column {
+    flex: 1;
+    margin-right: 20px;
+}
+
+.form-field {
+    margin-bottom: 10px;
 }
 
 .filter-form {

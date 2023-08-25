@@ -5,7 +5,7 @@ from datetime import datetime
 from django.db.models import Sum
 from django.core.paginator import Paginator
 from apps.rendas_gastos.utils import check_authentication
-from apps.investimentos.models import Acoes, Fiis, Bdrs, Criptos, RendaFixa, HistoricoCompra
+from apps.investimentos.models import Acoes, Fiis, Bdrs, Criptos, RendasFixa, HistoricoCompra
 from apps.investimentos.forms import AcoesForm, FiisForm, BdrsForm, CriptosForm, RendaFixaForm
 from apps.investimentos.forms import OpcoesAcoes, OpcoesBdrs, OpcoesCriptos, OpcoesFiis, OpcoesRendaFixa
 
@@ -13,8 +13,8 @@ def investimentos(request):
     if not check_authentication(request):
         return redirect('login')
     else:
-        #context_renda_gasto = rendas_gastos_view(request)
-        return #render(request, 'index.html', context_renda_gasto)
+        context_investimentos = investimentos_view(request)
+        return render(request, 'investimentos/investimentos.html', context_investimentos)
 
 def acoes(request):
     if not request.user.is_authenticated:
@@ -24,10 +24,7 @@ def acoes(request):
         form = process_form(request, AcoesForm, Acoes, 'Ação registrada com sucesso!')
     acoes_cadastradas = Acoes.objects.filter(created_by=request.user)
     total_acoes, acoes_cadastradas = filter_selections(request, acoes_cadastradas)
-    acoes_cadastradas = acoes_cadastradas.order_by('-data')
-    paginator = Paginator(acoes_cadastradas, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj, acoes_cadastradas = paginacao(request, acoes_cadastradas)
     return render(request, 'investimentos/acoes.html', {'form': form, 'acoes_cadastradas': acoes_cadastradas,
                     'total_acoes': total_acoes, 'opcoes_acoes': OpcoesAcoes.choices, 'page_obj': page_obj})
     
@@ -39,10 +36,7 @@ def fiis(request):
         form = process_form(request, FiisForm, Fiis, 'Fundo imobiliário registrado com sucesso!')
     fiis_cadastrados = Fiis.objects.filter(created_by=request.user)
     total_fiis, fiis_cadastrados = filter_selections(request, fiis_cadastrados)
-    fiis_cadastrados = fiis_cadastrados.order_by('-data')
-    paginator = Paginator(fiis_cadastrados, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj, fiis_cadastrados = paginacao(request, fiis_cadastrados)
     return render(request, 'investimentos/fiis.html', {'form': form, 'fiis_cadastrados': fiis_cadastrados,
                     'total_fiis': total_fiis, 'opcoes_fiis': OpcoesFiis.choices, 'page_obj': page_obj})
     
@@ -54,10 +48,7 @@ def bdrs(request):
         form = process_form(request, BdrsForm, Bdrs, 'BDR registrado com sucesso!')
     bdrs_cadastrados = Bdrs.objects.filter(created_by=request.user)
     total_bdrs, bdrs_cadastrados = filter_selections(request, bdrs_cadastrados)
-    bdrs_cadastrados = bdrs_cadastrados.order_by('-data')
-    paginator = Paginator(bdrs_cadastrados, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj, bdrs_cadastrados = paginacao(request, bdrs_cadastrados)
     return render(request, 'investimentos/bdrs.html', {'form': form, 'bdrs_cadastrados': bdrs_cadastrados,
                     'total_bdrs': total_bdrs, 'opcoes_bdrs': OpcoesBdrs.choices, 'page_obj': page_obj})
     
@@ -69,10 +60,7 @@ def criptos(request):
         form = process_form(request, CriptosForm, Criptos, 'Cripto moeda registrada com sucesso!')
     criptos_cadastradas = Criptos.objects.filter(created_by=request.user)
     total_criptos, criptos_cadastradas = filter_selections(request, criptos_cadastradas)
-    criptos_cadastradas = criptos_cadastradas.order_by('-data')
-    paginator = Paginator(criptos_cadastradas, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj, criptos_cadastradas = paginacao(request, criptos_cadastradas)
     return render(request, 'investimentos/criptos.html', {'form': form, 'criptos_cadastradas': criptos_cadastradas,
                     'total_criptos': total_criptos, 'opcoes_criptos': OpcoesCriptos.choices, 'page_obj': page_obj})
     
@@ -81,13 +69,10 @@ def rendasfixa(request):
         messages.error(request, 'Usuário não logado')
         return redirect('login')
     else:
-        form = process_form(request, RendaFixaForm, RendaFixa, 'Renda fixa registrada com sucesso!')
-    rendasfixa_cadastradas = RendaFixa.objects.filter(created_by=request.user)
+        form = process_form(request, RendaFixaForm, RendasFixa, 'Renda fixa registrada com sucesso!')
+    rendasfixa_cadastradas = RendasFixa.objects.filter(created_by=request.user)
     total_rendasfixa, rendasfixa_cadastradas = filter_selections(request, rendasfixa_cadastradas)
-    rendasfixa_cadastradas = rendasfixa_cadastradas.order_by('-data')
-    paginator = Paginator(rendasfixa_cadastradas, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj, rendasfixa_cadastradas = paginacao(request, rendasfixa_cadastradas)
     return render(request, 'investimentos/rendasfixa.html', {'form': form, 'rendasfixa_cadastradas': rendasfixa_cadastradas,
                     'total_rendasfixa': total_rendasfixa, 'opcoes_rendasfixa': OpcoesRendaFixa.choices, 'page_obj': page_obj})
 
@@ -134,18 +119,51 @@ def filter_selections(request, name_cadastrado_categoria):
     return total, name_cadastrado_categoria
 
 def investimentos_view(request):
-    #today = datetime.today()
-    #rendas_do_mes = Rendas.objects.filter(created_by=request.user, data__year=today.year, data__month=today.month)
-    #renda_mes = sum(renda.valor for renda in rendas_do_mes)
-    #gastos_do_mes = Gastos.objects.filter(created_by=request.user, data__year=today.year, data__month=today.month)
-    #gasto_mes = sum(gasto.valor for gasto in gastos_do_mes)
-    #saldo = renda_mes - gasto_mes
-    #context = {
-    #    'renda_mes': renda_mes,
-    #    'gasto_total': gasto_mes,
-    #    'saldo': saldo, 
-    #}
-    return #context
+    investido_acoes_user = Acoes.objects.filter(created_by=request.user)
+    investido_acoes = sum(acao.valor for acao in investido_acoes_user)
+    dividendo_acoes = sum(acao.dividendo for acao in investido_acoes_user)
+    total_acoes = investido_acoes + dividendo_acoes
+    investido_fiis_user = Fiis.objects.filter(created_by=request.user)
+    investido_fiis = sum(fii.valor for fii in investido_fiis_user)
+    dividendo_fiis = sum(fii.dividendo for fii in investido_acoes_user)
+    total_fiis = investido_fiis + dividendo_fiis
+    investido_bdrs_user = Bdrs.objects.filter(created_by=request.user)
+    investido_bdrs = sum(bdr.valor for bdr in investido_bdrs_user)
+    dividendo_bdrs = sum(bdr.dividendo for bdr in investido_bdrs_user)
+    total_bdrs = investido_bdrs = dividendo_bdrs
+    investido_criptos_user = Criptos.objects.filter(created_by=request.user)
+    investido_criptos = sum(cripto.valor for cripto in investido_criptos_user)
+    dividendo_criptos = sum(cripto.dividendo for cripto in investido_criptos_user)
+    total_criptos = investido_criptos + dividendo_criptos
+    investido_rendasfixa_user = RendasFixa.objects.filter(created_by=request.user)
+    investido_rendasfixa = sum(rendafixa.valor for rendafixa in investido_rendasfixa_user)
+    dividendo_rendasfixa = sum(rendafixa.dividendo for rendafixa in investido_rendasfixa_user)
+    total_rendasfixa = investido_rendasfixa + dividendo_rendasfixa
+    context = {
+        'investido_acoes': investido_acoes,
+        'dividendo_acoes': dividendo_acoes,
+        'total_acoes': total_acoes,
+        'investido_fiis': investido_fiis,
+        'dividendo_fiis': dividendo_fiis,
+        'total_fiis': total_fiis,
+        'investido_bdrs': investido_bdrs,
+        'dividendo_bdrs': dividendo_bdrs,
+        'total_bdrs': total_bdrs,
+        'investido_criptos': investido_criptos,
+        'dividendo_criptos': dividendo_criptos,
+        'total_criptos': total_criptos,
+        'investido_rendasfixa': investido_rendasfixa,
+        'dividendo_rendasfixa': dividendo_rendasfixa,
+        'total_rendasfixa': total_rendasfixa,
+    }
+    return context
+
+def paginacao(request, invest_cadastrados):
+    invest_cadastrados = invest_cadastrados.order_by('-data')
+    paginator = Paginator(invest_cadastrados, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return page_obj, invest_cadastrados
 
 def delete_acao(request, acao_id):
     acao = get_object_or_404(Acoes, pk=acao_id)

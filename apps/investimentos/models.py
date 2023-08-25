@@ -111,7 +111,7 @@ class Criptos(BaseTransaction):
     class Meta:
         verbose_name_plural = "Criptos"
 
-class RendaFixa(BaseTransaction):
+class RendasFixa(BaseTransaction):
     categoria = models.CharField(max_length=100, choices=OpcoesRendaFixa.choices, default=OpcoesRendaFixa.OUTROS)
     def __str__(self):
         return f"Renda Fixa [ticker={self.ticker}]"

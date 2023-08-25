@@ -33,7 +33,7 @@ def gastos(request):
     if not check_authentication(request):
         return redirect('login')
     else:
-        form = process_form(request, GastosForm, Gastos, 'gastos', 'Gasto registrado com sucesso!')
+        form = process_form(request, GastosForm, Gastos, 'Gasto registrado com sucesso!')
     gastos_cadastrados = Gastos.objects.filter(created_by=request.user)
     total_gastos, gastos_cadastrados = filter_selections(request, gastos_cadastrados)
     gastos_cadastrados = gastos_cadastrados.order_by('-data')
