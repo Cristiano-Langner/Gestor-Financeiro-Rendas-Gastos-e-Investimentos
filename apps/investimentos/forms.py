@@ -2,17 +2,6 @@ from django import forms
 from apps.investimentos.models import OpcoesAcoes, OpcoesBdrs, OpcoesCriptos, OpcoesFiis, OpcoesRendaFixa
 
 class BaseInvestimentos(forms.Form):
-    nome=forms.CharField(
-        label='Nome: ', 
-        required=True, 
-        max_length=30,
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Digite o nome',
-            }
-        ),
-    )
     ticker=forms.CharField(
         label='Ticker: ',
         required=True, 
@@ -42,17 +31,6 @@ class BaseInvestimentos(forms.Form):
             attrs={
                 'class': 'form-control',
                 'placeholder': 'Ex.: 5'
-            }
-        )
-    )
-    dividendo=forms.DecimalField(
-        label='Dividendo: ', 
-        required=True, 
-        widget=forms.NumberInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Ex.: 1000.00',
-                'step': '0.01'
             }
         )
     )

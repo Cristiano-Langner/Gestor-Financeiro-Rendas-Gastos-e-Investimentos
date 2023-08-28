@@ -3,13 +3,13 @@
 {% block content %}
 
 <div class="pagina">
-    <form action="{% url 'acoes' %}" method="POST" class="form-cadastro">
+    <form action="{% url 'acoes' %}" method="POST" class="form-cadastro" style="max-width: 850px;">
         {% csrf_token %}
         {% include 'shared/cadastro_template.html' %}
-        <div>
+        <div style="text-align: center;">
             <button type="submit">Cadastrar Ação</button>
         </div>
-    </form>
+    </form> 
     
     <form method="get" class="filter-form">
         <div>

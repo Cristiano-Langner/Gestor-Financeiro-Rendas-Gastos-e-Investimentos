@@ -3,10 +3,10 @@
 {% block content %}
 
 <div class="pagina">
-    <form action="{% url 'gastos' %}" method="POST" class="form-cadastro">
+    <form action="{% url 'gastos' %}" method="POST" class="form-cadastro" style="max-width: 680px;">
         {% csrf_token %}
-        {% include 'shared/cadastro_template_RG.html' %}
-        <div>
+        {% include 'shared/cadastro_template.html' %}
+        <div style="text-align: center;">
             <button type="submit">Cadastrar gasto</button>
         </div>
     </form>
@@ -40,12 +40,17 @@
         <button type="submit">Filtrar</button>
     </form>
 
-    <h2>Gastos Cadastrados</h2>
+    <h2>GASTOS CADASTRADOS:</h2>
     <ul class="item-list">
+        <li>
+            <span><strong>VALOR</strong></span>
+            <span><strong>CATEGORIA</strong></span>
+            <span><strong>PAGAMENTO</strong></span>
+            <span><strong>DATA</strong></span>
+        </li>
         {% for gasto in page_obj %}
-        <li class="item-renda">
+        <li>
             <span>R$ {{ gasto.valor|floatformat:2 }}</span>
-            <span>{{ gasto.descricao }}</span>
             <span>{{ gasto.categoria }}</span>
             <span>{{ gasto.metodo_pagamento }}</span>
             <span>{{ gasto.data|date:"d-m-Y" }}</span>

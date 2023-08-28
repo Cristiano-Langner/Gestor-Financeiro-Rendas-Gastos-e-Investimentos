@@ -80,7 +80,6 @@ def process_form(request, form_class, created_class, success_message):
     if request.method == 'POST':
         form = form_class(request.POST)
         if form.is_valid():
-            nome = form.cleaned_data['nome']
             ticker = form.cleaned_data['ticker']
             valor = form.cleaned_data['valor']
             quantidade = form.cleaned_data['quantidade']
@@ -92,7 +91,7 @@ def process_form(request, form_class, created_class, success_message):
             if created_class.objects.filter(ticker=ticker, created_by=request.user).exists():
                 messages.warning(request, f'{ticker} já está cadastrado.')
             else:
-                novo = created_class.objects.create(nome=nome, ticker=ticker, valor=valor_total, quantidade=quantidade,
+                novo = created_class.objects.create(ticker=ticker, valor=valor_total, quantidade=quantidade,
                                                     dividendo=dividendo, preco_medio=preco_medio, data=data,
                                                     categoria=categoria, created_by=request.user)
                 novo.save(user=request.user)

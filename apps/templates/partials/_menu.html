@@ -1,7 +1,4 @@
 {% load static %}
-<header>
-    {% include 'partials/_alertas.html' %}
-</header>
 <div>
     <nav class="menu-lateral">
         <div class="btn-expandir">
@@ -11,37 +8,55 @@
             <li class="item-menu">
                 <a href="{% url 'index' %}">
                     <span class="icon"><i class="bi bi-house"></i></span>
-                    <span class="txt-link">Home</span>
+                    <span class="txt-link">HOME</span>
                 </a>
             </li>
             <li class="item-menu">
                 <a href="{% url 'rendas' %}">
                     <span class="icon"><i class="bi bi-cash-coin"></i></span>
-                    <span class="txt-link">Rendas</span>
+                    <span class="txt-link">RENDAS</span>
                 </a>
             </li>
             <li class="item-menu">
                 <a href="{% url 'gastos' %}">
-                    <span class="icon"><i class="bi bi-wallet"></i></span>
-                    <span class="txt-link">Gastos</span>
+                    <span class="icon"><i class="bi bi-wallet2"></i></span>
+                    <span class="txt-link">GASTOS</span>
                 </a>
             </li>
             <li class="item-menu">
-                <a href="{% url 'investimentos' %}">
+                <a href="{% url 'acoes' %}">
                     <span class="icon"><i class="bi bi-graph-up"></i></span>
-                    <span class="txt-link">Investimentos</span>
+                    <span class="txt-link">AÇÕES</span>
                 </a>
             </li>
             <li class="item-menu">
-                <a href="{% url 'login' %}">
-                    <span class="icon"><i class="bi bi-box-arrow-in-right"></i></i></span>
-                    <span class="txt-link">Login</span>
+                <a href="{% url 'fiis' %}">
+                    <span class="icon"><i class="bi bi-buildings"></i></i></span>
+                    <span class="txt-link">FIIS</span>
+                </a>
+            </li>
+            <li class="item-menu">
+                <a href="{% url 'bdrs' %}">
+                    <span class="icon"><i class="bi bi-currency-dollar"></i></i></span>
+                    <span class="txt-link">BDRS</span>
+                </a>
+            </li>
+            <li class="item-menu">
+                <a href="{% url 'criptos' %}">
+                    <span class="icon"><i class="bi bi-currency-bitcoin"></i></i></span>
+                    <span class="txt-link">CRIPTOS</span>
+                </a>
+            </li>
+            <li class="item-menu">
+                <a href="{% url 'rendasfixa' %}">
+                    <span class="icon"><i class="bi bi-bank"></i></span>
+                    <span class="txt-link">FIXA</span>
                 </a>
             </li>
             <li class="item-menu">
                 <a href="{% url 'config' %}">
-                    <span class="icon"><i class="bi bi-gear"></i></i></span>
-                    <span class="txt-link">Configurações</span>
+                    <span class="icon"><i class="bi bi-gear"></i></span>
+                    <span class="txt-link">AJUSTES</span>
                 </a>
             </li>
         </ul>

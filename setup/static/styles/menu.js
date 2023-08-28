@@ -20,9 +20,9 @@ document.addEventListener('DOMContentLoaded', function() {
     btnExp.addEventListener('click', function() {
         menuSide.classList.toggle('expandir');
         if (menuSide.classList.contains('expandir')) {
-            pagina.style.marginLeft = '300px';
+            pagina.style.marginLeft = '190px';
         } else {
-            pagina.style.marginLeft = '140px';
+            pagina.style.marginLeft = '100px';
         }
     });
 });

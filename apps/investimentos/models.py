@@ -61,7 +61,6 @@ class OpcoesRendaFixa(models.TextChoices):
     OUTROS = "Outros"
     
 class BaseTransaction(models.Model):
-    nome = models.CharField(max_length=30,null=False,blank=False)
     ticker = models.CharField(max_length=10,null=False,blank=False)
     valor = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), validators=[MinValueValidator(Decimal('0.00'))])
     quantidade = models.PositiveIntegerField(default=0)

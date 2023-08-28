@@ -1,15 +1,7 @@
 <div class="form-columns">
-    <div class="form-column">
-        {% for field in form.visible_fields|slice:":4" %}
-        <div class="form-field">
-            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-            {{ field.as_widget }}
-        </div>
-        {% endfor %}
-    </div>
-    <div class="form-column">
-        {% for field in form.visible_fields|slice:"4:" %}
-        <div class="form-field">
+    <div class="form-column" style="white-space: nowrap;">
+        {% for field in form.visible_fields %}
+        <div class="form-field" style="display: inline-block; margin-right: 10px;">
             <label for="{{ field.id_for_label }}">{{ field.label }}</label>
             {{ field.as_widget }}
         </div>

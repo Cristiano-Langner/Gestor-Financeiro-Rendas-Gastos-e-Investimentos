@@ -3,7 +3,7 @@ from apps.rendas_gastos.models import MetodoPagamento, OpcoesGastos, OpcoesRenda
 
 class BaseRendasGastos(forms.Form):
     valor=forms.DecimalField(
-        label='Valor: ', 
+        label='Valor', 
         required=True, 
         widget=forms.NumberInput(
             attrs={
@@ -12,17 +12,6 @@ class BaseRendasGastos(forms.Form):
                 'step': '0.01'
             }
         )
-    )
-    descricao=forms.CharField(
-        label='Descrição: ', 
-        required=True, 
-        max_length=100,
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Digite a sua descrição',
-            }
-        ),
     )
     data = forms.DateField(
         label='Data',
@@ -36,7 +25,7 @@ class BaseRendasGastos(forms.Form):
         )
     )
     metodo_pagamento = forms.ChoiceField(
-        label='Método de pagamento: ',
+        label='Pagamento',
         choices=MetodoPagamento.choices,
         required=True,
         widget=forms.Select(
@@ -48,7 +37,7 @@ class BaseRendasGastos(forms.Form):
     
 class RendasForm(BaseRendasGastos):
     categoria = forms.ChoiceField(
-        label='Categoria: ',
+        label='Categoria',
         choices=OpcoesRendas.choices,
         required=True,
         widget=forms.Select(

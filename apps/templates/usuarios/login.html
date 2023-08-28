@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="pagina">
-    <form action="{% url 'login' %}" method="POST" class="form-cadastro">
+    <form action="{% url 'login' %}" method="POST" class="form-cadastro" style="max-width: 300px;">
         {% csrf_token %}
         <div>
             {% for field in form.visible_fields %}
@@ -17,7 +17,7 @@
             <button type="submit">Logar</button>
         </div>
     </form>
-    <div style="margin-left: 410px;">
+    <div style="margin-left: 485px;">
         <p>Não tem uma conta ainda? <a href="{% url 'cadastro' %}">Cadastrar</a></p>
     </div>
 </div>
