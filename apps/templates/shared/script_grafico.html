@@ -1,0 +1,29 @@
+<script>
+    var totais_dict = {{ grafico|safe }};
+    var labels = Object.keys(totais_dict);
+    var data = Object.values(totais_dict);
+    var Data = {
+        labels: labels,
+        datasets: [{
+            label: 'Grafico',
+            data: data,
+            backgroundColor: [
+                'red', 'green', 'blue', 'orange', 'purple', 'yellow', 'pink', 'turquoise', 'indigo', 'magenta',
+                'cyan', 'brown', 'gold', 'silver', 'teal', 'lavender', 'maroon', 'olive', 'coral', 'slate',
+            ]
+        }]
+    };
+    var chartOptions = {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    };
+    var Chart = new Chart(document.getElementById('grafico').getContext('2d'), {
+        type: 'bar',
+        data: Data,
+        options: chartOptions,
+    });
+</script>

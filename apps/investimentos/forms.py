@@ -3,7 +3,7 @@ from apps.investimentos.models import OpcoesAcoes, OpcoesBdrs, OpcoesCriptos, Op
 
 class BaseInvestimentos(forms.Form):
     ticker=forms.CharField(
-        label='Ticker: ',
+        label='Ticker ',
         required=True, 
         max_length=10,
         widget=forms.TextInput(
@@ -14,7 +14,7 @@ class BaseInvestimentos(forms.Form):
         ),
     )
     valor=forms.DecimalField(
-        label='Valor: ', 
+        label='Valor unidade ', 
         required=True, 
         widget=forms.NumberInput(
             attrs={
@@ -25,7 +25,7 @@ class BaseInvestimentos(forms.Form):
         )
     )
     quantidade = forms.IntegerField(
-        label='Quantidade: ',
+        label='Quantidade ',
         required=True,
         widget=forms.NumberInput(
             attrs={
@@ -48,7 +48,7 @@ class BaseInvestimentos(forms.Form):
     
 class AcoesForm(BaseInvestimentos):
     categoria = forms.ChoiceField(
-        label='Categoria: ',
+        label='Categoria ',
         choices=OpcoesAcoes.choices,
         required=True,
         widget=forms.Select(
@@ -60,7 +60,7 @@ class AcoesForm(BaseInvestimentos):
     
 class FiisForm(BaseInvestimentos):
     categoria = forms.ChoiceField(
-        label='Categoria: ',
+        label='Categoria ',
         choices=OpcoesFiis.choices,
         required=True,
         widget=forms.Select(
@@ -72,7 +72,7 @@ class FiisForm(BaseInvestimentos):
     
 class BdrsForm(BaseInvestimentos):
     categoria = forms.ChoiceField(
-        label='Categoria: ',
+        label='Categoria ',
         choices=OpcoesBdrs.choices,
         required=True,
         widget=forms.Select(
@@ -84,7 +84,7 @@ class BdrsForm(BaseInvestimentos):
     
 class CriptosForm(BaseInvestimentos):
     categoria = forms.ChoiceField(
-        label='Categoria: ',
+        label='Categoria ',
         choices=OpcoesCriptos.choices,
         required=True,
         widget=forms.Select(
@@ -96,7 +96,7 @@ class CriptosForm(BaseInvestimentos):
     
 class RendaFixaForm(BaseInvestimentos):
     categoria = forms.ChoiceField(
-        label='Categoria: ',
+        label='Categoria ',
         choices=OpcoesRendaFixa.choices,
         required=True,
         widget=forms.Select(

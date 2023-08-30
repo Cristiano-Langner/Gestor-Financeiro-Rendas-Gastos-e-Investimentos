@@ -258,6 +258,28 @@ ul li.item-menu a .icon > i{
     background-color: #c82333;
 }
 
+.graficos-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 40px;
+    margin-left: 270px;
+}
+
+.grafico {
+    width: 70%;
+}
+
+.graficos-container-index {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    margin-left: 150px;
+}
+
+.grafico-index {
+    width: 40%;
+}
+
 .container {
     display: flex;
     justify-content: space-around;

@@ -1,9 +1,8 @@
 from django.urls import path
-from apps.investimentos.views import investimentos, acoes, fiis, bdrs, criptos, rendasfixa
+from apps.investimentos.views import acoes, fiis, bdrs, criptos, rendasfixa
 from apps.investimentos.views import delete_acao, delete_fii, delete_bdr, delete_cripto, delete_rendafixa
 
 urlpatterns = [
-    path('investimentos', investimentos, name='investimentos'),
     path('acoes', acoes, name='acoes'),
     path('fiis', fiis, name='fiis'),
     path('bdrs', bdrs, name='bdrs'),

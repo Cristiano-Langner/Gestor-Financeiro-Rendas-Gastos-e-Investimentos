@@ -9,15 +9,8 @@ from apps.investimentos.models import Acoes, Fiis, Bdrs, Criptos, RendasFixa, Hi
 from apps.investimentos.forms import AcoesForm, FiisForm, BdrsForm, CriptosForm, RendaFixaForm
 from apps.investimentos.forms import OpcoesAcoes, OpcoesBdrs, OpcoesCriptos, OpcoesFiis, OpcoesRendaFixa
 
-def investimentos(request):
-    if not check_authentication(request):
-        return redirect('login')
-    else:
-        context_investimentos = investimentos_view(request)
-        return render(request, 'investimentos/investimentos.html', context_investimentos)
-
 def acoes(request):
-    if not request.user.is_authenticated:
+    if not check_authentication(request):
         messages.error(request, 'Usuário não logado')
         return redirect('login')
     else:
@@ -29,7 +22,7 @@ def acoes(request):
                     'total_acoes': total_acoes, 'opcoes_acoes': OpcoesAcoes.choices, 'page_obj': page_obj})
     
 def fiis(request):
-    if not request.user.is_authenticated:
+    if not check_authentication(request):
         messages.error(request, 'Usuário não logado')
         return redirect('login')
     else:
@@ -41,7 +34,7 @@ def fiis(request):
                     'total_fiis': total_fiis, 'opcoes_fiis': OpcoesFiis.choices, 'page_obj': page_obj})
     
 def bdrs(request):
-    if not request.user.is_authenticated:
+    if not check_authentication(request):
         messages.error(request, 'Usuário não logado')
         return redirect('login')
     else:
@@ -53,7 +46,7 @@ def bdrs(request):
                     'total_bdrs': total_bdrs, 'opcoes_bdrs': OpcoesBdrs.choices, 'page_obj': page_obj})
     
 def criptos(request):
-    if not request.user.is_authenticated:
+    if not check_authentication(request):
         messages.error(request, 'Usuário não logado')
         return redirect('login')
     else:
@@ -65,7 +58,7 @@ def criptos(request):
                     'total_criptos': total_criptos, 'opcoes_criptos': OpcoesCriptos.choices, 'page_obj': page_obj})
     
 def rendasfixa(request):
-    if not request.user.is_authenticated:
+    if not check_authentication(request):
         messages.error(request, 'Usuário não logado')
         return redirect('login')
     else:

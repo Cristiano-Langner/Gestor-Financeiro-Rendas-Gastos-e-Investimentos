@@ -10,6 +10,7 @@ class MetodoPagamento(models.TextChoices):
     DEBITO = "Débito"
     CREDITO = "Crédito"
     PIX = "Pix"
+    BOLETO = "Boleto"
     OUTROS = "Outros"
     
 class OpcoesRendas(models.TextChoices):
@@ -17,6 +18,7 @@ class OpcoesRendas(models.TextChoices):
     ACOES = "Ações"
     BDRS = "BDRs"
     FIIS = "FIIs"
+    RENDA_FIXA = "Renda Fixa"
     OUTROS = "Outros"
     
 class OpcoesGastos(models.TextChoices):
@@ -36,10 +38,8 @@ class OpcoesGastos(models.TextChoices):
     INVESTIMENTOS = "Investimentos"
     DOACOES = "Doações"
     CARRO = "Carro"
-    IMOVEIS = "Imóveis"
     SEGUROS = "Seguros"
-    PRESENTES = "Presentes"
-    RESTAURANTES = "Restaurantes"
+    RESTAURANTE = "Restaurante"
     CASA = "Casa"
     OUTROS = "Outros"
     

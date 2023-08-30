@@ -63,6 +63,25 @@
         <li><span>Total: R$ {{ total_rendas|floatformat:2 }}</span></li>
     </ul>
     {% include 'shared/pagination.html' %}
+    <div class="container">
+        <div class="box">
+            <h2>Rendas do mês atual</h2>
+            <p>Total: R$ {{ context.renda_mes|floatformat:2 }}</p>
+            <p>Gastos: R$ {{ context.gasto_total|floatformat:2 }}</p>
+            <p>Saldo: <span class="{% if context.saldo >= 0 %}positive{% else %}negative{% endif %}">
+                R$ {{ context.saldo|floatformat:2 }}
+                </span>
+            </p>
+        </div>
+    </div>
+    <div class="graficos-container">
+        <div class="grafico">
+            <canvas id="grafico"></canvas>
+        </div>
+    </div>
+
+    {% include 'shared/script_grafico.html' %}
+
 </div>
 
 {% endblock %}
