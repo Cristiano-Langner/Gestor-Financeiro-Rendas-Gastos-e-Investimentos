@@ -101,7 +101,7 @@ class Bdrs(BaseTransaction):
     def __str__(self):
         return f"Brazilian Depositary Receipts [ticker={self.ticker}]"
     class Meta:
-        verbose_name_plural = "Brazilian Depositary Receipts"
+        verbose_name_plural = "BDRs"
 
 class Criptos(BaseTransaction):
     categoria = models.CharField(max_length=100, choices=OpcoesCriptos.choices, default=OpcoesCriptos.OUTROS)
@@ -126,3 +126,12 @@ class HistoricoCompra(models.Model):
     modified_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_modified_by')
     def __str__(self):
         return f"{self.ticker} - {self.quantidade} - {self.data}"
+    
+class HistoricoDividendo(models.Model):
+    ticker = models.CharField(max_length=10)
+    valor = models.DecimalField(max_digits=10, decimal_places=2)
+    data = models.DateField()
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_created_by')
+    modified_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_modified_by')
+    def __str__(self):
+        return f"{self.ticker} - {self.valor} - {self.data}"
