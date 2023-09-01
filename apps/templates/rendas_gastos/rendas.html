@@ -38,6 +38,9 @@
         </div>
 
         <button type="submit">Filtrar</button>
+        <form action="{% url 'limpar_filtros' 'gastos' %}" method="get">
+            <button type="submit">Limpar Filtros</button>
+        </form>   
     </form>
 
     <h2>RENDAS CADASTRADAS:</h2>
@@ -66,10 +69,26 @@
     <div class="container">
         <div class="box">
             <h2>Rendas do mês atual</h2>
-            <p>Total: R$ {{ context.renda_mes|floatformat:2 }}</p>
-            <p>Gastos: R$ {{ context.gasto_total|floatformat:2 }}</p>
-            <p>Saldo: <span class="{% if context.saldo >= 0 %}positive{% else %}negative{% endif %}">
-                R$ {{ context.saldo|floatformat:2 }}
+            <p>Total: R$ {{ context_view.renda_mes|floatformat:2 }}</p>
+            <p>Gastos: R$ {{ context_view.gasto_mes|floatformat:2 }}</p>
+            <p>Saldo: <span class="{% if context_view.saldo >= 0 %}positive{% else %}negative{% endif %}">
+                R$ {{ context_view.saldo|floatformat:2 }}
+                </span>
+            </p>
+        </div>
+    </div>
+    <div class="graficos-container">
+        <div class="grafico">
+            <canvas id="grafico-mes"></canvas>
+        </div>
+    </div>
+    <div class="container">
+        <div class="box">
+            <h2>Rendas totais</h2>
+            <p>Total: R$ {{ context_total.renda_total|floatformat:2 }}</p>
+            <p>Gastos: R$ {{ context_total.gasto_total|floatformat:2 }}</p>
+            <p>Saldo: <span class="{% if context_total.saldo_total >= 0 %}positive{% else %}negative{% endif %}">
+                R$ {{ context_total.saldo_total|floatformat:2 }}
                 </span>
             </p>
         </div>

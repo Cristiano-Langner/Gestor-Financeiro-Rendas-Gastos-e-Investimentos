@@ -3,6 +3,8 @@ from django.contrib import messages
 from datetime import datetime
 from django.db.models import Sum
 from django.core.paginator import Paginator
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from apps.rendas_gastos.forms import GastosForm, RendasForm, OpcoesRendas, OpcoesGastos, MetodoPagamento
 from apps.rendas_gastos.models import Rendas, Gastos
 from apps.investimentos.views import investimentos_view
@@ -34,19 +36,31 @@ def rendas(request):
     else:
         form = process_form(request, RendasForm, Rendas, 'Renda registrada com sucesso!')
     rendas_cadastradas = Rendas.objects.filter(created_by=request.user)
+    context_total = rendas_gastos_view_total(request)
     today = datetime.today()
     rendas_cadastradas_mes = Rendas.objects.filter(created_by=request.user, data__year=today.year, data__month=today.month)
     categorias_renda = OpcoesRendas.choices
-    grafico = graph(categorias_renda, rendas_cadastradas_mes)
+    grafico_mes = graph(categorias_renda, rendas_cadastradas_mes)
+    grafico = graph(categorias_renda, rendas_cadastradas)
     total_rendas, rendas_cadastradas = filter_selections(request, rendas_cadastradas)
     rendas_cadastradas = rendas_cadastradas.order_by('-data')
     paginator = Paginator(rendas_cadastradas, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    context = rendas_gastos_view(request)
-    return render(request, 'rendas_gastos/rendas.html', {'form': form, 'rendas_cadastradas': rendas_cadastradas,
-                    'total_rendas': total_rendas, 'opcoes_rendas': OpcoesRendas.choices, 'grafico': grafico,
-                    'opcoes_pagamentos': MetodoPagamento.choices, 'page_obj': page_obj, 'context': context})
+    context_view = rendas_gastos_view(request)
+    context = {
+        'form': form,
+        'rendas_cadastradas': rendas_cadastradas,
+        'total_rendas': total_rendas,
+        'opcoes_rendas': OpcoesRendas.choices,
+        'grafico_mes': grafico_mes,
+        'grafico': grafico,
+        'opcoes_pagamentos': MetodoPagamento.choices,
+        'page_obj': page_obj,
+        'context_view': context_view,
+        'context_total': context_total
+    }
+    return render(request, 'rendas_gastos/rendas.html', context)
 
 def gastos(request):
     if not check_authentication(request):
@@ -54,19 +68,31 @@ def gastos(request):
     else:
         form = process_form(request, GastosForm, Gastos, 'Gasto registrado com sucesso!')
     gastos_cadastrados = Gastos.objects.filter(created_by=request.user)
+    context_total = rendas_gastos_view_total(request)
     today = datetime.today()
     gastos_cadastrados_mes = Gastos.objects.filter(created_by=request.user, data__year=today.year, data__month=today.month)
     categorias = OpcoesGastos.choices
-    grafico = graph(categorias, gastos_cadastrados_mes)
+    grafico_mes = graph(categorias, gastos_cadastrados_mes)
+    grafico = graph(categorias, gastos_cadastrados)
     total_gastos, gastos_cadastrados = filter_selections(request, gastos_cadastrados)
     gastos_cadastrados = gastos_cadastrados.order_by('-data')
     paginator = Paginator(gastos_cadastrados, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    context = rendas_gastos_view(request)
-    return render(request, 'rendas_gastos/gastos.html', {'form': form, 'gastos_cadastrados': gastos_cadastrados,
-                    'total_gastos': total_gastos, 'opcoes_gastos': OpcoesGastos.choices, 'grafico': grafico,
-                    'opcoes_pagamentos': MetodoPagamento.choices, 'page_obj': page_obj, 'context': context})
+    context_view = rendas_gastos_view(request)
+    context = {
+        'form': form,
+        'gastos_cadastrados': gastos_cadastrados,
+        'total_gastos': total_gastos,
+        'opcoes_gastos': OpcoesGastos.choices,
+        'grafico_mes': grafico_mes,
+        'grafico': grafico,
+        'opcoes_pagamentos': MetodoPagamento.choices,
+        'page_obj': page_obj,
+        'context_view': context_view,
+        'context_total': context_total
+    }
+    return render(request, 'rendas_gastos/gastos.html', context)
 
 def process_form(request, form_class, created_class, success_message):
     if request.method == 'POST':
@@ -105,20 +131,12 @@ def rendas_gastos_view(request):
     gastos_do_mes = Gastos.objects.filter(created_by=request.user, data__year=today.year, data__month=today.month)
     gasto_mes = sum(gasto.valor for gasto in gastos_do_mes)
     saldo = renda_mes - gasto_mes
-    context = {
+    context_view = {
         'renda_mes': renda_mes,
-        'gasto_total': gasto_mes,
+        'gasto_mes': gasto_mes,
         'saldo': saldo, 
     }
-    return context
-
-def graph(categorias_ref, name_cadastrado):
-    totais_dict = {categoria[1]: 0.0 for categoria in categorias_ref}
-    for categoria in categorias_ref:
-        total_categoria = name_cadastrado.filter(categoria=categoria[0]).aggregate(total=Sum('valor'))['total']
-        total_categoria_formatted = round(float(total_categoria), 2) if total_categoria else 0.0
-        totais_dict[categoria[1]] = total_categoria_formatted
-    return totais_dict
+    return context_view
 
 def rendas_gastos_view_total(request):
     rendas_usuario = Rendas.objects.filter(created_by=request.user)
@@ -126,12 +144,24 @@ def rendas_gastos_view_total(request):
     gastos_usuario = Gastos.objects.filter(created_by=request.user)
     gasto_total = sum(gasto.valor for gasto in gastos_usuario)
     saldo_total = renda_total - gasto_total
-    context = {
+    context_total = {
         'renda_total': renda_total,
         'gasto_total': gasto_total,
         'saldo_total': saldo_total, 
     }
-    return context
+    return context_total
+
+def graph(categorias_ref, name_cadastrado):
+    totais_dict = {categoria[1]: 0.0 for categoria in categorias_ref}
+    for categoria in categorias_ref:
+        total_categoria = name_cadastrado.filter(categoria=categoria[0]).aggregate(total=Sum('valor'))['total']
+        total_categoria_formatted = round(float(total_categoria), 2) if total_categoria else 0.0
+        totais_dict[categoria[1]] = total_categoria_formatted
+    totais_dict_ordenado = {k: v for k, v in sorted(totais_dict.items(), key=lambda item: item[1], reverse=True)}
+    return totais_dict_ordenado
+
+def limpar_filtros(request, pagina):
+    return HttpResponseRedirect(reverse(pagina))
 
 def delete_renda(request, renda_id):
     renda = get_object_or_404(Rendas, pk=renda_id)

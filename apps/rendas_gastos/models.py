@@ -19,6 +19,7 @@ class OpcoesRendas(models.TextChoices):
     BDRS = "BDRs"
     FIIS = "FIIs"
     RENDA_FIXA = "Renda Fixa"
+    CASHBACK = "Cashback"
     OUTROS = "Outros"
     
 class OpcoesGastos(models.TextChoices):
@@ -28,6 +29,8 @@ class OpcoesGastos(models.TextChoices):
     ÁGUA = "Água"
     GASOLINA = "Gasolina"
     PET = "Pet"
+    INTERNET = "Internet"
+    CELULAR = "Celular"
     LANCHES = "Lanches"
     SAUDE = "Saúde"
     TRANSPORTE = "Transporte"

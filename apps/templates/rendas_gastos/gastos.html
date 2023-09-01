@@ -14,12 +14,12 @@
     <form method="get" class="filter-form">
         <div>
             <label for="selected_month">Mês:</label>
-            <input type="month" id="selected_month" name="selected_month">
+            <input type="month" id="selected_month" name="selected_month" value="{{ request.GET.selected_month }}">
         </div>
 
         <div>
             <label for="selected_category">Categoria:</label>
-            <select id="selected_category" name="selected_category">
+            <select id="selected_category" name="selected_category" value="{{ request.GET.selected_category }}">
                 <option value="">Todas as categorias</option>
                 {% for category in opcoes_gastos %}
                     <option value="{{ category.0 }}">{{ category.1 }}</option>
@@ -29,7 +29,7 @@
 
         <div>
             <label for="selected_payment">Pagamento:</label>
-            <select id="selected_payment" name="selected_payment">
+            <select id="selected_payment" name="selected_payment" value="{{ request.GET.selected_payment }}">
                 <option value="">Todos pagamento</option>
                 {% for payment in opcoes_pagamentos %}
                     <option value="{{ payment.0 }}">{{ payment.1 }}</option>
@@ -38,6 +38,9 @@
         </div>
 
         <button type="submit">Filtrar</button>
+        <form action="{% url 'limpar_filtros' 'gastos' %}" method="get">
+            <button type="submit">Limpar Filtros</button>
+        </form>   
     </form>
 
     <h2>GASTOS CADASTRADOS:</h2>
@@ -66,7 +69,18 @@
     <div class="container">
         <div class="box">
             <h2>Gastos do mês atual</h2>
-            <p>Total: R$ {{ context.gasto_total|floatformat:2 }}</p>
+            <p>Total: R$ {{ context_view.gasto_mes|floatformat:2 }}</p>
+        </div>
+    </div>
+    <div class="graficos-container">
+        <div class="grafico">
+            <canvas id="grafico-mes"></canvas>
+        </div>
+    </div>
+    <div class="container">
+        <div class="box">
+            <h2>Gastos totais</h2>
+            <p>Total: R$ {{ context_total.gasto_total|floatformat:2 }}</p>
         </div>
     </div>
     <div class="graficos-container">

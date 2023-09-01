@@ -2,6 +2,9 @@
     var totais_dict = {{ grafico|safe }};
     var labels = Object.keys(totais_dict);
     var data = Object.values(totais_dict);
+    var totais_dict_mes = {{ grafico_mes|safe }};
+    var labels_mes = Object.keys(totais_dict_mes);
+    var data_mes = Object.values(totais_dict_mes);
     var Data = {
         labels: labels,
         datasets: [{
@@ -9,7 +12,7 @@
             data: data,
             backgroundColor: [
                 'red', 'green', 'blue', 'orange', 'purple', 'yellow', 'pink', 'turquoise', 'indigo', 'magenta',
-                'cyan', 'brown', 'gold', 'silver', 'teal', 'lavender', 'maroon', 'olive', 'coral', 'slate',
+                'cyan', 'brown', 'gold', 'silver', 'teal', 'lavender', 'maroon', 'olive', 'coral', 'slate', 'gray', 'black',
             ]
         }]
     };
@@ -21,9 +24,25 @@
             }
         }
     };
-    var Chart = new Chart(document.getElementById('grafico').getContext('2d'), {
+    var ChartTotal = new Chart(document.getElementById('grafico').getContext('2d'), {
         type: 'bar',
         data: Data,
+        options: chartOptions,
+    });
+    var DataMes = {
+        labels: labels_mes,
+        datasets: [{
+            label: 'Grafico',
+            data: data_mes,
+            backgroundColor: [
+                'red', 'green', 'blue', 'orange', 'purple', 'yellow', 'pink', 'turquoise', 'indigo', 'magenta',
+                'cyan', 'brown', 'gold', 'silver', 'teal', 'lavender', 'maroon', 'olive', 'coral', 'slate', 'gray', 'black',
+            ]
+        }]
+    };
+    var ChartMes = new Chart(document.getElementById('grafico-mes').getContext('2d'), {
+        type: 'bar',
+        data: DataMes,
         options: chartOptions,
     });
 </script>
