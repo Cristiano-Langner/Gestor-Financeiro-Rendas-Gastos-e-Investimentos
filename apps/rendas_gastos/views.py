@@ -7,14 +7,14 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from apps.rendas_gastos.forms import GastosForm, RendasForm, OpcoesRendas, OpcoesGastos, MetodoPagamento
 from apps.rendas_gastos.models import Rendas, Gastos
-from apps.investimentos.views import investimentos_view
+from apps.investimentos.views import investimentos_total_view
 from apps.rendas_gastos.utils import check_authentication
 
 def index(request):
     if not check_authentication(request):
         return redirect('login')
     else:
-        context_investimentos = investimentos_view(request)
+        context_investimentos = investimentos_total_view(request)
         context_renda_gasto = rendas_gastos_view_total(request)
         rendas_cadastradas = Rendas.objects.filter(created_by=request.user)
         categorias_renda = OpcoesRendas.choices

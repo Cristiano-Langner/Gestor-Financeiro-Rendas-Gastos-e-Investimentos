@@ -29,6 +29,15 @@
 
     <div class="container">
         <div class="box">
+            <h2>Renda Fixa</h2>
+            <p>Capital aplicado: R$ {{ context_investimentos.investido_rendasfixa|floatformat:2 }}</p>
+            <p>Dividendos: R$ {{ context_investimentos.dividendo_rendasfixa|floatformat:2 }}</p>
+            <p>Total acumulado: <span class="{% if context_investimentos.total_rendasfixa >= 0 %}positive{% else %}negative{% endif %}">
+                R$ {{ context_investimentos.total_rendasfixa|floatformat:2 }}
+                </span>
+            </p>
+        </div>
+        <div class="box">
             <h2>Ações</h2>
             <p>Capital aplicado: R$ {{ context_investimentos.investido_acoes|floatformat:2 }}</p>
             <p>Dividendos: R$ {{ context_investimentos.dividendo_acoes|floatformat:2 }}</p>
@@ -37,6 +46,8 @@
                 </span>
             </p>
         </div>
+    </div>
+    <div class="container">
         <div class="box">
             <h2>Fundos Imobiliários</h2>
             <p>Capital aplicado: R$ {{ context_investimentos.investido_fiis|floatformat:2 }}</p>
@@ -46,8 +57,6 @@
                 </span>
             </p>
         </div>
-    </div>
-    <div class="container">
         <div class="box">
             <h2>BDRs</h2>
             <p>Capital aplicado: R$ {{ context_investimentos.investido_bdrs|floatformat:2 }}</p>
@@ -57,23 +66,14 @@
                 </span>
             </p>
         </div>
+    </div>
+    <div class="container">
         <div class="box">
             <h2>Cripto Moedas</h2>
             <p>Capital aplicado: R$ {{ context_investimentos.investido_criptos|floatformat:2 }}</p>
             <p>Stacking: R$ {{ context_investimentos.dividendo_criptos|floatformat:2 }}</p>
             <p>Total acumulado: <span class="{% if context_investimentos.total_criptos >= 0 %}positive{% else %}negative{% endif %}">
                 R$ {{ context_investimentos.total_criptos|floatformat:2 }}
-                </span>
-            </p>
-        </div>
-    </div>
-    <div class="container">
-        <div class="box">
-            <h2>Renda Fixa</h2>
-            <p>Capital aplicado: R$ {{ context_investimentos.investido_rendasfixa|floatformat:2 }}</p>
-            <p>Dividendos: R$ {{ context_investimentos.dividendo_rendasfixa|floatformat:2 }}</p>
-            <p>Total acumulado: <span class="{% if context_investimentos.total_rendasfixa >= 0 %}positive{% else %}negative{% endif %}">
-                R$ {{ context_investimentos.total_rendasfixa|floatformat:2 }}
                 </span>
             </p>
         </div>

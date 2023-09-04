@@ -80,9 +80,21 @@ nav.menu-lateral.expandir .txt-link{
     opacity: 1;
 }
 
-ul li.item-menu a .icon > i{
+ul li.item-menu a .icon > img{
+    margin-top: 5px;
     font-size: 25px;
+    height: 25px;
     margin-left: 10px;
+}
+
+.icon {
+    cursor: pointer;
+}
+
+.btn-expandir img {
+    width: 25px;
+    height: 25px;
+    align-items: center;
 }
 
 .form-cadastro {

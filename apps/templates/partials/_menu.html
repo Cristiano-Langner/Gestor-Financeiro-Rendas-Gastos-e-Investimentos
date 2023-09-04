@@ -2,60 +2,80 @@
 <div>
     <nav class="menu-lateral">
         <div class="btn-expandir">
-            <i class="bi bi-list" id="btn-exp"></i>
+            <span class="icon">
+                <img src="{% static 'img/list.svg' %}" alt="Ícone" id="btn-exp" />
+            </span>
         </div>
         <ul>
             <li class="item-menu">
                 <a href="{% url 'index' %}">
-                    <span class="icon"><i class="bi bi-house"></i></span>
+                    <span class="icon">
+                        <img src="{% static 'img/house.svg' %}" alt="Ícone" />
+                    </span>
                     <span class="txt-link">HOME</span>
                 </a>
             </li>
             <li class="item-menu">
                 <a href="{% url 'rendas' %}">
-                    <span class="icon"><i class="bi bi-cash-coin"></i></span>
+                    <span class="icon">
+                        <img src="{% static 'img/cash-coin.svg' %}" alt="Ícone" />
+                    </span>
                     <span class="txt-link">RENDAS</span>
                 </a>
             </li>
             <li class="item-menu">
                 <a href="{% url 'gastos' %}">
-                    <span class="icon"><i class="bi bi-wallet2"></i></span>
+                    <span class="icon">
+                        <img src="{% static 'img/wallet2.svg' %}" alt="Ícone" />
+                    </span>
                     <span class="txt-link">GASTOS</span>
                 </a>
             </li>
             <li class="item-menu">
+                <a href="{% url 'rendasfixa' %}">
+                    <span class="icon">
+                        <img src="{% static 'img/bank.svg' %}" alt="Ícone" />
+                    </span>
+                    <span class="txt-link">FIXA</span>
+                </a>
+            </li>
+            <li class="item-menu">
                 <a href="{% url 'acoes' %}">
-                    <span class="icon"><i class="bi bi-graph-up"></i></span>
+                    <span class="icon">
+                        <img src="{% static 'img/graph-up.svg' %}" alt="Ícone" />
+                    </span>
                     <span class="txt-link">AÇÕES</span>
                 </a>
             </li>
             <li class="item-menu">
                 <a href="{% url 'fiis' %}">
-                    <span class="icon"><i class="bi bi-buildings"></i></i></span>
+                    <span class="icon">
+                        <img src="{% static 'img/buildings.svg' %}" alt="Ícone" />
+                    </span>
                     <span class="txt-link">FIIS</span>
                 </a>
             </li>
             <li class="item-menu">
                 <a href="{% url 'bdrs' %}">
-                    <span class="icon"><i class="bi bi-currency-dollar"></i></i></span>
+                    <span class="icon">
+                        <img src="{% static 'img/currency-dollar.svg' %}" alt="Ícone" />
+                    </span>
                     <span class="txt-link">BDRS</span>
                 </a>
             </li>
             <li class="item-menu">
                 <a href="{% url 'criptos' %}">
-                    <span class="icon"><i class="bi bi-currency-bitcoin"></i></i></span>
+                    <span class="icon">
+                        <img src="{% static 'img/currency-bitcoin.svg' %}" alt="Ícone" />
+                    </span>
                     <span class="txt-link">CRIPTOS</span>
                 </a>
             </li>
             <li class="item-menu">
-                <a href="{% url 'rendasfixa' %}">
-                    <span class="icon"><i class="bi bi-bank"></i></span>
-                    <span class="txt-link">FIXA</span>
-                </a>
-            </li>
-            <li class="item-menu">
                 <a href="{% url 'config' %}">
-                    <span class="icon"><i class="bi bi-gear"></i></span>
+                    <span class="icon">
+                        <img src="{% static 'img/gear.svg' %}" alt="Ícone" />
+                    </span>
                     <span class="txt-link">AJUSTES</span>
                 </a>
             </li>
