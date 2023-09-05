@@ -43,7 +43,7 @@
         </form>   
     </form>
 
-    <h2>GASTOS CADASTRADOS:</h2>
+    <h2 style="margin: 8px 40px;">GASTOS CADASTRADOS:</h2>
     <ul class="item-list">
         <li>
             <span><strong>VALOR</strong></span>
@@ -74,6 +74,13 @@
     </div>
     <div class="graficos-container">
         <div class="grafico">
+            <h2>
+                Gastos do mês
+                <span class="info-icon">i
+                    <span class="info-text">Gráfico representando os gastos do mês atual, 
+                        em ordem decrescente da soma dos valores das categorias</span>
+                </span>
+            </h2>
             <canvas id="grafico-mes"></canvas>
         </div>
     </div>
@@ -85,7 +92,36 @@
     </div>
     <div class="graficos-container">
         <div class="grafico">
+            <h2>
+                Todos os gastos
+                <span class="info-icon">i
+                    <span class="info-text">Gráfico representando todos os gastos cadastrados, 
+                        em ordem decrescente da soma dos valores das categorias</span>
+                </span>
+            </h2>
             <canvas id="grafico"></canvas>
+        </div>
+    </div>
+    <div class="graficos-container-pie">
+        <div class="grafico-pie">
+            <h2>
+                Categorias do mês
+                <span class="info-icon">i
+                    <span class="info-text">Gráfico representando a quantidade de vezes 
+                        que cada categoria de gastos foi utilizada este mês</span>
+                </span>
+            </h2>
+            <canvas id="grafico-contagem-mes"></canvas>
+        </div>
+        <div class="grafico-pie">
+            <h2>
+                Categorias total
+                <span class="info-icon">i
+                    <span class="info-text">Gráfico representando a quantidade de vezes 
+                        que cada categoria de gastos foi utilizada desde o início</span>
+                </span>
+            </h2>
+            <canvas id="grafico-contagem-total"></canvas>
         </div>
     </div>
 

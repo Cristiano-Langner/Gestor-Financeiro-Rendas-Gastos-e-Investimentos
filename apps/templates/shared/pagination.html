@@ -1,4 +1,4 @@
-<div>
+<div style="margin: 8px 40px;">
     <span>
         {% if page_obj.has_previous %}
             <a href="?page=1{% if request.GET.selected_month %}&selected_month={{ request.GET.selected_month }}{% endif %}{% if request.GET.selected_category %}&selected_category={{ request.GET.selected_category }}{% endif %}{% if request.GET.selected_payment %}&selected_payment={{ request.GET.selected_payment }}{% endif %}">&laquo; primeira</a>
