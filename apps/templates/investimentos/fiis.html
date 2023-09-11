@@ -2,6 +2,10 @@
 {% load static %}
 {% block content %}
 
+<div class="titulo">
+    <h4>FUNDOS IMOBILIÁRIOS</h4>
+    {% include 'partials/_alertas.html' %}
+</div>
 <div class="pagina">
     <form action="{% url 'fiis' %}" method="POST" class="form-cadastro" style="max-width: 850px;">
         {% csrf_token %}
@@ -71,5 +75,6 @@
     </div>
 
 </div>
+{% include 'shared/footer.html' %}
 
 {% endblock %}

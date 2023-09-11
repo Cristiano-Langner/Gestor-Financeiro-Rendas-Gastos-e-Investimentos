@@ -1,0 +1,12 @@
+{% extends 'shared/base.html' %}
+{% block content %}
+<div class="pagina">
+    <form action="{% url 'atualizar_gasto' gasto.id %}" method="post" class="form-cadastro" style="max-width: 680px;">
+        {% csrf_token %}
+        {% include 'shared/cadastro_template.html' with form=form %}
+        <div style="text-align: center;">
+            <button type="submit">Atualizar Gasto</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

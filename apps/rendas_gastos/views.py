@@ -37,11 +37,9 @@ def rendas(request):
     else:
         form = process_form(request, RendasForm, Rendas, 'Renda registrada com sucesso!')
     rendas_cadastradas = Rendas.objects.filter(created_by=request.user)
-    contagem_total = contagem(rendas_cadastradas)
     context_total = rendas_gastos_view_total(request)
     today = datetime.today()
     rendas_cadastradas_mes = Rendas.objects.filter(created_by=request.user, data__year=today.year, data__month=today.month)
-    contagem_mes = contagem(rendas_cadastradas_mes)
     categorias_renda = OpcoesRendas.choices
     grafico_mes = graph(categorias_renda, rendas_cadastradas_mes)
     grafico = graph(categorias_renda, rendas_cadastradas)
@@ -58,8 +56,6 @@ def rendas(request):
         'opcoes_rendas': OpcoesRendas.choices,
         'grafico_mes': grafico_mes,
         'grafico': grafico,
-        'contagem_total': contagem_total,
-        'contagem_mes': contagem_mes,
         'opcoes_pagamentos': MetodoPagamento.choices,
         'page_obj': page_obj,
         'context_view': context_view,
@@ -73,11 +69,9 @@ def gastos(request):
     else:
         form = process_form(request, GastosForm, Gastos, 'Gasto registrado com sucesso!')
     gastos_cadastrados = Gastos.objects.filter(created_by=request.user)
-    contagem_total = contagem(gastos_cadastrados)
     context_total = rendas_gastos_view_total(request)
     today = datetime.today()
     gastos_cadastrados_mes = Gastos.objects.filter(created_by=request.user, data__year=today.year, data__month=today.month)
-    contagem_mes = contagem(gastos_cadastrados_mes)
     categorias = OpcoesGastos.choices
     grafico_mes = graph(categorias, gastos_cadastrados_mes)
     grafico = graph(categorias, gastos_cadastrados)
@@ -94,8 +88,6 @@ def gastos(request):
         'opcoes_gastos': OpcoesGastos.choices,
         'grafico_mes': grafico_mes,
         'grafico': grafico,
-        'contagem_total': contagem_total,
-        'contagem_mes': contagem_mes,
         'opcoes_pagamentos': MetodoPagamento.choices,
         'page_obj': page_obj,
         'context_view': context_view,
@@ -160,12 +152,6 @@ def rendas_gastos_view_total(request):
     }
     return context_total
 
-def contagem(cadastros):
-    categorias_contagem = Counter(x.categoria for x in cadastros)
-    categorias_contagem_dict = dict(categorias_contagem)
-    categorias_contagem_dict_ordened = dict(sorted(categorias_contagem_dict.items(), key=lambda item: item[1], reverse=True))
-    return categorias_contagem_dict_ordened
-
 def graph(categorias_ref, name_cadastrado):
     totais_dict = {categoria[1]: 0.0 for categoria in categorias_ref}
     for categoria in categorias_ref:
@@ -175,8 +161,11 @@ def graph(categorias_ref, name_cadastrado):
     totais_dict_ordenado = {k: v for k, v in sorted(totais_dict.items(), key=lambda item: item[1], reverse=True)}
     return totais_dict_ordenado
 
-def limpar_filtros(request, pagina):
+def limpar_filtros(pagina):
     return HttpResponseRedirect(reverse(pagina))
+
+def atualizar_gasto(request, gasto_id):
+    gasto = get_object_or_404(Gastos, pk=gasto_id)
 
 def delete_renda(request, renda_id):
     renda = get_object_or_404(Rendas, pk=renda_id)

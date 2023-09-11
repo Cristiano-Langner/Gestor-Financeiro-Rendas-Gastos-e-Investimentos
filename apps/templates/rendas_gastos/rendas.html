@@ -2,6 +2,10 @@
 {% load static %}
 {% block content %}
 
+<div class="titulo">
+    <h4>RENDAS</h4>
+    {% include 'partials/_alertas.html' %}
+</div>
 <div class="pagina">
     <form action="{% url 'rendas' %}" method="POST" class="form-cadastro" style="max-width: 680px;">
         {% csrf_token %}
@@ -43,13 +47,13 @@
         </form>   
     </form>
 
-    <h2>RENDAS CADASTRADAS:</h2>
+    <h2 style="margin: 8px 40px;">RENDAS CADASTRADAS:</h2>
     <ul class="item-list">
         <li>
             <span><strong>VALOR</strong></span>
             <span><strong>CATEGORIA</strong></span>
             <span><strong>PAGAMENTO</strong></span>
-            <span><strong>DATA</strong></span>
+            <span style="padding-right: 30px;"><strong>DATA</strong></span>
         </li>
         {% for renda in page_obj %}
         <li>
@@ -63,7 +67,7 @@
             </form>
         </li>
         {% endfor %}
-        <li><span>Total: R$ {{ total_rendas|floatformat:2 }}</span></li>
+        <li><span style="font-weight: bold;">Total: R$ {{ total_rendas|floatformat:2 }}</span></li>
     </ul>
     {% include 'shared/pagination.html' %}
     <div class="container">
@@ -83,7 +87,7 @@
                 Rendas do mês
                 <span class="info-icon">i
                     <span class="info-text">Gráfico representando as rendas do mês atual, 
-                        em ordem decrescente da soma dos valores das categorias</span>
+                        em ordem decrescente da soma dos valores das categorias.</span>
                 </span>
             </h2>
             <canvas id="grafico-mes"></canvas>
@@ -106,37 +110,16 @@
                 Todas as rendas
                 <span class="info-icon">i
                     <span class="info-text">Gráfico representando todos as rendas cadastradas, 
-                        em ordem decrescente da soma dos valores das categorias</span>
+                        em ordem decrescente da soma dos valores das categorias.</span>
                 </span>
             </h2>
             <canvas id="grafico"></canvas>
-        </div>
-    </div>
-    <div class="graficos-container-pie">
-        <div class="grafico-pie">
-            <h2>
-                Categorias do mês
-                <span class="info-icon">i
-                    <span class="info-text">Gráfico representando a quantidade de vezes 
-                        que cada categoria de rendas foi utilizada este mês</span>
-                </span>
-            </h2>
-            <canvas id="grafico-contagem-mes"></canvas>
-        </div>
-        <div class="grafico-pie">
-            <h2>
-                Categorias total
-                <span class="info-icon">i
-                    <span class="info-text">Gráfico representando a quantidade de vezes 
-                        que cada categoria de rendas foi utilizada desde o início</span>
-                </span>
-            </h2>
-            <canvas id="grafico-contagem-total"></canvas>
         </div>
     </div>
 
     {% include 'shared/script_grafico.html' %}
 
 </div>
+{% include 'shared/footer.html' %}
 
 {% endblock %}

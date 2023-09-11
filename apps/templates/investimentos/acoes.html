@@ -2,6 +2,10 @@
 {% load static %}
 {% block content %}
 
+<div class="titulo">
+    <h4>AÇÕES</h4>
+    {% include 'partials/_alertas.html' %}
+</div>
 <div class="pagina">
     <form action="{% url 'acoes' %}" method="POST" class="form-cadastro" style="max-width: 850px;">
         {% csrf_token %}
@@ -77,5 +81,6 @@
     {% include 'shared/script_grafico.html' %}
     
 </div>
+{% include 'shared/footer.html' %}
 
 {% endblock %}

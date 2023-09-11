@@ -1,7 +1,12 @@
 {% extends 'shared/base.html' %}
 {% load static %}
-{% block content %}    
+{% block content %}
+<div class="titulo">
+    <h4>CONFIGURAÇÕES</h4>
+    {% include 'partials/_alertas.html' %}
+</div>    
 <div class="pagina">
     <a href="{% url 'logout' %}">Logout</a></p>
 </div>
+{% include 'shared/footer.html' %}
 {% endblock %}

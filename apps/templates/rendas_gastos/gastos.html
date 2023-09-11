@@ -2,6 +2,10 @@
 {% load static %}
 {% block content %}
 
+<div class="titulo">
+    <h4>GASTOS</h4>
+    {% include 'partials/_alertas.html' %}
+</div>
 <div class="pagina">
     <form action="{% url 'gastos' %}" method="POST" class="form-cadastro" style="max-width: 680px;">
         {% csrf_token %}
@@ -49,7 +53,7 @@
             <span><strong>VALOR</strong></span>
             <span><strong>CATEGORIA</strong></span>
             <span><strong>PAGAMENTO</strong></span>
-            <span><strong>DATA</strong></span>
+            <span style="padding-right: 30px;"><strong>DATA</strong></span>
         </li>
         {% for gasto in page_obj %}
         <li>
@@ -63,7 +67,7 @@
             </form>
         </li>
         {% endfor %}
-        <li><span>Total: R$ {{ total_gastos|floatformat:2 }}</span></li>
+        <li><span style="font-weight: bold;">Total: R$ {{ total_gastos|floatformat:2 }}</span></li>
     </ul>
     {% include 'shared/pagination.html' %}
     <div class="container">
@@ -78,7 +82,7 @@
                 Gastos do mês
                 <span class="info-icon">i
                     <span class="info-text">Gráfico representando os gastos do mês atual, 
-                        em ordem decrescente da soma dos valores das categorias</span>
+                        em ordem decrescente da soma dos valores das categorias.</span>
                 </span>
             </h2>
             <canvas id="grafico-mes"></canvas>
@@ -96,37 +100,16 @@
                 Todos os gastos
                 <span class="info-icon">i
                     <span class="info-text">Gráfico representando todos os gastos cadastrados, 
-                        em ordem decrescente da soma dos valores das categorias</span>
+                        em ordem decrescente da soma dos valores das categorias.</span>
                 </span>
             </h2>
             <canvas id="grafico"></canvas>
-        </div>
-    </div>
-    <div class="graficos-container-pie">
-        <div class="grafico-pie">
-            <h2>
-                Categorias do mês
-                <span class="info-icon">i
-                    <span class="info-text">Gráfico representando a quantidade de vezes 
-                        que cada categoria de gastos foi utilizada este mês</span>
-                </span>
-            </h2>
-            <canvas id="grafico-contagem-mes"></canvas>
-        </div>
-        <div class="grafico-pie">
-            <h2>
-                Categorias total
-                <span class="info-icon">i
-                    <span class="info-text">Gráfico representando a quantidade de vezes 
-                        que cada categoria de gastos foi utilizada desde o início</span>
-                </span>
-            </h2>
-            <canvas id="grafico-contagem-total"></canvas>
         </div>
     </div>
 
     {% include 'shared/script_grafico.html' %}
 
 </div>
+{% include 'shared/footer.html' %}
 
 {% endblock %}
