@@ -15,6 +15,7 @@ class OpcoesFiis(models.TextChoices):
     SHOPPINGS = "Shoppings"
     LAJES_CORPORATIVAS = "Lajes Corporativas"
     GALPÕES_LOGÍSTICOS = "Galpões Logísticos"
+    AGRO = "Agro"
     HOTÉIS = "Hotéis"
     EDUCACIONAL = "Educacional"
     HOSPITAIS = "Hospitais"
@@ -47,6 +48,7 @@ class OpcoesCriptos(models.TextChoices):
     OUTROS = "Outros"
     
 class OpcoesRendaFixa(models.TextChoices):
+    CONTA_REMUNERADA = "Conta Remunerada"
     TESOURO_SELIC = "Tesouro Selic"
     TESOURO_PREFIXADO = "Tesouro Prefixado"
     TESOURO_IPCA = "Tesouro IPCA"

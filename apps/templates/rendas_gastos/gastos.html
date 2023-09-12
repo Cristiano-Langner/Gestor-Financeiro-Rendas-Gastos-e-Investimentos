@@ -15,6 +15,10 @@
         </div>
     </form>
 
+    <h6>
+        Resumo Geral:
+    </h6>   
+
     <form method="get" class="filter-form">
         <div>
             <label for="selected_month">Mês:</label>
@@ -106,6 +110,19 @@
             <canvas id="grafico"></canvas>
         </div>
     </div>
+    <h6>
+        Esta tabela apresenta uma visão dos 10 principais gastos, expressos em porcentagem, 
+        organizados em ordem decrescente da soma total de despesas. Essa classificação é feita com base 
+        em todos os registros de gastos acumulados ao longo de todo o período cadastrado. 
+        Isso permite a identificação dos gastos mais substanciais ao longo desse intervalo de tempo.
+        Podendo ser comparado com os valores acumulados dos últimos 12 meses e do mês atual.
+    </h6>
+    
+    {% include 'shared/tabela.html' %}
+
+    <h6>
+        Dicas de economia, informações variações:
+    </h6>   
 
     {% include 'shared/script_grafico.html' %}
 

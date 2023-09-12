@@ -1,11 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.db.models import Sum
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from collections import Counter
 from apps.rendas_gastos.forms import GastosForm, RendasForm, OpcoesRendas, OpcoesGastos, MetodoPagamento
 from apps.rendas_gastos.models import Rendas, Gastos
 from apps.investimentos.views import investimentos_total_view
@@ -40,9 +39,16 @@ def rendas(request):
     context_total = rendas_gastos_view_total(request)
     today = datetime.today()
     rendas_cadastradas_mes = Rendas.objects.filter(created_by=request.user, data__year=today.year, data__month=today.month)
+    start_date = today - timedelta(days=365)
+    rendas_cadastradas_12meses = Rendas.objects.filter(created_by=request.user, data__range=(start_date, today))
     categorias_renda = OpcoesRendas.choices
     grafico_mes = graph(categorias_renda, rendas_cadastradas_mes)
+    porcentagem_mes = porcentagem(grafico_mes)
     grafico = graph(categorias_renda, rendas_cadastradas)
+    porcentagem_total = porcentagem(grafico)
+    grafico_12meses = graph(categorias_renda, rendas_cadastradas_12meses)
+    porcentagem_12meses = porcentagem(grafico_12meses)
+    porcentagem_categorias = ordenador_porcentagem(porcentagem_total, porcentagem_12meses, porcentagem_mes)
     total_rendas, rendas_cadastradas = filter_selections(request, rendas_cadastradas)
     rendas_cadastradas = rendas_cadastradas.order_by('-data')
     paginator = Paginator(rendas_cadastradas, 10)
@@ -59,7 +65,8 @@ def rendas(request):
         'opcoes_pagamentos': MetodoPagamento.choices,
         'page_obj': page_obj,
         'context_view': context_view,
-        'context_total': context_total
+        'context_total': context_total,
+        'porcentagem_categorias': porcentagem_categorias
     }
     return render(request, 'rendas_gastos/rendas.html', context)
 
@@ -72,9 +79,16 @@ def gastos(request):
     context_total = rendas_gastos_view_total(request)
     today = datetime.today()
     gastos_cadastrados_mes = Gastos.objects.filter(created_by=request.user, data__year=today.year, data__month=today.month)
+    start_date = today - timedelta(days=365)
+    gastos_cadastrados_12meses = Gastos.objects.filter(created_by=request.user, data__range=(start_date, today))
     categorias = OpcoesGastos.choices
     grafico_mes = graph(categorias, gastos_cadastrados_mes)
+    porcentagem_mes = porcentagem(grafico_mes)
     grafico = graph(categorias, gastos_cadastrados)
+    porcentagem_total = porcentagem(grafico)
+    grafico_12meses = graph(categorias, gastos_cadastrados_12meses)
+    porcentagem_12meses = porcentagem(grafico_12meses)
+    porcentagem_categorias = ordenador_porcentagem(porcentagem_total, porcentagem_12meses, porcentagem_mes)
     total_gastos, gastos_cadastrados = filter_selections(request, gastos_cadastrados)
     gastos_cadastrados = gastos_cadastrados.order_by('-data')
     paginator = Paginator(gastos_cadastrados, 10)
@@ -91,7 +105,8 @@ def gastos(request):
         'opcoes_pagamentos': MetodoPagamento.choices,
         'page_obj': page_obj,
         'context_view': context_view,
-        'context_total': context_total
+        'context_total': context_total,
+        'porcentagem_categorias': porcentagem_categorias
     }
     return render(request, 'rendas_gastos/gastos.html', context)
 
@@ -161,6 +176,34 @@ def graph(categorias_ref, name_cadastrado):
     totais_dict_ordenado = {k: v for k, v in sorted(totais_dict.items(), key=lambda item: item[1], reverse=True)}
     return totais_dict_ordenado
 
+def porcentagem(dicionario):
+    total = sum(dicionario.values())
+    categoria_porcentagem = {}
+    contador = 0
+    for categoria, valor in dicionario.items():
+        if contador < 10:
+            if total > 0:
+                percentage = (valor / total) * 100
+                percentage = round(percentage, 2)
+            else:
+                percentage = 0.00
+            categoria_porcentagem[categoria] = percentage
+        contador += 1
+    return categoria_porcentagem
+    
+def ordenador_porcentagem(porcentagem_total, porcentagem_12meses, porcentagem_mes):
+    categorias_ordenadas = sorted(porcentagem_total, key=lambda x: porcentagem_total[x], reverse=True)
+    porcentagem_categorias = []
+    for categoria in categorias_ordenadas:
+        categoria_dict = {
+            'categoria': categoria,
+            'porcentagem_total': porcentagem_total[categoria],
+            'porcentagem_12meses': porcentagem_12meses.get(categoria, 0),
+            'porcentagem_mes': porcentagem_mes.get(categoria, 0),
+        }
+        porcentagem_categorias.append(categoria_dict)
+    return porcentagem_categorias
+    
 def limpar_filtros(pagina):
     return HttpResponseRedirect(reverse(pagina))
 

@@ -1,0 +1,20 @@
+<table>
+    <thead>
+        <tr>
+        <th>Categorias</th>
+        <th>Total desde o ínicio</th>
+        <th>Últimos 12 meses</th>
+        <th>Mês atual</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for categoria in porcentagem_categorias %}
+        <tr>
+            <td>{{ categoria.categoria }}</td>
+            <td>{{ categoria.porcentagem_total }}%</td>
+            <td>{{ categoria.porcentagem_12meses }}%</td>
+            <td>{{ categoria.porcentagem_mes }}%</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
