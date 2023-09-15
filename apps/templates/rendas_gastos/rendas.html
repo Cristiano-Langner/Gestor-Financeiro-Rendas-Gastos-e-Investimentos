@@ -7,7 +7,17 @@
     {% include 'partials/_alertas.html' %}
 </div>
 <div class="pagina">
-    <form action="{% url 'rendas' %}" method="POST" class="form-cadastro" style="max-width: 680px;">
+    <h6>
+        Aqui na página de rendas você poderá cadastrar, visualizar e deletar todos as suas rendas.
+        Além é claro de poder ver vários gráficos e informações legais sobre como o seu dinheiro esta sendo ganho.
+    </h6>
+    <h6>
+        <strong>OBS:</strong> Cuidado ao cadastrar renda sobre os investimentos, devem ser cadastradas nesta página
+        apenas o lucro sobre a venda de seus ativos, qualquer dividendo deve ser cadastrado diretamente no ativo relacionado,
+        fique tranquilo pois esses valores vem automaticamente para as rendas, então cuidado com a duplicidade sobre dividendos.
+    </h6>
+
+    <form action="{% url 'rendas' %}" method="POST" class="form-cadastro" style="max-width: 680px; margin-top: 40px;">
         {% csrf_token %}
         {% include 'shared/cadastro_template.html' %}
         <div style="text-align: center;">
@@ -116,6 +126,11 @@
             <canvas id="grafico"></canvas>
         </div>
     </div>
+    <h6>
+        A tabela abaixo apresenta uma visão das <strong>10 principais rendas</strong>, expressas em porcentagem,
+        organizadas em ordem decrescente da soma total de despesas. Levando como ordenador a coluna de total,
+        que contém todos os dados cadastrados.
+    </h6>
 
     {% include 'shared/tabela.html' %}
     

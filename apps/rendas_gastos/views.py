@@ -1,15 +1,16 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
-from datetime import datetime, timedelta
-from django.db.models import Sum
-from django.core.paginator import Paginator
-from django.http import HttpResponseRedirect
-from django.urls import reverse
 from apps.rendas_gastos.forms import GastosForm, RendasForm, OpcoesRendas, OpcoesGastos, MetodoPagamento
-from apps.rendas_gastos.models import Rendas, Gastos
+from django.shortcuts import render, redirect, get_object_or_404
 from apps.investimentos.views import investimentos_total_view
 from apps.rendas_gastos.utils import check_authentication
+from apps.rendas_gastos.models import Rendas, Gastos
+from django.http import HttpResponseRedirect
+from django.core.paginator import Paginator
+from datetime import datetime, timedelta
+from django.contrib import messages
+from django.db.models import Sum
+from django.urls import reverse
 
+#Index responsável pela página inicial.
 def index(request):
     if not check_authentication(request):
         return redirect('login')
@@ -30,6 +31,7 @@ def index(request):
         }
         return render(request, 'index.html', context)
 
+#Rendas responsável pela página de rendas.
 def rendas(request):
     if not check_authentication(request):
         return redirect('login')
@@ -70,6 +72,7 @@ def rendas(request):
     }
     return render(request, 'rendas_gastos/rendas.html', context)
 
+#Gastos responsável pela página de gastos.
 def gastos(request):
     if not check_authentication(request):
         return redirect('login')
@@ -110,6 +113,7 @@ def gastos(request):
     }
     return render(request, 'rendas_gastos/gastos.html', context)
 
+#Função para verificar a válidade dos dados a serem cadastrados e efetuar o salvamento.
 def process_form(request, form_class, created_class, success_message):
     if request.method == 'POST':
         form = form_class(request.POST)
@@ -121,12 +125,12 @@ def process_form(request, form_class, created_class, success_message):
         form = form_class()
     return form
 
+#Função para filtrar os dados de acordo com o solicitado na página.
 def filter_selections(request, name_cadastrado_categoria):
     selected_month = request.GET.get('selected_month')
     selected_category = request.GET.get('selected_category')
     selected_payment = request.GET.get('selected_payment')
     filters ={'created_by': request.user}
-    
     if selected_month:
         selected_month_date = datetime.strptime(selected_month, '%Y-%m')
         filters['data__year'] = selected_month_date.year
@@ -135,11 +139,11 @@ def filter_selections(request, name_cadastrado_categoria):
         filters['categoria'] = selected_category
     if selected_payment:
         filters['metodo_pagamento'] = selected_payment
-        
     name_cadastrado_categoria = name_cadastrado_categoria.filter(**filters)
     total = name_cadastrado_categoria.aggregate(total=Sum('valor'))['total']
     return total, name_cadastrado_categoria
-    
+
+#Função para calcular os valores de renda, gasto e saldo no mês corrente.
 def rendas_gastos_view(request):
     today = datetime.today()
     rendas_do_mes = Rendas.objects.filter(created_by=request.user, data__year=today.year, data__month=today.month)
@@ -154,6 +158,7 @@ def rendas_gastos_view(request):
     }
     return context_view
 
+#Função para calcular os valores de renda, gasto e saldo de todo o período cadastrado.
 def rendas_gastos_view_total(request):
     rendas_usuario = Rendas.objects.filter(created_by=request.user)
     renda_total = sum(renda.valor for renda in rendas_usuario)
@@ -167,6 +172,7 @@ def rendas_gastos_view_total(request):
     }
     return context_total
 
+#Função para gerar os dados para os gráficos, que também são usadas nas porcentagens.
 def graph(categorias_ref, name_cadastrado):
     totais_dict = {categoria[1]: 0.0 for categoria in categorias_ref}
     for categoria in categorias_ref:
@@ -176,6 +182,7 @@ def graph(categorias_ref, name_cadastrado):
     totais_dict_ordenado = {k: v for k, v in sorted(totais_dict.items(), key=lambda item: item[1], reverse=True)}
     return totais_dict_ordenado
 
+#Função para calcular as porcentagens sobre as categorias em relação ao total analisado.
 def porcentagem(dicionario):
     total = sum(dicionario.values())
     categoria_porcentagem = {}
@@ -190,7 +197,8 @@ def porcentagem(dicionario):
             categoria_porcentagem[categoria] = percentage
         contador += 1
     return categoria_porcentagem
-    
+
+#Função para apenas ordenar as categorias e facilitar a exibição na página.
 def ordenador_porcentagem(porcentagem_total, porcentagem_12meses, porcentagem_mes):
     categorias_ordenadas = sorted(porcentagem_total, key=lambda x: porcentagem_total[x], reverse=True)
     porcentagem_categorias = []
@@ -203,19 +211,19 @@ def ordenador_porcentagem(porcentagem_total, porcentagem_12meses, porcentagem_me
         }
         porcentagem_categorias.append(categoria_dict)
     return porcentagem_categorias
-    
+
+#Função para limpar o filtro.
 def limpar_filtros(pagina):
     return HttpResponseRedirect(reverse(pagina))
 
-def atualizar_gasto(request, gasto_id):
-    gasto = get_object_or_404(Gastos, pk=gasto_id)
-
+#Função para deletar uma renda.
 def delete_renda(request, renda_id):
     renda = get_object_or_404(Rendas, pk=renda_id)
     renda.delete()
     messages.success(request, 'Renda deletada com sucesso!')
     return redirect('rendas')
 
+#Função para deletar um gasto.
 def delete_gasto(request, gasto_id):
     gasto = get_object_or_404(Gastos, pk=gasto_id)
     gasto.delete()

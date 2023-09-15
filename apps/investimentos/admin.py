@@ -1,5 +1,5 @@
 from django.contrib import admin
-from apps.investimentos.models import Acoes, Fiis, Bdrs, Criptos, RendasFixa, HistoricoCompra, HistoricoDividendo
+from apps.investimentos.models import Acoes, Fiis, Bdrs, Criptos, RendasFixa, HistoricoCompra, HistoricoDividendo, UltimaVerificacao
 
 class Acao(admin.ModelAdmin):
     list_display = ('id', 'ticker', 'valor', 'quantidade', 'dividendo', 'preco_medio',  'data', 'categoria', 'created_by', 'modified_by')
@@ -56,3 +56,11 @@ class HistoricoDiv(admin.ModelAdmin):
     list_per_page = 20
     
 admin.site.register(HistoricoDividendo, HistoricoDiv)
+
+class UltimaVeri(admin.ModelAdmin):
+    list_display = ('id', 'data')
+    list_display_links = ('id', 'data')
+    search_fields = ('data',)
+    list_per_page = 10
+    
+admin.site.register(UltimaVerificacao, UltimaVeri)

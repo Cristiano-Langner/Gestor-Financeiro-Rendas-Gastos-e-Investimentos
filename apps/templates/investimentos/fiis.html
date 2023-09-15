@@ -34,16 +34,17 @@
         <button type="submit">Filtrar</button>
     </form>
 
-    <h2>Fiis cadastrados</h2>
+    <h2 style="margin: 8px 40px;">Fiis cadastrados</h2>
     <ul class="item-list">
         <li>
             <span><strong>TICKER</strong></span>
             <span><strong>VALOR</strong></span>
             <span><strong>CATEGORIA</strong></span>
-            <span><strong>ULTIMA COMPRA</strong></span>
+            <span style="padding-right: 30px;"><strong>ULTIMA COMPRA</strong></span>
         </li>
         {% for fii in page_obj %}
         <li class="item-fii">
+            <span>{{ fii.ticker }}</span>
             <span>R$ {{ fii.valor|floatformat:2 }}</span>
             <span>{{ fii.categoria }}</span>
             <span>{{ fii.data|date:"d-m-Y" }}</span>
@@ -70,9 +71,32 @@
     </div>
     <div class="graficos-container">
         <div class="grafico">
-            <canvas id="grafico-mes"></canvas>
+            <h2>
+                Fundos Imobiliários
+                <span class="info-icon">i
+                    <span class="info-text">Gráfico representando a soma possuída em cada
+                        fundo imobiliário.</span>
+                </span>
+            </h2>
+            <canvas id="grafico-ticker"></canvas>
         </div>
     </div>
+    <div class="graficos-container">
+        <div class="grafico">
+            <h2>
+                Categorias
+                <span class="info-icon">i
+                    <span class="info-text">Gráfico representando a soma possuída em cada
+                        categoria de fundo imobiliário.</span>
+                </span>
+            </h2>
+            <canvas id="grafico-cat"></canvas>
+        </div>
+    </div>
+
+    {% include 'shared/script_grafico_invest.html' %}
+
+    {% include 'shared/tabela_invest.html' %}
 
 </div>
 {% include 'shared/footer.html' %}

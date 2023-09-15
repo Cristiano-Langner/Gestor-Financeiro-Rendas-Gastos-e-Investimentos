@@ -1,0 +1,19 @@
+<table>
+    <thead>
+        <tr>
+        <th>Ticker</th>
+        <th>Valor possuído</th>
+        <th>Valor compra</th>
+        <th>Dividendos</th>
+        <th>Lucro</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for key, value in tabela_tickers.items %}
+        <tr>
+            <td>{{ key }}</td>
+            <td>R$ {{ value }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

@@ -1,0 +1,50 @@
+<script>
+    var ticker_dict = {{ invest_ticker_dict|safe }};
+    var labels_ticker = Object.keys(ticker_dict);
+    var data_ticker = Object.values(ticker_dict);
+    console.log(labels_ticker)
+    console.log(data_ticker)
+    var totais_dict = {{ grafico|safe }};
+    var labels = Object.keys(totais_dict);
+    var data = Object.values(totais_dict);
+    var chartOptions = {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    };
+    var Data_ticker = {
+        labels: labels_ticker,
+        datasets: [{
+            label: 'Grafico',
+            data: data_ticker,
+            backgroundColor: [
+                'red', 'green', 'blue', 'orange', 'purple', 'yellow', 'pink', 'turquoise', 'indigo', 'magenta',
+                'cyan', 'brown', 'gold', 'silver',
+            ]
+        }]
+    };
+    var ChartTicker = new Chart(document.getElementById('grafico-ticker').getContext('2d'), {
+        type: 'bar',
+        data: Data_ticker,
+        options: chartOptions,
+    });
+    var Data = {
+        labels: labels,
+        datasets: [{
+            label: 'Grafico',
+            data: data,
+            backgroundColor: [
+                'red', 'green', 'blue', 'orange', 'purple', 'yellow', 'pink', 'turquoise', 'indigo', 'magenta',
+                'cyan', 'brown', 'gold', 'silver',
+            ]
+        }]
+    };
+    var ChartTotal = new Chart(document.getElementById('grafico-cat').getContext('2d'), {
+        type: 'bar',
+        data: Data,
+        options: chartOptions,
+    });
+</script>

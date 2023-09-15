@@ -137,3 +137,6 @@ class HistoricoDividendo(models.Model):
     modified_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_modified_by')
     def __str__(self):
         return f"{self.ticker} - {self.valor} - {self.data}"
+    
+class UltimaVerificacao(models.Model):
+    data = models.DateField()

@@ -267,7 +267,7 @@ ul li.item-menu a .icon > img{
 .graficos-container {
     display: flex;
     justify-content: space-between;
-    margin-top: 40px;
+    margin-bottom: 40px;
     margin-left: 270px;
 }
 
@@ -305,7 +305,6 @@ ul li.item-menu a .icon > img{
     justify-content: space-around;
     align-items: center;
     margin: 50px auto;
-    width: 80%;
 }
 
 .info-icon {
@@ -367,11 +366,11 @@ ul li.item-menu a .icon > img{
 h6 {
     font-size: 18px;
     font-weight: normal;
-    width: 1100px;
     margin: 0 auto;
-    margin-top: 40px;
+    margin-left: 40px;
+    margin-right: 40px;
     text-align: justify;
-    text-indent: 1.5em;
+    line-height: 1.4;
 }
 
 h3 {
@@ -462,7 +461,8 @@ table {
     width: 700px;
     border-collapse: collapse;
     margin: 0 auto;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
+    margin-top: 20px;
 }
 
 th {
