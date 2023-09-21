@@ -15,10 +15,7 @@ class MetodoPagamento(models.TextChoices):
     
 class OpcoesRendas(models.TextChoices):
     SALÁRIO = "Salário"
-    AÇÕES = "Ações"
-    BDRS = "BDRs"
-    FIIS = "FIIs"
-    RENDA_FIXA = "Renda Fixa"
+    VENDA_ATIVOS = "Venda ativos"
     CASHBACK = "Cashback"
     OUTROS = "Outros"
     
@@ -57,12 +54,9 @@ class BaseTransaction(models.Model):
         self.created_by = user
         self.modified_by = user
         super().save(*args, **kwargs)
-        
     def update_modified_by(self, user=None, *args, **kwargs):
         self.modified_by = user
         super().save(*args, **kwargs)
-        
-
     class Meta:
         abstract = True
         

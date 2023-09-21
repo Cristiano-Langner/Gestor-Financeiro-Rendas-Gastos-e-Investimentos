@@ -2,9 +2,10 @@
     <thead>
         <tr>
         <th>Ticker</th>
-        <th>Valor possuído</th>
-        <th>Valor compra</th>
+        <th>Preço atual</th>
+        <th>Média compra</th>
         <th>Dividendos</th>
+        <th>Quantidade</th>
         <th>Lucro</th>
         </tr>
     </thead>
@@ -12,7 +13,11 @@
         {% for key, value in tabela_tickers.items %}
         <tr>
             <td>{{ key }}</td>
-            <td>R$ {{ value }}</td>
+            <td>R$ {{ value.valor }}</td>
+            <td>R$ {{ value.preco_medio }}</td>
+            <td>R$ {{ value.dividendo }}</td>
+            <td> {{ value.quantidade }}</td>
+            <td> {{ value.lucro }}</td>
         </tr>
         {% endfor %}
     </tbody>

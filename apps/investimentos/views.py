@@ -1,10 +1,12 @@
-from apps.investimentos.models import Acoes, Fiis, Bdrs, Criptos, RendasFixa, HistoricoCompra, UltimaVerificacao
 from apps.investimentos.forms import OpcoesAcoes, OpcoesBdrs, OpcoesCriptos, OpcoesFiis, OpcoesRendaFixa
 from apps.investimentos.forms import AcoesForm, FiisForm, BdrsForm, CriptosForm, RendaFixaForm
+from apps.investimentos.models import Acoes, Fiis, Bdrs, Criptos, RendasFixa, HistoricoCompra
 from django.shortcuts import render, redirect, get_object_or_404
 from apps.rendas_gastos.utils import check_authentication
 from django.core.paginator import Paginator
 from pandas_datareader import data as pdr
+from decimal import Decimal, ROUND_DOWN
+from collections import defaultdict
 from django.contrib import messages
 from django.db.models import Sum
 from datetime import datetime
@@ -45,14 +47,16 @@ def fiis(request):
         form = process_form_invest(request, FiisForm, Fiis, 'Fundo imobiliário registrado com sucesso!')
     context_view, fiis_cadastrados, invest_ticker_dict = investimento_view(request, Fiis)
     total_fiis, fiis_cadastrados = filter_selections(request, fiis_cadastrados)
-    tabela_tickers = tabela(fiis_cadastrados)
+    tabela_tickers = consolidar_carteira(request, fiis_cadastrados)
+    for ticker, valores in tabela_tickers.items():
+        print(f'Ticker: {ticker}')
+        print(f'Valores: {valores}')
+        print('---')
     categorias = OpcoesFiis.choices
     grafico = graph(categorias, fiis_cadastrados)
     paginator = Paginator(fiis_cadastrados, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    print("Tabela: ")
-    print(tabela_tickers)
     context = {
         'form': form,
         'fiis_cadastrados': fiis_cadastrados,
@@ -251,56 +255,59 @@ def graph(categorias_ref, name_cadastrado):
     totais_dict_ordenado = {k: v for k, v in sorted(totais_dict.items(), key=lambda item: item[1], reverse=True)}
     return totais_dict_ordenado
 
-def tabela(invest_cadastrados):
-    ultima_verificacao = obter_ultima_verificacao()
-    data_hora_atual = datetime.today()
-    if not invest_cadastrados:
-        pass
-    elif ultima_verificacao is None or ultima_verificacao != data_hora_atual.date():
-        print("Ultima verificação:", ultima_verificacao)
-        print("Data atual: ", data_hora_atual)
-        ticker = [str(item).split('=')[1][:-1] for item in invest_cadastrados]
-        tickers = [ticker + ".SA" for ticker in ticker]
-        cotacoes = obter_cotacao_atual(tickers=tickers)
-        salvar_ultima_verificacao(data_hora_atual)
-    else:
-        cotacoes = {}
-    print("Antes das quantidade:")
-    print(cotacoes)
-    return cotacoes
-
-def obter_cotacao_atual(tickers):
+def consolidar_carteira(request, invest_cadastrados):
+    dados_fiis = defaultdict(list)
     cotacoes = {}
+    fiis = Fiis.objects.values('ticker', 'quantidade', 'preco_medio', 'dividendo')
+    Valores_fiis = preencher_dicionario(dados_fiis, fiis)
+    ticker = [str(item).split('=')[1][:-1] for item in invest_cadastrados]
+    tickers = [ticker + ".SA" for ticker in ticker]
+    cotacoes = obter_cotacao(tickers=tickers, cotacoes=cotacoes)
+    cotacoes_completo = unir_dados(cotacoes, Valores_fiis)
+    return cotacoes_completo
+    
+def obter_cotacao(tickers, cotacoes):
     for ticker in tickers:
-        valor = yfinance.Ticker(ticker)
-        cotacoes[ticker] = valor.info["regularMarketPreviousClose"]
+        try:
+            valor = yfinance.Ticker(ticker)
+            cotacoes[ticker] = valor.info["regularMarketPreviousClose"]
+        except Exception as e:
+            cotacoes[ticker] = "N/A"
         cotacoes = {chave.replace(".SA", ""): valor for chave, valor in cotacoes.items()}
     return cotacoes
 
-def obter_cotacao(tickers):
-    data_atual = datetime.today().strftime("%Y-%m-%d")
-    yfinance.pdr_override()
-    #Para pegar todos de uma vez, passar uma lista com os tickers, precisa ser lista.
-    cotacao = pdr.get_data_yahoo(tickers, "2023-09-01", data_atual)["Adj Close"]
-    print("tentantiva ultiomo valor")
-    valor = yfinance.Ticker(tickers)
-    informacoes_tempo_real = valor.info
-    if "last_price" in informacoes_tempo_real:
-        valor_atual = informacoes_tempo_real["last_price"]
-        print(f'Valor atual de {tickers}: {valor_atual}')
-    else:
-        print(f'As informações em tempo real para {tickers} não estão disponíveis gratuitamente.')
-    return cotacao
+def preencher_dicionario(dados, lista):
+    for item in lista:
+        ticker = item['ticker']
+        quantidade = item['quantidade']
+        preco_medio = item['preco_medio']
+        dividendo = item['dividendo']
+        dados[ticker].append(quantidade)
+        dados[ticker].append(preco_medio)
+        dados[ticker].append(dividendo)
+    return dados
 
-def obter_ultima_verificacao():
-    try:
-        ultima_verificacao = UltimaVerificacao.objects.latest('id')
-        return ultima_verificacao.data
-    except UltimaVerificacao.DoesNotExist:
-        return None
-
-def salvar_ultima_verificacao(data_atual):
-    UltimaVerificacao.objects.create(data=data_atual)
+def unir_dados(cotacoes, lista):
+    tabela_tickers = {}
+    for ticker, valor in cotacoes.items():
+        if ticker in lista:
+            preco_medio = Decimal(lista[ticker][1])
+            quantidade = Decimal(lista[ticker][0])
+            valor_atual = Decimal(valor)
+            lucro = (valor_atual * quantidade) - (preco_medio * quantidade)
+            valor_atual = valor_atual.quantize(Decimal('0.00'), rounding=ROUND_DOWN)
+            lucro = lucro.quantize(Decimal('0.00'), rounding=ROUND_DOWN)
+            lista[ticker].append(valor)
+            lista[ticker].append(lucro)
+    for ticker, valores in lista.items():
+            tabela_tickers[ticker] = {
+            'quantidade': valores[0],
+            'preco_medio': valores[1],
+            'dividendo': valores[2],
+            'valor': valores[3],
+            'lucro': valores[4],
+        }
+    return tabela_tickers
 
 #Função para deletar uma ação.
 def delete_acao(request, acao_id):
