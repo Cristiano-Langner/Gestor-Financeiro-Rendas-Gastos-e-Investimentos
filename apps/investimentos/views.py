@@ -1,3 +1,4 @@
+from apps.investimentos.models import AcoesConsolidadas, FiisConsolidadas, BdrsConsolidadas, CriptosConsolidadas
 from apps.investimentos.forms import OpcoesAcoes, OpcoesBdrs, OpcoesCriptos, OpcoesFiis, OpcoesRendaFixa
 from apps.investimentos.forms import AcoesForm, FiisForm, BdrsForm, CriptosForm, RendaFixaForm
 from apps.investimentos.models import Acoes, Fiis, Bdrs, Criptos, RendasFixa, HistoricoCompra
@@ -20,8 +21,9 @@ def acoes(request):
         return redirect('login')
     else:
         form = process_form_invest(request, AcoesForm, Acoes, 'Ação registrada com sucesso!')
-    context_view, acoes_cadastradas = investimento_view(request, Acoes)
-    grafico = graph(acoes_cadastradas)
+    context_view, acoes_cadastradas, invest_ticker_dict = investimento_view(request, Acoes)
+    categorias = OpcoesAcoes.choices
+    grafico = graph(categorias, acoes_cadastradas)
     total_acoes, acoes_cadastradas = filter_selections(request, acoes_cadastradas)
     acoes_cadastradas = acoes_cadastradas.order_by('-data')
     paginator = Paginator(acoes_cadastradas, 10)
@@ -34,7 +36,8 @@ def acoes(request):
         'opcoes_acoes': OpcoesAcoes.choices,
         'page_obj': page_obj,
         'context_view': context_view,
-        'grafico': grafico
+        'grafico': grafico,
+        'invest_ticker_dict': invest_ticker_dict
     }
     return render(request, 'investimentos/acoes.html', context)
 
@@ -47,16 +50,12 @@ def fiis(request):
         form = process_form_invest(request, FiisForm, Fiis, 'Fundo imobiliário registrado com sucesso!')
     context_view, fiis_cadastrados, invest_ticker_dict = investimento_view(request, Fiis)
     total_fiis, fiis_cadastrados = filter_selections(request, fiis_cadastrados)
-    tabela_tickers = consolidar_carteira(request, fiis_cadastrados)
-    for ticker, valores in tabela_tickers.items():
-        print(f'Ticker: {ticker}')
-        print(f'Valores: {valores}')
-        print('---')
     categorias = OpcoesFiis.choices
     grafico = graph(categorias, fiis_cadastrados)
     paginator = Paginator(fiis_cadastrados, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    tickers_consolidados = FiisConsolidadas.objects.filter(created_by=request.user)
     context = {
         'form': form,
         'fiis_cadastrados': fiis_cadastrados,
@@ -66,7 +65,7 @@ def fiis(request):
         'context_view': context_view,
         'grafico': grafico,
         'invest_ticker_dict': invest_ticker_dict,
-        'tabela_tickers': tabela_tickers
+        'tickers_consolidados': tickers_consolidados
     }
     return render(request, 'investimentos/fiis.html', context)
 
@@ -77,7 +76,7 @@ def bdrs(request):
         return redirect('login')
     else:
         form = process_form_invest(request, BdrsForm, Bdrs, 'BDR registrado com sucesso!')
-    context_view, bdrs_cadastrados = investimento_view(request, Bdrs)
+    context_view, bdrs_cadastrados, invest_ticker_dict = investimento_view(request, Bdrs)
     total_bdrs, bdrs_cadastrados = filter_selections(request, bdrs_cadastrados)
     paginator = Paginator(bdrs_cadastrados, 10)
     page_number = request.GET.get('page')
@@ -88,7 +87,8 @@ def bdrs(request):
         'total_bdrs': total_bdrs,
         'opcoes_bdrs': OpcoesBdrs.choices,
         'page_obj': page_obj,
-        'context_view': context_view
+        'context_view': context_view,
+        'invest_ticker_dict': invest_ticker_dict
     }
     return render(request, 'investimentos/bdrs.html', context)
 
@@ -99,7 +99,7 @@ def criptos(request):
         return redirect('login')
     else:
         form = process_form_invest(request, CriptosForm, Criptos, 'Cripto moeda registrada com sucesso!')
-    context_view, criptos_cadastradas = investimento_view(request, Criptos)
+    context_view, criptos_cadastradas, invest_ticker_dict = investimento_view(request, Criptos)
     total_criptos, criptos_cadastradas = filter_selections(request, criptos_cadastradas)
     paginator = Paginator(criptos_cadastradas, 10)
     page_number = request.GET.get('page')
@@ -110,7 +110,8 @@ def criptos(request):
         'total_criptos': total_criptos,
         'opcoes_criptos': OpcoesCriptos.choices,
         'page_obj': page_obj,
-        'context_view': context_view
+        'context_view': context_view,
+        'invest_ticker_dict': invest_ticker_dict
     }
     return render(request, 'investimentos/criptos.html', context)
 
@@ -121,7 +122,7 @@ def rendasfixa(request):
         return redirect('login')
     else:
         form = process_form_invest(request, RendaFixaForm, RendasFixa, 'Renda fixa registrada com sucesso!')
-    context_view, rendasfixa_cadastradas = investimento_view(request, RendasFixa)
+    context_view, rendasfixa_cadastradas, invest_ticker_dict = investimento_view(request, RendasFixa)
     total_rendasfixa, rendasfixa_cadastradas = filter_selections(request, rendasfixa_cadastradas)
     paginator = Paginator(rendasfixa_cadastradas, 10)
     page_number = request.GET.get('page')
@@ -132,7 +133,8 @@ def rendasfixa(request):
         'total_rendasfixa': total_rendasfixa,
         'opcoes_rendasfixa': OpcoesRendaFixa.choices,
         'page_obj': page_obj,
-        'context_view': context_view
+        'context_view': context_view,
+        'invest_ticker_dict': invest_ticker_dict
     }
     return render(request, 'investimentos/rendasfixa.html', context)
 
@@ -255,16 +257,49 @@ def graph(categorias_ref, name_cadastrado):
     totais_dict_ordenado = {k: v for k, v in sorted(totais_dict.items(), key=lambda item: item[1], reverse=True)}
     return totais_dict_ordenado
 
-def consolidar_carteira(request, invest_cadastrados):
-    dados_fiis = defaultdict(list)
-    cotacoes = {}
-    fiis = Fiis.objects.values('ticker', 'quantidade', 'preco_medio', 'dividendo')
-    Valores_fiis = preencher_dicionario(dados_fiis, fiis)
-    ticker = [str(item).split('=')[1][:-1] for item in invest_cadastrados]
-    tickers = [ticker + ".SA" for ticker in ticker]
-    cotacoes = obter_cotacao(tickers=tickers, cotacoes=cotacoes)
-    cotacoes_completo = unir_dados(cotacoes, Valores_fiis)
-    return cotacoes_completo
+def consolidar_carteira(request):
+    if request.method == 'POST':
+        cotacoes = {}
+        investido_acoes = Acoes.objects.filter(created_by=request.user)
+        investido_fiis = Fiis.objects.filter(created_by=request.user)
+        investido_bdrs = Bdrs.objects.filter(created_by=request.user)
+        investido_criptos = Criptos.objects.filter(created_by=request.user)
+        dados_acoes = defaultdict(list)
+        dados_fiis = defaultdict(list)
+        dados_bdrs = defaultdict(list)
+        dados_criptos = defaultdict(list)
+        acoes = Acoes.objects.values('ticker', 'quantidade', 'preco_medio', 'dividendo')
+        fiis = Fiis.objects.values('ticker', 'quantidade', 'preco_medio', 'dividendo')
+        bdrs = Bdrs.objects.values('ticker', 'quantidade', 'preco_medio', 'dividendo')
+        criptos = Criptos.objects.values('ticker', 'quantidade', 'preco_medio', 'dividendo')
+        Valores_acoes = preencher_dicionario(dados_acoes, acoes)
+        Valores_fiis = preencher_dicionario(dados_fiis, fiis)
+        Valores_bdrs = preencher_dicionario(dados_bdrs, bdrs)
+        Valores_criptos = preencher_dicionario(dados_criptos, criptos)
+        ticker_acoes = [str(item).split('=')[1][:-1] for item in investido_acoes]
+        ticker_fiis = [str(item).split('=')[1][:-1] for item in investido_fiis]
+        ticker_bdrs = [str(item).split('=')[1][:-1] for item in investido_bdrs]
+        ticker_criptos = [str(item).split('=')[1][:-1] for item in investido_criptos]
+        tickers_acoes = [ticker + ".SA" for ticker in ticker_acoes]
+        tickers_fiis = [ticker + ".SA" for ticker in ticker_fiis]
+        tickers_bdrs = [ticker + ".SA" for ticker in ticker_bdrs]
+        tickers_criptos = [ticker + ".SA" for ticker in ticker_criptos]
+        cotacoes_acoes = obter_cotacao(tickers_acoes, cotacoes)
+        cotacoes_acoes_unido = unir_dados(cotacoes_acoes, Valores_acoes)
+        cotacoes = {}
+        cotacoes_fiis = obter_cotacao(tickers_fiis, cotacoes)
+        cotacoes_fiis_unido = unir_dados(cotacoes_fiis, Valores_fiis)
+        cotacoes = {}
+        cotacoes_bdrs = obter_cotacao(tickers_bdrs, cotacoes)
+        cotacoes_bdrs_unido = unir_dados(cotacoes_bdrs, Valores_bdrs)
+        cotacoes = {}
+        cotacoes_criptos = obter_cotacao(tickers_criptos, cotacoes)
+        cotacoes_criptos_unido = unir_dados(cotacoes_criptos, Valores_criptos)
+    salvar_consolidacao(request, cotacoes_acoes_unido, AcoesConsolidadas)
+    salvar_consolidacao(request, cotacoes_fiis_unido, FiisConsolidadas)
+    salvar_consolidacao(request, cotacoes_bdrs_unido, BdrsConsolidadas)
+    salvar_consolidacao(request, cotacoes_criptos_unido, CriptosConsolidadas)
+    return redirect('index')
     
 def obter_cotacao(tickers, cotacoes):
     for ticker in tickers:
@@ -308,6 +343,23 @@ def unir_dados(cotacoes, lista):
             'lucro': valores[4],
         }
     return tabela_tickers
+
+def salvar_consolidacao(request, consolidar, class_name):
+    if consolidar:
+        dados_existentes = class_name.objects.filter(created_by=request.user)
+        if dados_existentes:
+            dados_existentes.delete()
+        for ticker, dados in consolidar.items():
+            consolidado = class_name.objects.create(
+                ticker=ticker,
+                quantidade=dados['quantidade'],
+                preco_medio=dados['preco_medio'],
+                dividendo=dados['dividendo'],
+                valor=dados['valor'],
+                lucro=dados['lucro'],
+                created_by=request.user
+            )
+            consolidado.save(user=request.user)
 
 #Função para deletar uma ação.
 def delete_acao(request, acao_id):

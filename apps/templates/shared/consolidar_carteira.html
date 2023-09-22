@@ -1,0 +1,6 @@
+<div class="consolidar-button">
+    <form method="post" action="{% url 'consolidar_carteira' %}">
+        {% csrf_token %}
+        <button type="submit">Consolidar Carteira</button>
+    </form>
+</div>

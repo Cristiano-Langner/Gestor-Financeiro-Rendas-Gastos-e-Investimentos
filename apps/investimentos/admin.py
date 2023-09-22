@@ -1,5 +1,6 @@
-from django.contrib import admin
 from apps.investimentos.models import Acoes, Fiis, Bdrs, Criptos, RendasFixa, HistoricoCompra, HistoricoDividendo
+from apps.investimentos.models import AcoesConsolidadas, FiisConsolidadas, BdrsConsolidadas, CriptosConsolidadas
+from django.contrib import admin
 
 class Acao(admin.ModelAdmin):
     list_display = ('id', 'ticker', 'valor', 'quantidade', 'dividendo', 'preco_medio',  'data', 'categoria', 'created_by', 'modified_by')
@@ -56,3 +57,35 @@ class HistoricoDiv(admin.ModelAdmin):
     list_per_page = 20
     
 admin.site.register(HistoricoDividendo, HistoricoDiv)
+
+class AcaoConsolidada(admin.ModelAdmin):
+    list_display = ('id', 'ticker', 'valor', 'quantidade', 'dividendo', 'preco_medio', 'created_by', 'modified_by')
+    list_display_links = ('id', 'ticker')
+    search_fields = ('ticker',)
+    list_per_page = 20
+    
+admin.site.register(AcoesConsolidadas, AcaoConsolidada)
+
+class FiiConsolidada(admin.ModelAdmin):
+    list_display = ('id', 'ticker', 'valor', 'quantidade', 'dividendo', 'preco_medio', 'created_by', 'modified_by')
+    list_display_links = ('id', 'ticker')
+    search_fields = ('ticker',)
+    list_per_page = 20
+    
+admin.site.register(FiisConsolidadas, FiiConsolidada)
+
+class BdrConsolidada(admin.ModelAdmin):
+    list_display = ('id', 'ticker', 'valor', 'quantidade', 'dividendo', 'preco_medio', 'created_by', 'modified_by')
+    list_display_links = ('id', 'ticker')
+    search_fields = ('ticker',)
+    list_per_page = 20
+    
+admin.site.register(BdrsConsolidadas, BdrConsolidada)
+
+class CriptoConsolidada(admin.ModelAdmin):
+    list_display = ('id', 'ticker', 'valor', 'quantidade', 'dividendo', 'preco_medio', 'created_by', 'modified_by')
+    list_display_links = ('id', 'ticker')
+    search_fields = ('ticker',)
+    list_per_page = 20
+    
+admin.site.register(CriptosConsolidadas, CriptoConsolidada)
