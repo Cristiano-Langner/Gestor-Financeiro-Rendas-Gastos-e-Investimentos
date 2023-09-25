@@ -10,14 +10,18 @@
         </tr>
     </thead>
     <tbody>
-        {% for key, value in tickers_consolidados.items %}
+        {% for ticker, dados  in tickers_consolidados.items %}
         <tr>
-            <td>{{ key }}</td>
-            <td>R$ {{ value.valor }}</td>
-            <td>R$ {{ value.preco_medio }}</td>
-            <td>R$ {{ value.dividendo }}</td>
-            <td> {{ value.quantidade }}</td>
-            <td> {{ value.lucro }}</td>
+            <td>{{ ticker  }}</td>
+            <td><span class="{% if dados.valor >= dados.preco_medio %}positive{% else %}negative{% endif %}">
+                {{ dados.valor }}</td>
+            </span>
+            <td>R$ {{ dados.preco_medio }}</td>
+            <td>R$ {{ dados.dividendo }}</td>
+            <td> {{ dados.quantidade }}</td>
+            <td><span class="{% if dados.lucro >= 0 %}positive{% else %}negative{% endif %}">
+                {{ dados.lucro }}</td>
+            </span>
         </tr>
         {% endfor %}
     </tbody>

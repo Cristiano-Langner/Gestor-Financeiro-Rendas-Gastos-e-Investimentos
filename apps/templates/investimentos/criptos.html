@@ -70,9 +70,32 @@
     </div>
     <div class="graficos-container">
         <div class="grafico">
-            <canvas id="grafico-mes"></canvas>
+            <h2>
+                Fundos Imobiliários
+                <span class="info-icon">i
+                    <span class="info-text">Gráfico representando a soma possuída em cada
+                        cripto moeda.</span>
+                </span>
+            </h2>
+            <canvas id="grafico-ticker"></canvas>
         </div>
     </div>
+    <div class="graficos-container">
+        <div class="grafico">
+            <h2>
+                Categorias
+                <span class="info-icon">i
+                    <span class="info-text">Gráfico representando a soma possuída em cada
+                        categoria de cripto moeda.</span>
+                </span>
+            </h2>
+            <canvas id="grafico-cat"></canvas>
+        </div>
+    </div>
+
+    {% include 'shared/script_grafico_invest.html' %}
+
+    {% include 'shared/tabela_invest.html' %}
 
 </div>
 {% include 'shared/footer.html' %}

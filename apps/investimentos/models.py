@@ -64,8 +64,8 @@ class OpcoesRendaFixa(models.TextChoices):
     
 class BaseTransaction(models.Model):
     ticker = models.CharField(max_length=10,null=False,blank=False)
-    valor = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), validators=[MinValueValidator(Decimal('0.00'))])
-    quantidade = models.PositiveIntegerField(default=0)
+    valor = models.DecimalField(max_digits=14, decimal_places=8, default=Decimal('0.00'))
+    quantidade = models.DecimalField(max_digits=14, decimal_places=8, default=0.0)
     dividendo = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), validators=[MinValueValidator(Decimal('0.00'))])
     preco_medio = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), validators=[MinValueValidator(Decimal('0.00'))])
     data = models.DateField(null=False, blank=False, validators=[MaxValueValidator(date.today())], default=date.today())
@@ -143,7 +143,7 @@ class ConsolidacaoCarteira(models.Model):
     quantidade = models.PositiveIntegerField(default=0)
     preco_medio = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), validators=[MinValueValidator(Decimal('0.00'))])
     dividendo = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), validators=[MinValueValidator(Decimal('0.00'))])
-    valor = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), validators=[MinValueValidator(Decimal('0.00'))])
+    valor = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     lucro = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_created_by')
     modified_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_modified_by')

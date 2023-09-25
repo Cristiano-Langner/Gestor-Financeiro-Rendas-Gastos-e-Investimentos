@@ -15,25 +15,28 @@ class BaseInvestimentos(forms.Form):
     )
     valor=forms.DecimalField(
         label='Valor unidade ', 
-        required=True, 
+        required=True,
+        max_digits=14,
+        decimal_places=8, 
         widget=forms.NumberInput(
             attrs={
                 'class': 'form-control',
                 'placeholder': 'Ex.: 1000.00',
-                'step': '0.01'
             }
         )
     )
-    quantidade = forms.IntegerField(
-        label='Quantidade ',
-        required=True,
-        widget=forms.NumberInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Ex.: 5'
-            }
-        )
+    quantidade = forms.DecimalField(
+    label='Quantidade ',
+    required=True,
+    max_digits=14,
+    decimal_places=8,
+    widget=forms.NumberInput(
+        attrs={
+            'class': 'form-control',
+            'placeholder': 'Ex.: 5.00'
+        }
     )
+)
     data = forms.DateField(
         label='Data',
         required=True,
