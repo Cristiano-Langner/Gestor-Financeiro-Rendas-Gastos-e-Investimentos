@@ -29,7 +29,7 @@ def acoes(request):
     paginator = Paginator(acoes_cadastradas, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    tickers_consolidados = import_ativos(AcoesConsolidadas)
+    tickers_consolidados,  tickers_consolidados_total= import_ativos(AcoesConsolidadas)
     context = {
         'form': form,
         'acoes_cadastradas': acoes_cadastradas,
@@ -39,7 +39,8 @@ def acoes(request):
         'context_view': context_view,
         'grafico': grafico,
         'invest_ticker_dict': invest_ticker_dict,
-        'tickers_consolidados': tickers_consolidados
+        'tickers_consolidados': tickers_consolidados,
+        'tickers_consolidados_total': tickers_consolidados_total
     }
     return render(request, 'investimentos/acoes.html', context)
 
@@ -58,7 +59,7 @@ def fiis(request):
     paginator = Paginator(fiis_cadastrados, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    tickers_consolidados = import_ativos(FiisConsolidadas)
+    tickers_consolidados, tickers_consolidados_total = import_ativos(FiisConsolidadas)
     context = {
         'form': form,
         'fiis_cadastrados': fiis_cadastrados,
@@ -68,7 +69,8 @@ def fiis(request):
         'context_view': context_view,
         'grafico': grafico,
         'invest_ticker_dict': invest_ticker_dict,
-        'tickers_consolidados': tickers_consolidados
+        'tickers_consolidados': tickers_consolidados,
+        'tickers_consolidados_total': tickers_consolidados_total
     }
     return render(request, 'investimentos/fiis.html', context)
 
@@ -87,7 +89,7 @@ def bdrs(request):
     paginator = Paginator(bdrs_cadastrados, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    tickers_consolidados = import_ativos(BdrsConsolidadas)
+    tickers_consolidados, tickers_consolidados_total = import_ativos(BdrsConsolidadas)
     context = {
         'form': form,
         'bdrs_cadastrados': bdrs_cadastrados,
@@ -97,7 +99,8 @@ def bdrs(request):
         'context_view': context_view,
         'grafico': grafico,
         'invest_ticker_dict': invest_ticker_dict,
-        'tickers_consolidados': tickers_consolidados
+        'tickers_consolidados': tickers_consolidados,
+        'tickers_consolidados_total': tickers_consolidados_total
     }
     return render(request, 'investimentos/bdrs.html', context)
 
@@ -116,7 +119,7 @@ def criptos(request):
     paginator = Paginator(criptos_cadastradas, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    tickers_consolidados = import_ativos(CriptosConsolidadas)
+    tickers_consolidados, tickers_consolidados_total = import_ativos(CriptosConsolidadas)
     context = {
         'form': form,
         'criptos_cadastradas': criptos_cadastradas,
@@ -126,7 +129,8 @@ def criptos(request):
         'context_view': context_view,
         'grafico': grafico,
         'invest_ticker_dict': invest_ticker_dict,
-        'tickers_consolidados': tickers_consolidados
+        'tickers_consolidados': tickers_consolidados,
+        'tickers_consolidados_total': tickers_consolidados_total
     }
     return render(request, 'investimentos/criptos.html', context)
 
@@ -397,6 +401,11 @@ def salvar_consolidacao(request, consolidar, class_name):
 def import_ativos(db):
     ativos = db.objects.all()
     dicionario_tabela = {}
+    dicionario_tabela_total = {}
+    total_valor = 0
+    total_preco_medio = 0
+    total_dividendos = 0
+    total_lucro = 0
     for ativo in ativos:
         ticker = ativo.ticker
         valor = ativo.valor
@@ -411,8 +420,16 @@ def import_ativos(db):
             'preco_medio': preco_medio,
             'lucro': lucro
         }
+        total_valor += valor
+        total_preco_medio += preco_medio
+        total_dividendos += dividendo
+        total_lucro += lucro
         dicionario_tabela[ticker] = dados_ativo
-    return dicionario_tabela
+    dicionario_tabela_total['total_valor'] = total_valor
+    dicionario_tabela_total['total_preco_medio'] = total_preco_medio
+    dicionario_tabela_total['total_dividendos'] = total_dividendos
+    dicionario_tabela_total['total_lucro'] = total_lucro
+    return dicionario_tabela, dicionario_tabela_total
 
 #Função para deletar uma ação.
 def delete_acao(request, acao_id):
