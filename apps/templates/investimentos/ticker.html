@@ -1,0 +1,16 @@
+{% extends 'shared/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="titulo">
+    <h4>{{ ticker }}</h4>
+    {% include 'partials/_alertas.html' %}
+</div>
+<div class="pagina">
+
+    <h2>Detalhes do Ticker: {{ ticker }}</h2>
+    <p>Outras informações sobre o ticker podem ser adicionadas aqui.</p>
+
+</div>
+
+{% endblock %}

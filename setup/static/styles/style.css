@@ -526,6 +526,22 @@ font-weight: normal;
     color: #fff;
 }
 
+.consolidar-button {
+    background-color: #032549;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 15px;
+    margin-left: 1000px;
+}
+
+.consolidar-button:hover {
+    background-color: #032549;
+}
+
 .modal {
     display: none;
     position: fixed;
@@ -539,10 +555,11 @@ font-weight: normal;
 }
 
 .modal-content {
-    background-color: #beb8b8;
+    background-color: #e2dfdf;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+    border: 3px solid black;
     position: relative;
     font-family: 'Outfit', sans-serif;
     max-width: 400px;
@@ -552,5 +569,5 @@ font-weight: normal;
 .modal-content p {
     font-size: 22px;
     color: #080808;
-    margin-top: 10px;
+    margin-top: 8px;
 }

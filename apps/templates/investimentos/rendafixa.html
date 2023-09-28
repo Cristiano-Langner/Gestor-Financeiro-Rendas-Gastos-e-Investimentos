@@ -7,7 +7,7 @@
     {% include 'partials/_alertas.html' %}
 </div>
 <div class="pagina">
-    <form action="{% url 'rendasfixa' %}" method="POST" class="form-cadastro" style="max-width: 850px;">
+    <form action="{% url 'rendafixa' %}" method="POST" class="form-cadastro" style="max-width: 850px;">
         {% csrf_token %}
         {% include 'shared/cadastro_template.html' %}
         <div style="text-align: center;">
@@ -32,6 +32,9 @@
         </div>
         
         <button type="submit">Filtrar</button>
+        <form action="{% url 'limpar_filtros' 'rendafixa' %}" method="get">
+            <button type="submit">Limpar Filtros</button>
+        </form>  
     </form>
 
     <h2>Rendas fixas cadastradas</h2>

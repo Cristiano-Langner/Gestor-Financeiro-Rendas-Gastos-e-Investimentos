@@ -135,7 +135,7 @@ def criptos(request):
     return render(request, 'investimentos/criptos.html', context)
 
 #Responsável pela página de renda fixa.
-def rendasfixa(request):
+def rendafixa(request):
     if not check_authentication(request):
         messages.error(request, 'Usuário não logado')
         return redirect('login')
@@ -159,7 +159,7 @@ def rendasfixa(request):
         'grafico': grafico,
         'invest_ticker_dict': invest_ticker_dict
     }
-    return render(request, 'investimentos/rendasfixa.html', context)
+    return render(request, 'investimentos/rendafixa.html', context)
 
 #Função que faz a verificação da válidade dos dados, alguns tratamentos de dados e salvamentos das informações.
 def process_form_invest(request, form_class, created_class, success_message):
@@ -279,6 +279,13 @@ def graph(categorias_ref, name_cadastrado):
         totais_dict[categoria[1]] = total_categoria_formatted
     totais_dict_ordenado = {k: v for k, v in sorted(totais_dict.items(), key=lambda item: item[1], reverse=True)}
     return totais_dict_ordenado
+
+def detalhes_do_ticker(request, tipo_investimento, ticker):
+    context = {
+        'tipo_investimento': tipo_investimento,
+        'ticker': ticker,
+    }
+    return render(request, 'investimentos/ticker.html', context)
 
 def consolidar_carteira(request):
     if request.method == 'POST':

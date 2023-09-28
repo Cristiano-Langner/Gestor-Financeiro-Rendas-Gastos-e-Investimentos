@@ -32,6 +32,9 @@
         </div>
         
         <button type="submit">Filtrar</button>
+        <form action="{% url 'limpar_filtros' 'criptos' %}" method="get">
+            <button type="submit">Limpar Filtros</button>
+        </form>  
     </form>
 
     <h2>Criptos cadastradas</h2>

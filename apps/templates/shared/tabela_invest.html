@@ -12,7 +12,7 @@
     <tbody>
         {% for ticker, dados  in tickers_consolidados.items %}
         <tr>
-            <td>{{ ticker  }}</td>
+            <td><a href="/{{ tipo_investimento }}/{{ ticker }}">{{ ticker }}</td>
             <td><span class="{% if dados.valor >= dados.preco_medio %}positive{% else %}negative{% endif %}">
                 {{ dados.valor }}</td>
             </span>

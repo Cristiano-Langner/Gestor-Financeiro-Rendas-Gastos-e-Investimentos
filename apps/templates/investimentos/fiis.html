@@ -32,9 +32,11 @@
         </div>
         
         <button type="submit">Filtrar</button>
+        <form action="{% url 'limpar_filtros' 'fiis' %}" method="get">
+            <button type="submit">Limpar Filtros</button>
+        </form>  
     </form>
 
-    <h2 style="margin: 8px 40px;">Fiis cadastrados</h2>
     <ul class="item-list">
         <li>
             <span><strong>TICKER</strong></span>
@@ -96,7 +98,9 @@
 
     {% include 'shared/script_grafico_invest.html' %}
 
+    {% with tipo_investimento="fiis" %}
     {% include 'shared/tabela_invest.html' %}
+    {% endwith %}
 
 </div>
 {% include 'shared/footer.html' %}
