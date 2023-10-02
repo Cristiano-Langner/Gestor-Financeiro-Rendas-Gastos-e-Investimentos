@@ -2,8 +2,6 @@
     var ticker_dict = {{ invest_ticker_dict|safe }};
     var labels_ticker = Object.keys(ticker_dict);
     var data_ticker = Object.values(ticker_dict);
-    console.log(labels_ticker)
-    console.log(data_ticker)
     var totais_dict = {{ grafico|safe }};
     var labels = Object.keys(totais_dict);
     var data = Object.values(totais_dict);

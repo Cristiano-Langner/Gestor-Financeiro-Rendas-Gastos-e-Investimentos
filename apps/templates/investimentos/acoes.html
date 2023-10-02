@@ -98,7 +98,9 @@
 
     {% include 'shared/script_grafico_invest.html' %}
 
+    {% with tipo_investimento="acoes" %}
     {% include 'shared/tabela_invest.html' %}
+    {% endwith %}
     
 </div>
 {% include 'shared/footer.html' %}

@@ -8,11 +8,6 @@
 </div>
 
 <div class="pagina">
-    <h6>
-        Aqui na página de gastos você poderá cadastrar, visualizar e deletar todos os seus gastos.
-        Além é claro de poder ver vários gráficos e informações legais sobre onde seu dinheiro esta sendo utilizado.
-    </h6>
-    
     <form action="{% url 'gastos' %}" method="POST" class="form-cadastro" style="max-width: 680px; margin-top: 40px;">
         {% csrf_token %}
         {% include 'shared/cadastro_template.html' %}

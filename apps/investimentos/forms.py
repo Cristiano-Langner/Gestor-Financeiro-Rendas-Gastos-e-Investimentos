@@ -108,3 +108,26 @@ class RendaFixaForm(BaseInvestimentos):
             }
         )
     )
+    
+class DividendoForm(forms.Form):
+    valor = forms.DecimalField(
+        label='Valor do Dividendo',
+        max_digits=10,
+        decimal_places=2,
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Ex.: 10.00',
+            }
+        )
+    )
+    data = forms.DateField(
+        label='Data do Dividendo',
+        widget=forms.DateInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Ex.: DD/MM/AAAA',
+                'type': 'date',
+            }
+        )
+    )

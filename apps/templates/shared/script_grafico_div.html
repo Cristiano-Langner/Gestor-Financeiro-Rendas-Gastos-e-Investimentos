@@ -1,0 +1,28 @@
+<script>
+    var div_dict = {{ somados_por_mes|safe }};
+    var labels_div = Object.keys(div_dict);
+    var data_div = Object.values(div_dict);
+    var chartOptions = {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    };
+    var Data_div = {
+        labels: labels_div,
+        datasets: [{
+            label: 'Grafico',
+            data: data_div,
+            backgroundColor: [
+            'green',
+            ]
+        }]
+    };
+    var ChartDiv = new Chart(document.getElementById('grafico-div').getContext('2d'), {
+        type: 'bar',
+        data: Data_div,
+        options: chartOptions,
+    });
+</script>

@@ -7,10 +7,50 @@
     {% include 'partials/_alertas.html' %}
 </div>
 <div class="pagina">
+    <form action="{% url 'detalhes_ticker' tipo_investimento=tipo_investimento ticker=ticker %}" method="POST" class="form-cadastro" style="max-width: 355px;">
+        {% csrf_token %}
+        {% include 'shared/cadastro_template.html' %}
+        <div style="text-align: center;">
+            <button type="submit">Cadastrar Dividendo</button>
+        </div>
+    </form>
 
-    <h2>Detalhes do Ticker: {{ ticker }}</h2>
-    <p>Outras informações sobre o ticker podem ser adicionadas aqui.</p>
+    <ul class="item-list" style="width: 500px; margin-left: 365px;">
+        <li>
+            <span><strong>VALOR</strong></span>
+            <span><strong>DATA</strong></span>
+        </li>
+        {% for div in page_obj %}
+        <li>
+            <span>R$ {{ div.valor|floatformat:2 }}</span>
+            <span>{{ div.data|date:"d-m-Y" }}</span>
+            <form action="{% url 'delete_div' div.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" onclick="return confirm('Tem certeza que deseja deletar esse dividendo?')">X</button>
+            </form>
+        </li>
+        {% endfor %}
+        <li><span style="font-weight: bold;">Total dividendos: R$ {{ total_div|floatformat:2 }}</span></li>
+    </ul>
+    <div style="margin-left: 365px;"> {% include 'shared/pagination.html' %} </div>
+
+    <div class="graficos-container">
+        <div class="grafico">
+            <h2>
+                Histórico dividendos
+                <span class="info-icon">i
+                    <span class="info-text">Gráfico representando a quantidade de dividendos recebidos
+                        em cada mês.</span>
+                </span>
+            </h2>
+            <canvas id="grafico-div"></canvas>
+        </div>
+    </div>
+
+    {% include 'shared/script_grafico_div.html' %}
 
 </div>
+
+{% include 'shared/footer.html' %}
 
 {% endblock %}

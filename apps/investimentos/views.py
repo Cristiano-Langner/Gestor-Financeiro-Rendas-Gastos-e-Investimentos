@@ -1,7 +1,7 @@
+from apps.investimentos.models import Acoes, Fiis, Bdrs, Criptos, RendasFixa, HistoricoCompra, HistoricoDividendo
 from apps.investimentos.models import AcoesConsolidadas, FiisConsolidadas, BdrsConsolidadas, CriptosConsolidadas
+from apps.investimentos.forms import AcoesForm, FiisForm, BdrsForm, CriptosForm, RendaFixaForm, DividendoForm
 from apps.investimentos.forms import OpcoesAcoes, OpcoesBdrs, OpcoesCriptos, OpcoesFiis, OpcoesRendaFixa
-from apps.investimentos.forms import AcoesForm, FiisForm, BdrsForm, CriptosForm, RendaFixaForm
-from apps.investimentos.models import Acoes, Fiis, Bdrs, Criptos, RendasFixa, HistoricoCompra
 from django.shortcuts import render, redirect, get_object_or_404
 from apps.rendas_gastos.utils import check_authentication
 from django.core.paginator import Paginator
@@ -161,6 +161,29 @@ def rendafixa(request):
     }
     return render(request, 'investimentos/rendafixa.html', context)
 
+def detalhes_ticker(request, tipo_investimento, ticker):
+    if not check_authentication(request):
+        messages.error(request, 'Usuário não logado')
+        return redirect('login')
+    else:
+        form = cadastrar_dividendo(request, ticker)
+    dividendos_cadastrados = HistoricoDividendo.objects.filter(created_by=request.user, ticker=ticker)
+    dividendos_cadastrados = dividendos_cadastrados.order_by('-data')
+    somados_por_mes = dividendos_por_mes(dividendos_cadastrados)
+    paginator = Paginator(dividendos_cadastrados, 6)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    total_div = dividendos_cadastrados.aggregate(total=Sum('valor'))['total']
+    context = {
+        'tipo_investimento': tipo_investimento,
+        'ticker': ticker,
+        'form': form,
+        'somados_por_mes': somados_por_mes,
+        'page_obj': page_obj,
+        'total_div': total_div
+    }
+    return render(request, 'investimentos/ticker.html', context)
+
 #Função que faz a verificação da válidade dos dados, alguns tratamentos de dados e salvamentos das informações.
 def process_form_invest(request, form_class, created_class, success_message):
     if request.method == 'POST':
@@ -186,6 +209,24 @@ def process_form_invest(request, form_class, created_class, success_message):
                 messages.success(request, success_message)
     else:
         form = form_class()
+    return form
+
+def cadastrar_dividendo(request, ticker):
+    if request.method == 'POST':
+        form = DividendoForm(request.POST)
+        if form.is_valid():
+            valor = form.cleaned_data['valor']
+            data = form.cleaned_data['data']
+            novo_dividendo = HistoricoDividendo.objects.create(
+                ticker=ticker,
+                valor=valor,
+                data=data,
+                created_by=request.user,
+            )
+            novo_dividendo.save()
+            messages.success(request, 'Dividendo registrado com sucesso!')
+    else:
+        form = DividendoForm()
     return form
 
 #Função para filtrar os dados de acordo com o solicitado na página.
@@ -280,12 +321,14 @@ def graph(categorias_ref, name_cadastrado):
     totais_dict_ordenado = {k: v for k, v in sorted(totais_dict.items(), key=lambda item: item[1], reverse=True)}
     return totais_dict_ordenado
 
-def detalhes_do_ticker(request, tipo_investimento, ticker):
-    context = {
-        'tipo_investimento': tipo_investimento,
-        'ticker': ticker,
-    }
-    return render(request, 'investimentos/ticker.html', context)
+def dividendos_por_mes(dividendos_cadastrados):
+    totais_por_mes = defaultdict(float)
+    for dividendo in dividendos_cadastrados:
+        mes_ano = dividendo.data.strftime('%Y-%m')
+        total_mes = float(dividendo.valor)
+        totais_por_mes[mes_ano] += total_mes
+    totais_dict_ordenado = {k: round(v, 2) for k, v in sorted(totais_por_mes.items(), key=lambda item: item[0])}
+    return totais_dict_ordenado
 
 def consolidar_carteira(request):
     if request.method == 'POST':
@@ -454,21 +497,27 @@ def delete_fii(request, fii_id):
 
 #Função para deletar um BDR.
 def delete_bdr(request, bdr_id):
-    bdr = get_object_or_404(Fiis, pk=bdr_id)
+    bdr = get_object_or_404(Bdrs, pk=bdr_id)
     bdr.delete()
     messages.success(request, 'BDR deletado com sucesso!')
     return redirect('bdrs')
 
 #Função para deletar uma cripto moeda.
 def delete_cripto(request, cripto_id):
-    cripto = get_object_or_404(Fiis, pk=cripto_id)
+    cripto = get_object_or_404(Criptos, pk=cripto_id)
     cripto.delete()
     messages.success(request, 'Cripto moeda deletada com sucesso!')
     return redirect('criptos')
 
 #Função para deletar uma renda fixa.
 def delete_rendafixa(request, rendafixa_id):
-    rendafixa = get_object_or_404(Fiis, pk=rendafixa_id)
+    rendafixa = get_object_or_404(RendasFixa, pk=rendafixa_id)
     rendafixa.delete()
     messages.success(request, 'Renda fixa deletada com sucesso!')
     return redirect('rendasfixa')
+
+def delete_div(request, div_id):
+    dividendo = get_object_or_404(HistoricoDividendo, pk=div_id)
+    dividendo.delete()
+    messages.success(request, 'Dividendo deletado com sucesso!')
+    return redirect('detalhes_ticker')
