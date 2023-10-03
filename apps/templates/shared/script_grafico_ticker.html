@@ -1,8 +1,10 @@
-<!-- language: javascript -->
 <script>
     var div_dict = {{ somados_por_mes|safe }};
     var labels_div = Object.keys(div_dict);
     var data_div = Object.values(div_dict);
+    var compra_dict = {{ somados_compras_por_mes|safe }};
+    var labels_compra = Object.keys(compra_dict);
+    var data_compra = Object.values(compra_dict);
     var chartOptions = {
         responsive: true,
         plugins: {
@@ -24,6 +26,21 @@
     var ChartDiv = new Chart(document.getElementById('grafico-div').getContext('2d'), {
         type: 'bar',
         data: Data_div,
+        options: chartOptions,
+    });
+    var Data_compra = {
+        labels: labels_compra,
+        datasets: [{
+            label: 'Grafico',
+            data: data_compra,
+            backgroundColor: [
+            'blue',
+            ]
+        }]
+    };
+    var ChartCompra = new Chart(document.getElementById('grafico-compra').getContext('2d'), {
+        type: 'bar',
+        data: Data_compra,
         options: chartOptions,
     });
 </script>

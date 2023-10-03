@@ -46,8 +46,20 @@
             <canvas id="grafico-div"></canvas>
         </div>
     </div>
+    <div class="graficos-container">
+        <div class="grafico">
+            <h2>
+                Histórico compras
+                <span class="info-icon">i
+                    <span class="info-text">Gráfico representando os valores das compras
+                        em cada mês.</span>
+                </span>
+            </h2>
+            <canvas id="grafico-compra"></canvas>
+        </div>
+    </div>
 
-    {% include 'shared/script_grafico_div.html' %}
+    {% include 'shared/script_grafico_ticker.html' %}
 
 </div>
 

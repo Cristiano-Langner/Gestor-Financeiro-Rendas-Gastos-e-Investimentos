@@ -168,19 +168,25 @@ def detalhes_ticker(request, tipo_investimento, ticker):
     else:
         form = cadastrar_dividendo(request, ticker)
     dividendos_cadastrados = HistoricoDividendo.objects.filter(created_by=request.user, ticker=ticker)
+    compras_cadastradas = HistoricoCompra.objects.filter(created_by=request.user, ticker=ticker)
     dividendos_cadastrados = dividendos_cadastrados.order_by('-data')
     somados_por_mes = dividendos_por_mes(dividendos_cadastrados)
+    compras_cadastradas = compras_cadastradas.order_by('-data')
+    somados_compras_por_mes = compras_por_mes(compras_cadastradas)
     paginator = Paginator(dividendos_cadastrados, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     total_div = dividendos_cadastrados.aggregate(total=Sum('valor'))['total']
+    total_compra = compras_cadastradas.aggregate(total=Sum('valor'))['total']
     context = {
         'tipo_investimento': tipo_investimento,
         'ticker': ticker,
         'form': form,
         'somados_por_mes': somados_por_mes,
+        'somados_compras_por_mes': somados_compras_por_mes,
         'page_obj': page_obj,
-        'total_div': total_div
+        'total_div': total_div,
+        'total_compra': total_compra
     }
     return render(request, 'investimentos/ticker.html', context)
 
@@ -196,8 +202,17 @@ def process_form_invest(request, form_class, created_class, success_message):
             categoria = form.cleaned_data['categoria']
             preco_medio = valor if valor > 0 else 0
             valor_total = valor * quantidade
-            if created_class.objects.filter(ticker=ticker, created_by=request.user).exists():
-                messages.warning(request, f'{ticker} já está cadastrado.')
+            ja_cadastrado = created_class.objects.filter(ticker=ticker, created_by=request.user).first()
+            if ja_cadastrado:
+                ja_cadastrado.valor += valor_total
+                ja_cadastrado.quantidade += quantidade
+                ja_cadastrado.preco_medio = (ja_cadastrado.preco_medio + preco_medio)/2
+                if data > ja_cadastrado.data: ja_cadastrado.data = data
+                ja_cadastrado.save(user=request.user)
+                historico_compra = HistoricoCompra.objects.create(ticker=ticker, valor=valor_total, quantidade=quantidade,
+                                                    data=data, created_by=request.user)
+                historico_compra.save()
+                messages.success(request, f'Compra do {ticker} adicionada.')
             else:
                 novo = created_class.objects.create(ticker=ticker, valor=valor_total, quantidade=quantidade,
                                                     preco_medio=preco_medio, data=data,
@@ -326,6 +341,15 @@ def dividendos_por_mes(dividendos_cadastrados):
     for dividendo in dividendos_cadastrados:
         mes_ano = dividendo.data.strftime('%Y-%m')
         total_mes = float(dividendo.valor)
+        totais_por_mes[mes_ano] += total_mes
+    totais_dict_ordenado = {k: round(v, 2) for k, v in sorted(totais_por_mes.items(), key=lambda item: item[0])}
+    return totais_dict_ordenado
+
+def compras_por_mes(compras_cadastradas):
+    totais_por_mes = defaultdict(float)
+    for valor in compras_cadastradas:
+        mes_ano = valor.data.strftime('%Y-%m')
+        total_mes = float(valor.valor)
         totais_por_mes[mes_ano] += total_mes
     totais_dict_ordenado = {k: round(v, 2) for k, v in sorted(totais_por_mes.items(), key=lambda item: item[0])}
     return totais_dict_ordenado
