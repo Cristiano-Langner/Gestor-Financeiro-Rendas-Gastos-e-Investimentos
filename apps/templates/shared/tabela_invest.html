@@ -14,27 +14,27 @@
         <tr>
             <td><a href="/{{ tipo_investimento }}/{{ ticker }}">{{ ticker }}</td>
             <td><span class="{% if dados.valor >= dados.preco_medio %}positive{% else %}negative{% endif %}">
-                {{ dados.valor }}</td>
+                R$ {{ dados.valor }}</td>
             </span>
             <td>R$ {{ dados.preco_medio }}</td>
             <td>R$ {{ dados.dividendo }}</td>
             <td> {{ dados.quantidade }}</td>
             <td><span class="{% if dados.lucro >= 0 %}positive{% else %}negative{% endif %}">
-                {{ dados.lucro }}</td>
+                R$ {{ dados.lucro }}</td>
             </span>
         </tr>
         {% endfor %}
         <tr>
             <td>TOTAL</td>
-            <td><span class="{% if tickers_consolidados_total.total_valor >= tickers_consolidados_total.total_preco_medio %}positive{% else %}negative{% endif %}">
-                {{ tickers_consolidados_total.total_valor }}</td>
+            <td><span class="{% if tickers_consolidados_total.total_valor >= tickers_consolidados_total.total_preco_medio %}negative{% else %}positive{% endif %}">
+                R$ {{ tickers_consolidados_total.total_valor }}</td>
             </span>
             </td>
             <td>R$ {{ tickers_consolidados_total.total_preco_medio }}</td>
             <td>R$ {{ tickers_consolidados_total.total_dividendos }}</td>
             <td> - </td>
             <td><span class="{% if tickers_consolidados_total.total_lucro >= 0 %}positive{% else %}negative{% endif %}">
-                {{ tickers_consolidados_total.total_lucro }}</td>
+                R$ {{ tickers_consolidados_total.total_lucro }}</td>
             </span>
         </tr>
     </tbody>

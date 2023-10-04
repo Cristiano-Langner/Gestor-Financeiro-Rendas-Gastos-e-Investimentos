@@ -24,7 +24,7 @@
         <li>
             <span>R$ {{ div.valor|floatformat:2 }}</span>
             <span>{{ div.data|date:"d-m-Y" }}</span>
-            <form action="{% url 'delete_div' div.id %}" method="post">
+            <form action="{% url 'delete_div' tipo_investimento=tipo_investimento ticker=ticker div_id=div.id%}" method="post">
                 {% csrf_token %}
                 <button type="submit" onclick="return confirm('Tem certeza que deseja deletar esse dividendo?')">X</button>
             </form>

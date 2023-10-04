@@ -14,36 +14,13 @@
             <button type="submit">Cadastrar Fii</button>
         </div>
     </form>
-    
-    <form method="get" class="filter-form">
-        <div>
-            <label for="selected_month">Mês:</label>
-            <input type="month" id="selected_month" name="selected_month">
-        </div>
-        
-        <div>
-            <label for="selected_category">Categoria:</label>
-            <select id="selected_category" name="selected_category">
-                <option value="">Todas as categorias</option>
-                {% for category in opcoes_fiis %}
-                    <option value="{{ category.0 }}">{{ category.1 }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        
-        <button type="submit">Filtrar</button>
-        <form action="{% url 'limpar_filtros' 'fiis' %}" method="get">
-            <button type="submit">Limpar Filtros</button>
-        </form>  
-    </form>
 
     <ul class="item-list">
         <li>
             <span><strong>TICKER</strong></span>
-            <span style="margin-left: 210px;"><strong>VALOR</strong></span>
-            <span style="margin-left: 220px;"><strong>CATEGORIA</strong></span>
-            <span style="margin-left: 185px;"><strong>ULTIMA COMPRA</strong></span>
-            <span style="margin-left: 205px;"><strong>DEL</strong></span>
+            <span><strong>TOTAL</strong></span>
+            <span><strong>CATEGORIA</strong></span>
+            <span style="padding-right: 30px;"><strong>ULTIMA COMPRA</strong></span>
         </li>
         {% for fii in page_obj %}
         <li class="item-fii">

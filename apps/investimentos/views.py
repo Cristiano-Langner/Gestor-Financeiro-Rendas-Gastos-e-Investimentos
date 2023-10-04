@@ -22,7 +22,7 @@ def acoes(request):
     else:
         form = process_form_invest(request, AcoesForm, Acoes, 'Ação registrada com sucesso!')
     context_view, acoes_cadastradas, invest_ticker_dict = investimento_view(request, Acoes)
-    total_acoes, acoes_cadastradas = filter_selections(request, acoes_cadastradas)
+    total_acoes = acoes_cadastradas.aggregate(total=Sum('valor'))['total']
     categorias = OpcoesAcoes.choices
     grafico = graph(categorias, acoes_cadastradas)
     acoes_cadastradas = acoes_cadastradas.order_by('-data')
@@ -52,14 +52,14 @@ def fiis(request):
     else:
         form = process_form_invest(request, FiisForm, Fiis, 'Fundo imobiliário registrado com sucesso!')
     context_view, fiis_cadastrados, invest_ticker_dict = investimento_view(request, Fiis)
-    total_fiis, fiis_cadastrados = filter_selections(request, fiis_cadastrados)
+    total_fiis = fiis_cadastrados.aggregate(total=Sum('valor'))['total']
     categorias = OpcoesFiis.choices
     grafico = graph(categorias, fiis_cadastrados)
     fiis_cadastrados = fiis_cadastrados.order_by('-data')
     paginator = Paginator(fiis_cadastrados, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    tickers_consolidados, tickers_consolidados_total = import_ativos(FiisConsolidadas)
+    tickers_consolidados, tickers_consolidados_total = import_ativos(request, FiisConsolidadas, Fiis)
     context = {
         'form': form,
         'fiis_cadastrados': fiis_cadastrados,
@@ -82,7 +82,7 @@ def bdrs(request):
     else:
         form = process_form_invest(request, BdrsForm, Bdrs, 'BDR registrado com sucesso!')
     context_view, bdrs_cadastrados, invest_ticker_dict = investimento_view(request, Bdrs)
-    total_bdrs, bdrs_cadastrados = filter_selections(request, bdrs_cadastrados)
+    total_bdrs = bdrs_cadastrados.aggregate(total=Sum('valor'))['total']
     categorias = OpcoesBdrs.choices
     grafico = graph(categorias, bdrs_cadastrados)
     bdrs_cadastrados = bdrs_cadastrados.order_by('-data')
@@ -112,7 +112,7 @@ def criptos(request):
     else:
         form = process_form_invest(request, CriptosForm, Criptos, 'Cripto moeda registrada com sucesso!')
     context_view, criptos_cadastradas, invest_ticker_dict = investimento_view(request, Criptos)
-    total_criptos, criptos_cadastradas = filter_selections(request, criptos_cadastradas)
+    total_criptos = criptos_cadastradas.aggregate(total=Sum('valor'))['total']
     categorias = OpcoesCriptos.choices
     grafico = graph(categorias, criptos_cadastradas)
     criptos_cadastradas = criptos_cadastradas.order_by('-data')
@@ -142,7 +142,7 @@ def rendafixa(request):
     else:
         form = process_form_invest(request, RendaFixaForm, RendasFixa, 'Renda fixa registrada com sucesso!')
     context_view, rendasfixa_cadastradas, invest_ticker_dict = investimento_view(request, RendasFixa)
-    total_rendasfixa, rendasfixa_cadastradas = filter_selections(request, rendasfixa_cadastradas)
+    total_rendasfixa = rendasfixa_cadastradas.aggregate(total=Sum('valor'))['total']
     categorias = OpcoesRendaFixa.choices
     grafico = graph(categorias, rendasfixa_cadastradas)
     rendasfixa_cadastradas = rendasfixa_cadastradas.order_by('-data')
@@ -166,7 +166,7 @@ def detalhes_ticker(request, tipo_investimento, ticker):
         messages.error(request, 'Usuário não logado')
         return redirect('login')
     else:
-        form = cadastrar_dividendo(request, ticker)
+        form = cadastrar_dividendo(request, ticker, tipo_investimento)
     dividendos_cadastrados = HistoricoDividendo.objects.filter(created_by=request.user, ticker=ticker)
     compras_cadastradas = HistoricoCompra.objects.filter(created_by=request.user, ticker=ticker)
     dividendos_cadastrados = dividendos_cadastrados.order_by('-data')
@@ -206,12 +206,13 @@ def process_form_invest(request, form_class, created_class, success_message):
             if ja_cadastrado:
                 ja_cadastrado.valor += valor_total
                 ja_cadastrado.quantidade += quantidade
-                ja_cadastrado.preco_medio = (ja_cadastrado.preco_medio + preco_medio)/2
+                ja_cadastrado.preco_medio = ((ja_cadastrado.valor)/ja_cadastrado.quantidade)
                 if data > ja_cadastrado.data: ja_cadastrado.data = data
                 ja_cadastrado.save(user=request.user)
                 historico_compra = HistoricoCompra.objects.create(ticker=ticker, valor=valor_total, quantidade=quantidade,
                                                     data=data, created_by=request.user)
                 historico_compra.save()
+                form = form_class()
                 messages.success(request, f'Compra do {ticker} adicionada.')
             else:
                 novo = created_class.objects.create(ticker=ticker, valor=valor_total, quantidade=quantidade,
@@ -226,7 +227,7 @@ def process_form_invest(request, form_class, created_class, success_message):
         form = form_class()
     return form
 
-def cadastrar_dividendo(request, ticker):
+def cadastrar_dividendo(request, ticker, tipo_investimento):
     if request.method == 'POST':
         form = DividendoForm(request.POST)
         if form.is_valid():
@@ -240,24 +241,13 @@ def cadastrar_dividendo(request, ticker):
             )
             novo_dividendo.save()
             messages.success(request, 'Dividendo registrado com sucesso!')
+        if tipo_investimento == 'fiis':
+            ativo_cadastrado = Fiis.objects.filter(ticker=ticker, created_by=request.user).first()
+            ativo_cadastrado.dividendo = ativo_cadastrado.dividendo + valor
+            ativo_cadastrado.save(user=request.user)
     else:
         form = DividendoForm()
     return form
-
-#Função para filtrar os dados de acordo com o solicitado na página.
-def filter_selections(request, name_cadastrado_categoria):
-    selected_month = request.GET.get('selected_month')
-    selected_category = request.GET.get('selected_category')
-    filters ={'created_by': request.user}
-    if selected_month:
-        selected_month_date = datetime.strptime(selected_month, '%Y-%m')
-        filters['data__year'] = selected_month_date.year
-        filters['data__month'] = selected_month_date.month
-    if selected_category:
-        filters['categoria'] = selected_category
-    name_cadastrado_categoria = name_cadastrado_categoria.filter(**filters)
-    total = name_cadastrado_categoria.aggregate(total=Sum('valor'))['total']
-    return total, name_cadastrado_categoria
 
 #Função calcula os valores que foram investidos, recebidos e somados de cada ativo financeiro.
 def investimentos_total_view(request):
@@ -472,7 +462,7 @@ def salvar_consolidacao(request, consolidar, class_name):
             )
             consolidado.save(user=request.user)
 
-def import_ativos(db):
+def import_ativos(request, db, class_name):
     ativos = db.objects.all()
     dicionario_tabela = {}
     dicionario_tabela_total = {}
@@ -486,7 +476,9 @@ def import_ativos(db):
         quantidade = ativo.quantidade
         dividendo = ativo.dividendo
         preco_medio = ativo.preco_medio
-        lucro = ativo.lucro
+        ativo_class = class_name.objects.filter(ticker=ticker, created_by=request.user).first()
+        dividendo_ticker = ativo_class.dividendo
+        lucro = ativo.lucro + dividendo_ticker
         dados_ativo = {
             'valor': valor,
             'quantidade': quantidade,
@@ -540,8 +532,8 @@ def delete_rendafixa(request, rendafixa_id):
     messages.success(request, 'Renda fixa deletada com sucesso!')
     return redirect('rendasfixa')
 
-def delete_div(request, div_id):
+def delete_div(request, tipo_investimento, ticker, div_id,):
     dividendo = get_object_or_404(HistoricoDividendo, pk=div_id)
     dividendo.delete()
     messages.success(request, 'Dividendo deletado com sucesso!')
-    return redirect('detalhes_ticker')
+    return redirect('detalhes_ticker', tipo_investimento, ticker)

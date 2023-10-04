@@ -14,30 +14,7 @@
             <button type="submit">Cadastrar BDR</button>
         </div>
     </form>
-    
-    <form method="get" class="filter-form">
-        <div>
-            <label for="selected_month">Mês:</label>
-            <input type="month" id="selected_month" name="selected_month">
-        </div>
-        
-        <div>
-            <label for="selected_category">Categoria:</label>
-            <select id="selected_category" name="selected_category">
-                <option value="">Todas as categorias</option>
-                {% for category in opcoes_bdrs %}
-                    <option value="{{ category.0 }}">{{ category.1 }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        
-        <button type="submit">Filtrar</button>
-        <form action="{% url 'limpar_filtros' 'bdrs' %}" method="get">
-            <button type="submit">Limpar Filtros</button>
-        </form>  
-    </form>
 
-    <h2>BDRs cadastrados</h2>
     <ul class="item-list">
         <li>
             <span><strong>TICKER</strong></span>

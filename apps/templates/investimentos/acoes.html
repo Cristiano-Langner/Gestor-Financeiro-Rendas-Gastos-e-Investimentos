@@ -14,30 +14,7 @@
             <button type="submit">Cadastrar Ação</button>
         </div>
     </form> 
-    
-    <form method="get" class="filter-form">
-        <div>
-            <label for="selected_month">Mês:</label>
-            <input type="month" id="selected_month" name="selected_month">
-        </div>
-        
-        <div>
-            <label for="selected_category">Categoria:</label>
-            <select id="selected_category" name="selected_category">
-                <option value="">Todas as categorias</option>
-                {% for category in opcoes_acoes %}
-                    <option value="{{ category.0 }}">{{ category.1 }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        
-        <button type="submit">Filtrar</button>
-        <form action="{% url 'limpar_filtros' 'acoes' %}" method="get">
-            <button type="submit">Limpar Filtros</button>
-        </form>   
-    </form>
 
-    <h2 style="margin: 8px 40px;">AÇÕES CADASTRADAS</h2>
     <ul class="item-list">
         <li>
             <span><strong>TICKER</strong></span>
