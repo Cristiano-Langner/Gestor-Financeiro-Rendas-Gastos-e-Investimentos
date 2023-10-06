@@ -30,7 +30,7 @@
             <span>{{ fii.data|date:"d-m-Y" }}</span>
             <form action="{% url 'delete_fii' fii.id %}" method="post">
                 {% csrf_token %}
-                <button type="submit" onclick="return confirm('Tem certeza que deseja deletar esse fii?')">X</button>
+                <button type="submit" onclick="return confirm('Tem certeza que deseja deletar esse fii? Todos os dados vinculados também serão excluídos.')">X</button>
             </form>
         </li>
         {% endfor %}

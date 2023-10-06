@@ -9,31 +9,85 @@
 <div class="pagina">
     {% include 'shared/consolidar_carteira.html' %}
     <div class="container">
-        <div class="box">
-            <h2>Rendas totais</h2>
-            <p>Total: R$ {{ context_renda_gasto.renda_total|floatformat:2 }}</p>
-            <p>Saldo: <span class="{% if context_renda_gasto.saldo_total >= 0 %}positive{% else %}negative{% endif %}">
-                R$ {{ context_renda_gasto.saldo_total|floatformat:2 }}
-                </span>
-            </p>
-        </div>
-    </div>
-    <div class="container">
-        <div class="box">
-            <h2>Rendas totais</h2>
-            <p>Total: R$ {{ context_renda_gasto.renda_total|floatformat:2 }}</p>
-            <p>Saldo: <span class="{% if context_renda_gasto.saldo_total >= 0 %}positive{% else %}negative{% endif %}">
-                R$ {{ context_renda_gasto.saldo_total|floatformat:2 }}
-                </span>
-            </p>
-        </div>
-        <div class="box">
-            <h2>Gastos totais</h2>
-            <p>Total: R$ {{ context_renda_gasto.gasto_total|floatformat:2 }}</p>
-        </div>
+        <table>
+            <thead>
+                <tr>
+                <th>Rendas Totais</th>
+                <th>Gastos Totais</th>
+                <th>Saldo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="font-weight: normal;">R$ {{ context_renda_gasto.renda_total }}</td>
+                    <td>R$ {{ context_renda_gasto.gasto_total }}</td>
+                    <td><span class="{% if context_renda_gasto.saldo_total >= 0 %}positive{% else %}negative{% endif %}">
+                        R$ {{ context_renda_gasto.saldo_total }}
+                        </span>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
-    {% include 'shared/script_grafico_index.html' %}
+    <div class="container">
+        <table>
+            <thead>
+                <tr>
+                <th>Investimento</th>
+                <th>Valor Atual</th>
+                <th>Valor Aplicado</th>
+                <th>Dividendos</th>
+                <th>Lucro</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Ações</td>
+                    <td><span class="{% if context_investimentos.investido_acoes_consolidado >= context_investimentos.investido_acoes %}positive{% else %}negative{% endif %}">
+                        R$ {{ context_investimentos.investido_acoes_consolidado|floatformat:2 }}</td>
+                    </span>
+                    <td>R$ {{ context_investimentos.investido_acoes|floatformat:2 }}</td>
+                    <td>R$ {{ context_investimentos.dividendo_acoes|floatformat:2 }}</td>
+                    <td><span class="{% if context_investimentos.lucro_acao >= 0 %}positive{% else %}negative{% endif %}">
+                        R$ {{ context_investimentos.lucro_acao|floatformat:2 }}</td>
+                    </span>
+                </tr>
+                <tr>
+                    <td>FIIs</td>
+                    <td><span class="{% if context_investimentos.investido_fiis_consolidado >= context_investimentos.investido_fiis %}positive{% else %}negative{% endif %}">
+                        R$ {{ context_investimentos.investido_fiis_consolidado|floatformat:2 }}</td>
+                    </span>
+                    <td>R$ {{ context_investimentos.investido_fiis|floatformat:2 }}</td>
+                    <td>R$ {{ context_investimentos.dividendo_fiis|floatformat:2 }}</td>
+                    <td><span class="{% if context_investimentos.lucro_fii >= 0 %}positive{% else %}negative{% endif %}">
+                        R$ {{ context_investimentos.lucro_fii|floatformat:2 }}</td>
+                    </span>
+                </tr>
+                <tr>
+                    <td>BDRs</td>
+                    <td><span class="{% if context_investimentos.investido_bdrs_consolidado >= context_investimentos.investido_bdrs %}positive{% else %}negative{% endif %}">
+                        R$ {{ context_investimentos.investido_bdrs_consolidado|floatformat:2 }}</td>
+                    </span>
+                    <td>R$ {{ context_investimentos.investido_bdrs|floatformat:2 }}</td>
+                    <td>R$ {{ context_investimentos.dividendo_bdrs|floatformat:2 }}</td>
+                    <td><span class="{% if context_investimentos.lucro_bdr >= 0 %}positive{% else %}negative{% endif %}">
+                        R$ {{ context_investimentos.lucro_bdr|floatformat:2 }}</td>
+                    </span>
+                </tr>
+                <tr>
+                    <td>Criptos</td>
+                    <td><span class="{% if context_investimentos.investido_criptos_consolidado >= context_investimentos.investido_criptos %}positive{% else %}negative{% endif %}">
+                        R$ {{ context_investimentos.investido_criptos_consolidado|floatformat:2 }}</td>
+                    </span>
+                    <td>R$ {{ context_investimentos.investido_criptos|floatformat:2 }}</td>
+                    <td>R$ {{ context_investimentos.dividendo_criptos|floatformat:2 }}</td>
+                    <td><span class="{% if context_investimentos.lucro_cripto >= 0 %}positive{% else %}negative{% endif %}">
+                        R$ {{ context_investimentos.lucro_cripto|floatformat:2 }}</td>
+                    </span>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
 </div>
 {% include 'shared/footer.html' %}

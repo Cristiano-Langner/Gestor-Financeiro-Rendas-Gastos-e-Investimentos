@@ -1,6 +1,6 @@
 from apps.rendas_gastos.forms import GastosForm, RendasForm, OpcoesRendas, OpcoesGastos, MetodoPagamento
 from django.shortcuts import render, redirect, get_object_or_404
-from apps.investimentos.views import investimentos_total_view
+from apps.investimentos.views import investimentos_total_view 
 from apps.rendas_gastos.utils import check_authentication
 from apps.rendas_gastos.models import Rendas, Gastos
 from django.http import HttpResponseRedirect
@@ -17,17 +17,9 @@ def index(request):
     else:
         context_investimentos = investimentos_total_view(request)
         context_renda_gasto = rendas_gastos_view_total(request)
-        rendas_cadastradas = Rendas.objects.filter(created_by=request.user)
-        categorias_renda = OpcoesRendas.choices
-        grafico_renda = graph(categorias_renda, rendas_cadastradas)
-        gastos_cadastrados = Gastos.objects.filter(created_by=request.user)
-        categorias_gasto = OpcoesGastos.choices
-        grafico_gasto = graph(categorias_gasto, gastos_cadastrados)
         context = {
             'context_renda_gasto': context_renda_gasto,
-            'context_investimentos': context_investimentos,
-            'grafico_renda': grafico_renda,
-            'grafico_gasto': grafico_gasto
+            'context_investimentos': context_investimentos
         }
         return render(request, 'index.html', context)
 

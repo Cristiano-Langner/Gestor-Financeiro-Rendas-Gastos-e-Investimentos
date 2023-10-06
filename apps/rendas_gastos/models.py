@@ -1,8 +1,8 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth.models import User
+from django.utils import timezone
 from django.db import models
 from decimal import Decimal
-from datetime import date
-from django.contrib.auth.models import User
-from django.core.validators import MinValueValidator, MaxValueValidator
 
 class MetodoPagamento(models.TextChoices):
     DEPÓSITO = "Depósito"
@@ -45,7 +45,7 @@ class OpcoesGastos(models.TextChoices):
     
 class BaseTransaction(models.Model):
     valor = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), validators=[MinValueValidator(Decimal('0.00'))])
-    data = models.DateField(null=False, blank=False, validators=[MaxValueValidator(date.today())], default=date.today())
+    data = models.DateField(null=False, blank=False, default=timezone.now)
     metodo_pagamento = models.CharField(max_length=100, choices=MetodoPagamento.choices, default=MetodoPagamento.OUTROS)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_created_by')
     modified_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_modified_by')

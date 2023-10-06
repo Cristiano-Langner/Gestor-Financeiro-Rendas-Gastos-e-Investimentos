@@ -1,8 +1,8 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth.models import User
+from django.utils import timezone
 from django.db import models
 from decimal import Decimal
-from datetime import date
-from django.contrib.auth.models import User
-from django.core.validators import MinValueValidator, MaxValueValidator
     
 class OpcoesAcoes(models.TextChoices):
     ORDINARIAS = "Ordinárias"
@@ -68,7 +68,7 @@ class BaseTransaction(models.Model):
     quantidade = models.DecimalField(max_digits=14, decimal_places=8, default=0.0)
     dividendo = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), validators=[MinValueValidator(Decimal('0.00'))])
     preco_medio = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), validators=[MinValueValidator(Decimal('0.00'))])
-    data = models.DateField(null=False, blank=False, validators=[MaxValueValidator(date.today())], default=date.today())
+    data = models.DateField(null=False, blank=False, default=timezone.now)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_created_by')
     modified_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_modified_by')
     def save(self, user=None, *args, **kwargs):
@@ -123,7 +123,7 @@ class HistoricoCompra(models.Model):
     ticker = models.CharField(max_length=10)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
     quantidade = models.PositiveIntegerField()
-    data = models.DateField()
+    data = models.DateField(null=False, blank=False, default=timezone.now)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_created_by')
     modified_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_modified_by')
     def __str__(self):
@@ -132,7 +132,7 @@ class HistoricoCompra(models.Model):
 class HistoricoDividendo(models.Model):
     ticker = models.CharField(max_length=10)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
-    data = models.DateField()
+    data = models.DateField(null=False, blank=False, default=timezone.now)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_created_by')
     modified_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_modified_by')
     def __str__(self):
