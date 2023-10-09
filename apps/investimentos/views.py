@@ -247,44 +247,48 @@ def cadastrar_dividendo(request, ticker, tipo_investimento):
 #Função calcula os valores que foram investidos, recebidos e somados de cada ativo financeiro.
 def investimentos_total_view(request):
     investido_acoes_user = Acoes.objects.filter(created_by=request.user)
-    investido_acoes = sum(acao.valor for acao in investido_acoes_user)
-    dividendo_acoes = sum(acao.dividendo for acao in investido_acoes_user)
-    total_acoes = investido_acoes + dividendo_acoes
+    investido_acoes = round(sum(float(acao.valor) for acao in investido_acoes_user), 2)
+    dividendo_acoes = round(sum(float(acao.dividendo) for acao in investido_acoes_user), 2)
+    total_acoes = round(investido_acoes + dividendo_acoes, 2)
     investido_fiis_user = Fiis.objects.filter(created_by=request.user)
-    investido_fiis = sum(fii.valor for fii in investido_fiis_user)
-    dividendo_fiis = sum(fii.dividendo for fii in investido_fiis_user)
-    total_fiis = investido_fiis + dividendo_fiis
+    investido_fiis = round(sum(float(fii.valor) for fii in investido_fiis_user), 2)
+    dividendo_fiis = round(sum(float(fii.dividendo) for fii in investido_fiis_user), 2)
+    total_fiis = round(investido_fiis + dividendo_fiis, 2)
     investido_bdrs_user = Bdrs.objects.filter(created_by=request.user)
-    investido_bdrs = sum(bdr.valor for bdr in investido_bdrs_user)
-    dividendo_bdrs = sum(bdr.dividendo for bdr in investido_bdrs_user)
-    total_bdrs = investido_bdrs = dividendo_bdrs
+    investido_bdrs = round(sum(float(bdr.valor) for bdr in investido_bdrs_user), 2)
+    dividendo_bdrs = round(sum(float(bdr.dividendo) for bdr in investido_bdrs_user), 2)
+    total_bdrs = round(investido_bdrs + dividendo_bdrs, 2)
     investido_criptos_user = Criptos.objects.filter(created_by=request.user)
     dividendo_criptos = 0
     for ticker in investido_criptos_user:
         cotacao_consolidada = CriptosConsolidadas.objects.filter(ticker=ticker)
         if cotacao_consolidada is not None:
-            valor_reais = cotacao_consolidada.preco_medio * cotacao_consolidada.dividendo
+            valor_reais = round(float(cotacao_consolidada.preco_medio) * float(cotacao_consolidada.dividendo), 2)
         else:
-            valor_reais = investido_criptos_user.preco_medio & investido_criptos_user.dividendo
+            valor_reais = round(float(ticker.preco_medio) * float(ticker.dividendo), 2)
         dividendo_criptos += valor_reais
-    investido_criptos = sum(cripto.valor for cripto in investido_criptos_user)
-    total_criptos = investido_criptos + dividendo_criptos
+    investido_criptos = round(sum(float(cripto.valor) for cripto in investido_criptos_user), 2)
+    total_criptos = round(investido_criptos + dividendo_criptos, 2)
     investido_rendasfixa_user = RendasFixa.objects.filter(created_by=request.user)
-    investido_rendasfixa = sum(rendafixa.valor for rendafixa in investido_rendasfixa_user)
-    dividendo_rendasfixa = sum(rendafixa.dividendo for rendafixa in investido_rendasfixa_user)
-    total_rendasfixa = investido_rendasfixa + dividendo_rendasfixa
+    investido_rendasfixa = round(sum(float(rendafixa.valor) for rendafixa in investido_rendasfixa_user), 2)
+    dividendo_rendasfixa = round(sum(float(rendafixa.dividendo) for rendafixa in investido_rendasfixa_user), 2)
+    total_rendasfixa = round(investido_rendasfixa + dividendo_rendasfixa, 2)
     investido_acoes_consolidado_user = AcoesConsolidadas.objects.filter(created_by=request.user)
-    investido_acoes_consolidado = sum(acao.valor * acao.quantidade for acao in investido_acoes_consolidado_user)
+    investido_acoes_consolidado = round(sum(float(acao.valor) * float(acao.quantidade) for acao in investido_acoes_consolidado_user), 2)
     investido_fiis_consolidado_user = FiisConsolidadas.objects.filter(created_by=request.user)
-    investido_fiis_consolidado = sum(fii.valor * fii.quantidade for fii in investido_fiis_consolidado_user)
+    investido_fiis_consolidado = round(sum(float(fii.valor) * float(fii.quantidade) for fii in investido_fiis_consolidado_user), 2)
     investido_bdrs_consolidado_user = BdrsConsolidadas.objects.filter(created_by=request.user)
-    investido_bdrs_consolidado = sum(bdr.valor * bdr.quantidade for bdr in investido_bdrs_consolidado_user)
+    investido_bdrs_consolidado = round(sum(float(bdr.valor) * float(bdr.quantidade) for bdr in investido_bdrs_consolidado_user), 2)
     investido_criptos_consolidado_user = CriptosConsolidadas.objects.filter(created_by=request.user)
-    investido_criptos_consolidado = sum(cripto.valor * cripto.quantidade for cripto in investido_criptos_consolidado_user)
-    lucro_acao = (investido_acoes_consolidado - investido_acoes) + dividendo_acoes
-    lucro_fii = (investido_fiis_consolidado - investido_fiis) + dividendo_fiis
-    lucro_bdr = (investido_bdrs_consolidado - investido_bdrs) + dividendo_bdrs
-    lucro_cripto = (investido_criptos_consolidado - investido_criptos) + dividendo_criptos
+    investido_criptos_consolidado = round(sum(float(cripto.valor) * float(cripto.quantidade) for cripto in investido_criptos_consolidado_user), 2)
+    lucro_acao = round((investido_acoes_consolidado - investido_acoes) + dividendo_acoes, 2)
+    lucro_fii = round((investido_fiis_consolidado - investido_fiis) + dividendo_fiis, 2)
+    lucro_bdr = round((investido_bdrs_consolidado - investido_bdrs) + dividendo_bdrs, 2)
+    lucro_cripto = round((investido_criptos_consolidado - investido_criptos) + dividendo_criptos, 2)
+    total_lucro = round((lucro_acao + lucro_fii + lucro_bdr + lucro_cripto), 2)
+    total_dividendos = round(dividendo_acoes + dividendo_fiis + dividendo_bdrs + dividendo_criptos, 2)
+    total_comprado = round((investido_acoes + investido_fiis + investido_bdrs + investido_criptos), 2)
+    total_consolidado = round((investido_acoes_consolidado + investido_fiis_consolidado + investido_bdrs_consolidado + investido_criptos_consolidado), 2)
     context = {
         'investido_acoes': investido_acoes,
         'dividendo_acoes': dividendo_acoes,
@@ -308,7 +312,11 @@ def investimentos_total_view(request):
         'lucro_acao': lucro_acao,
         'lucro_fii': lucro_fii,
         'lucro_bdr': lucro_bdr,
-        'lucro_cripto': lucro_cripto
+        'lucro_cripto': lucro_cripto,
+        'total_lucro': total_lucro,
+        'total_dividendos': total_dividendos,
+        'total_comprado': total_comprado,
+        'total_consolidado': total_consolidado
     }
     return context
 

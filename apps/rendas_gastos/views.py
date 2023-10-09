@@ -153,14 +153,14 @@ def rendas_gastos_view(request):
 #Função para calcular os valores de renda, gasto e saldo de todo o período cadastrado.
 def rendas_gastos_view_total(request):
     rendas_usuario = Rendas.objects.filter(created_by=request.user)
-    renda_total = sum(renda.valor for renda in rendas_usuario)
+    renda_total = round(sum(float(renda.valor) for renda in rendas_usuario), 2)
     gastos_usuario = Gastos.objects.filter(created_by=request.user)
-    gasto_total = sum(gasto.valor for gasto in gastos_usuario)
-    saldo_total = renda_total - gasto_total
+    gasto_total = round(sum(float(gasto.valor) for gasto in gastos_usuario), 2)
+    saldo_total = round((renda_total - gasto_total), 2)
     context_total = {
-        'renda_total': renda_total,
-        'gasto_total': gasto_total,
-        'saldo_total': saldo_total, 
+        'Rendas': renda_total,
+        'Gastos': gasto_total,
+        'Saldo': saldo_total, 
     }
     return context_total
 

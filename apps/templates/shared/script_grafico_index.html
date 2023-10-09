@@ -1,0 +1,50 @@
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var rendas_gastos = {{ context_renda_gasto|safe }};
+        var labels_rendas_gastos = Object.keys(rendas_gastos);
+        var data_rendas_gastos = Object.values(rendas_gastos);
+        var context_investimentos = {{ context_investimentos|safe }};
+        var investido_acoes = context_investimentos.investido_acoes_consolidado;
+        var investido_fiis = context_investimentos.investido_fiis_consolidado;
+        var investido_bdrs = context_investimentos.investido_bdrs_consolidado;
+        var investido_criptos = context_investimentos.investido_criptos_consolidado;
+        var chartOptions = {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true
+                }
+            }
+        };
+        var Data_Rendas_Gastos = {
+            labels: labels_rendas_gastos,
+            datasets: [{
+                label: 'Grafico',
+                data: data_rendas_gastos,
+                backgroundColor: [
+                    'red', 'green', 'blue',
+                ]
+            }]
+        };
+        var ChartRendasGastos = new Chart(document.getElementById('grafico-rendas-gastos').getContext('2d'), {
+            type: 'pie',
+            data: Data_Rendas_Gastos,
+            options: chartOptions,
+        });
+        var Data_Investimentos = {
+            labels: ['Ações', 'Fundos Imobiliários', 'BDRs', 'Criptomoedas'],
+            datasets: [{
+                label: 'Grafico',
+                data: [investido_acoes, investido_fiis, investido_bdrs, investido_criptos],
+                backgroundColor: [
+                    'red', 'green', 'blue', 'purple',
+                ]
+            }]
+        };
+        var ChartInvestimentos = new Chart(document.getElementById('grafico-investimentos').getContext('2d'), {
+            type: 'pie',
+            data: Data_Investimentos,
+            options: chartOptions,
+        });
+    });
+</script>    

@@ -8,7 +8,7 @@
 </div>
 <div class="pagina">
     {% include 'shared/consolidar_carteira.html' %}
-    <div class="container">
+    <div class="container" style="margin: 50px auto 0px auto;">
         <table>
             <thead>
                 <tr>
@@ -19,17 +19,22 @@
             </thead>
             <tbody>
                 <tr>
-                    <td style="font-weight: normal;">R$ {{ context_renda_gasto.renda_total }}</td>
-                    <td>R$ {{ context_renda_gasto.gasto_total }}</td>
-                    <td><span class="{% if context_renda_gasto.saldo_total >= 0 %}positive{% else %}negative{% endif %}">
-                        R$ {{ context_renda_gasto.saldo_total }}
+                    <td style="font-weight: normal;">R$ {{ context_renda_gasto.Rendas }}</td>
+                    <td>R$ {{ context_renda_gasto.Gastos }}</td>
+                    <td><span class="{% if context_renda_gasto.Saldo >= 0 %}positive{% else %}negative{% endif %}">
+                        R$ {{ context_renda_gasto.Saldo }}
                         </span>
                 </tr>
             </tbody>
         </table>
     </div>
+    <div class="graficos-container-index">
+        <div class="grafico">
+            <canvas id="grafico-rendas-gastos"></canvas>
+        </div>
+    </div>
 
-    <div class="container">
+    <div class="container" style="margin: 50px auto 0px auto;">
         <table>
             <thead>
                 <tr>
@@ -85,11 +90,28 @@
                         R$ {{ context_investimentos.lucro_cripto|floatformat:2 }}</td>
                     </span>
                 </tr>
+                <tr>
+                    <td>Total</td>
+                    <td><span class="{% if context_investimentos.total_consolidado >= context_investimentos.total_comprado %}positive{% else %}negative{% endif %}">
+                        R$ {{ context_investimentos.total_consolidado|floatformat:2 }}</td>
+                    </span>
+                    <td>R$ {{ context_investimentos.total_comprado|floatformat:2 }}</td>
+                    <td>R$ {{ context_investimentos.total_dividendos|floatformat:2 }}</td>
+                    <td><span class="{% if context_investimentos.total_lucro >= 0 %}positive{% else %}negative{% endif %}">
+                        R$ {{ context_investimentos.total_lucro|floatformat:2 }}</td>
+                    </span>
+                </tr>
             </tbody>
         </table>
     </div>
+    <div class="graficos-container-index">
+        <div class="grafico">
+            <canvas id="grafico-investimentos"></canvas>
+        </div>
+    </div>
 
 </div>
+{% include 'shared/script_grafico_index.html' %}
 {% include 'shared/footer.html' %}
 <script src="{% static 'styles/modal_button.js' %}"></script>
 

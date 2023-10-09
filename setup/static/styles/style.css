@@ -114,8 +114,11 @@ ul li.item-menu a .icon > img{
 
 .form-cadastro input[type="text"],
 .form-cadastro input[type="number"],
+.form-cadastro input[type="date"],
+.form-cadastro input[type="password"],
+.form-cadastro input[type="email"],
 .form-cadastro select {
-    width: 150px;
+    width: 100%;
     padding: 8px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
@@ -131,46 +134,6 @@ ul li.item-menu a .icon > img{
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-}
-
-.form-cadastro input[type="date"] {
-    width: 150px;;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: white;
-}
-
-.form-cadastro input[type="date"]::-webkit-inner-spin-button,
-.form-cadastro input[type="date"]::-webkit-calendar-picker-indicator {
-    display: none;
-    -webkit-appearance: none;
-    appearance: none;
-}
-
-.form-cadastro input[type="date"]::-webkit-clear-button {
-    display: none;
-    -webkit-appearance: none;
-    appearance: none;
-}
-
-.form-cadastro input[type="password"] {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: white;
-}
-
-.form-cadastro input[type="email"] {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: white;
 }
 
 .form-columns {
@@ -291,8 +254,7 @@ ul li.item-menu a .icon > img{
 .graficos-container-index {
     display: flex;
     justify-content: space-between;
-    margin-top: 40px;
-    margin-left: 150px;
+    margin-left: 400px;
 }
 
 .grafico-index {
