@@ -1,6 +1,6 @@
+from apps.investimentos.forms import AcoesForm, FiisForm, BdrsForm, CriptosForm, RendaFixaForm, DividendoForm, VendaForm
 from apps.investimentos.models import Acoes, Fiis, Bdrs, Criptos, RendasFixa, HistoricoCompra, HistoricoDividendo
 from apps.investimentos.models import AcoesConsolidadas, FiisConsolidadas, BdrsConsolidadas, CriptosConsolidadas
-from apps.investimentos.forms import AcoesForm, FiisForm, BdrsForm, CriptosForm, RendaFixaForm, DividendoForm
 from apps.investimentos.forms import OpcoesAcoes, OpcoesBdrs, OpcoesCriptos, OpcoesFiis, OpcoesRendaFixa
 from django.shortcuts import render, redirect, get_object_or_404
 from apps.rendas_gastos.utils import check_authentication
@@ -26,7 +26,8 @@ def acoes(request):
     paginator = Paginator(acoes_cadastradas, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    tickers_consolidados,  tickers_consolidados_total= import_ativos(request, AcoesConsolidadas, Acoes)
+    tipo = "Acao"
+    tickers_consolidados,  tickers_consolidados_total= import_ativos(request, AcoesConsolidadas, Acoes, tipo)
     context = {
         'form': form,
         'acoes_cadastradas': acoes_cadastradas,
@@ -56,7 +57,8 @@ def fiis(request):
     paginator = Paginator(fiis_cadastrados, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    tickers_consolidados, tickers_consolidados_total = import_ativos(request, FiisConsolidadas, Fiis)
+    tipo = "FII"
+    tickers_consolidados, tickers_consolidados_total = import_ativos(request, FiisConsolidadas, Fiis, tipo)
     context = {
         'form': form,
         'fiis_cadastrados': fiis_cadastrados,
@@ -86,7 +88,8 @@ def bdrs(request):
     paginator = Paginator(bdrs_cadastrados, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    tickers_consolidados, tickers_consolidados_total = import_ativos(request, BdrsConsolidadas, Bdrs)
+    tipo = "BDR"
+    tickers_consolidados, tickers_consolidados_total = import_ativos(request, BdrsConsolidadas, Bdrs, tipo)
     context = {
         'form': form,
         'bdrs_cadastrados': bdrs_cadastrados,
@@ -116,7 +119,8 @@ def criptos(request):
     paginator = Paginator(criptos_cadastradas, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    tickers_consolidados, tickers_consolidados_total = import_ativos(request, CriptosConsolidadas, Criptos)
+    tipo = "Cripto"
+    tickers_consolidados, tickers_consolidados_total = import_ativos(request, CriptosConsolidadas, Criptos, tipo)
     context = {
         'form': form,
         'criptos_cadastradas': criptos_cadastradas,
@@ -244,6 +248,9 @@ def cadastrar_dividendo(request, ticker, tipo_investimento):
         form = DividendoForm()
     return form
 
+def cadastrar_venda(request):
+    pass
+
 #Função calcula os valores que foram investidos, recebidos e somados de cada ativo financeiro.
 def investimentos_total_view(request):
     investido_acoes_user = Acoes.objects.filter(created_by=request.user)
@@ -262,7 +269,7 @@ def investimentos_total_view(request):
     dividendo_criptos = 0
     for ticker in investido_criptos_user:
         cotacao_consolidada = CriptosConsolidadas.objects.filter(ticker=ticker)
-        if cotacao_consolidada is not None:
+        if cotacao_consolidada:
             valor_reais = round(float(cotacao_consolidada.preco_medio) * float(cotacao_consolidada.dividendo), 2)
         else:
             valor_reais = round(float(ticker.preco_medio) * float(ticker.dividendo), 2)
@@ -502,8 +509,8 @@ def salvar_consolidacao(request, consolidar, class_name):
             )
             consolidado.save(user=request.user)
 
-def import_ativos(request, db, class_name):
-    ativos = db.objects.all()
+def import_ativos(request, db, class_name, tipo):
+    ativos = db.objects.filter(created_by=request.user)
     dicionario_tabela = {}
     dicionario_tabela_total = {}
     total_valor = 0
@@ -513,7 +520,10 @@ def import_ativos(request, db, class_name):
     for ativo in ativos:
         ticker = ativo.ticker
         valor = ativo.valor
-        quantidade = ativo.quantidade
+        if tipo == "Cripto":
+            quantidade = Decimal(ativo.quantidade)
+        else:
+            quantidade = ativo.quantidade
         dividendo = ativo.dividendo
         preco_medio = ativo.preco_medio
         ativo_class = class_name.objects.filter(ticker=ticker, created_by=request.user).first()
@@ -546,6 +556,8 @@ def delete_acao(request, acao_id):
     historico_delete.delete()
     dividendos_delete = HistoricoDividendo.objects.filter(ticker=ticker)
     dividendos_delete.delete()
+    consolidadao_delete = AcoesConsolidadas.objects.filter(ticker=ticker)
+    consolidadao_delete.delete()
     messages.success(request, 'Ação deletada com sucesso!')
     return redirect('acoes')
 
@@ -558,6 +570,8 @@ def delete_fii(request, fii_id):
     historico_delete.delete()
     dividendos_delete = HistoricoDividendo.objects.filter(ticker=ticker)
     dividendos_delete.delete()
+    consolidadao_delete = FiisConsolidadas.objects.filter(ticker=ticker)
+    consolidadao_delete.delete()
     messages.success(request, 'Fundo imobiliário deletado com sucesso!')
     return redirect('fiis')
 
@@ -570,6 +584,8 @@ def delete_bdr(request, bdr_id):
     historico_delete.delete()
     dividendos_delete = HistoricoDividendo.objects.filter(ticker=ticker)
     dividendos_delete.delete()
+    consolidadao_delete = BdrsConsolidadas.objects.filter(ticker=ticker)
+    consolidadao_delete.delete()
     messages.success(request, 'BDR deletado com sucesso!')
     return redirect('bdrs')
 
@@ -582,6 +598,8 @@ def delete_cripto(request, cripto_id):
     historico_delete.delete()
     dividendos_delete = HistoricoDividendo.objects.filter(ticker=ticker)
     dividendos_delete.delete()
+    consolidadao_delete = CriptosConsolidadas.objects.filter(ticker=ticker)
+    consolidadao_delete.delete()
     messages.success(request, 'Cripto moeda deletada com sucesso!')
     return redirect('criptos')
 

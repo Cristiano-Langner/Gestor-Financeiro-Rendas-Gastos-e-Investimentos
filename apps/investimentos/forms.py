@@ -131,3 +131,27 @@ class DividendoForm(forms.Form):
             }
         )
     )
+    
+class VendaForm(forms.Form):
+    quantidade = forms.DecimalField(
+        label='Quantidade ',
+        required=True,
+        max_digits=14,
+        decimal_places=8,
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Ex.: 5.00'
+            }
+        )
+    )
+    data = forms.DateField(
+        label='Data do Dividendo',
+        widget=forms.DateInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Ex.: DD/MM/AAAA',
+                'type': 'date',
+            }
+        )
+    )

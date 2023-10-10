@@ -65,7 +65,7 @@ class OpcoesRendaFixa(models.TextChoices):
 class BaseTransaction(models.Model):
     ticker = models.CharField(max_length=10,null=False,blank=False)
     valor = models.DecimalField(max_digits=14, decimal_places=8, default=Decimal('0.00'))
-    quantidade = models.DecimalField(max_digits=14, decimal_places=8, default=0.0)
+    quantidade = models.IntegerField(default=0)
     dividendo = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), validators=[MinValueValidator(Decimal('0.00'))])
     preco_medio = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), validators=[MinValueValidator(Decimal('0.00'))])
     data = models.DateField(null=False, blank=False, default=timezone.now)
@@ -106,6 +106,7 @@ class Bdrs(BaseTransaction):
         verbose_name_plural = "BDRs"
 
 class Criptos(BaseTransaction):
+    quantidade = models.DecimalField(max_digits=14, decimal_places=8, default=0.0)
     categoria = models.CharField(max_length=100, choices=OpcoesCriptos.choices, default=OpcoesCriptos.OUTROS)
     def __str__(self):
         return f"Criptos [ticker={self.ticker}]"

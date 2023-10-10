@@ -223,8 +223,12 @@ ul li.item-menu a .icon > img{
     cursor: pointer;
 }
 
+.item-list li:hover {
+    background-color: #f0f0f0;
+}
+
 .item-list li form button:hover {
-    background-color: #c82333;
+    background-color: #ff0019;
 }
 
 .graficos-container {

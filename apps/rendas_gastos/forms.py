@@ -49,7 +49,7 @@ class RendasForm(BaseRendasGastos):
     
 class GastosForm(BaseRendasGastos):
     categoria = forms.ChoiceField(
-        label='Categoria: ',
+        label='Categoria ',
         choices=OpcoesGastos.choices,
         required=True,
         widget=forms.Select(

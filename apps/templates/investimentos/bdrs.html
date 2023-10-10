@@ -7,7 +7,7 @@
     {% include 'partials/_alertas.html' %}
 </div>
 <div class="pagina">
-    <form action="{% url 'bdrs' %}" method="POST" class="form-cadastro" style="max-width: 850px;">
+    <form action="{% url 'bdrs' %}" method="POST" class="form-cadastro" style="max-width: 870px;">
         {% csrf_token %}
         {% include 'shared/cadastro_template.html' %}
         <div style="text-align: center;">

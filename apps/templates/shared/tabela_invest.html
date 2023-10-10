@@ -18,12 +18,19 @@
             </span>
             <td>R$ {{ dados.preco_medio }}</td>
             <td>R$ {{ dados.dividendo }}</td>
-            <td> {{ dados.quantidade }}</td>
+            <td> 
+                {% if tipo_investimento == "criptos" %}
+                {{ dados.quantidade|floatformat:8 }}
+                {% else %}
+                {{ dados.quantidade }}
+                {% endif %}
+            </td>
             <td><span class="{% if dados.lucro >= 0 %}positive{% else %}negative{% endif %}">
                 R$ {{ dados.lucro }}</td>
             </span>
         </tr>
         {% endfor %}
+        {% if tipo_investimento != "criptos" %}
         <tr>
             <td>TOTAL</td>
             <td><span class="{% if tickers_consolidados_total.total_valor >= tickers_consolidados_total.total_preco_medio %}negative{% else %}positive{% endif %}">
@@ -37,5 +44,6 @@
                 R$ {{ tickers_consolidados_total.total_lucro }}</td>
             </span>
         </tr>
+        {% endif %}
     </tbody>
 </table>

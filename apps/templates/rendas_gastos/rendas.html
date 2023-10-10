@@ -7,7 +7,7 @@
     {% include 'partials/_alertas.html' %}
 </div>
 <div class="pagina">
-    <form action="{% url 'rendas' %}" method="POST" class="form-cadastro" style="max-width: 680px; margin-top: 40px;">
+    <form action="{% url 'rendas' %}" method="POST" class="form-cadastro" style="max-width: 610px; margin-top: 40px;">
         {% csrf_token %}
         {% include 'shared/cadastro_template.html' %}
         <div style="text-align: center;">
@@ -47,7 +47,6 @@
         </form>   
     </form>
 
-    <h2 style="margin: 8px 40px;">RENDAS CADASTRADAS:</h2>
     <ul class="item-list">
         <li>
             <span><strong>VALOR</strong></span>
