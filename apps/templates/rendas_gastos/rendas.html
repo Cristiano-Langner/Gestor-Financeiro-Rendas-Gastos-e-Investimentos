@@ -11,7 +11,7 @@
         {% csrf_token %}
         {% include 'shared/cadastro_template.html' %}
         <div style="text-align: center;">
-            <button type="submit">Cadastrar renda</button>
+            <button type="submit" class="botao-normal">Cadastrar renda</button>
         </div>
     </form>
 
@@ -47,28 +47,38 @@
         </form>   
     </form>
 
-    <ul class="item-list">
-        <li>
-            <span><strong>VALOR</strong></span>
-            <span><strong>CATEGORIA</strong></span>
-            <span><strong>PAGAMENTO</strong></span>
-            <span style="padding-right: 30px;"><strong>DATA</strong></span>
-        </li>
-        {% for renda in page_obj %}
-        <li>
-            <span>R$ {{ renda.valor|floatformat:2 }}</span>
-            <span>{{ renda.categoria }}</span>
-            <span>{{ renda.metodo_pagamento }}</span>
-            <span>{{ renda.data|date:"d-m-Y" }}</span>
-            <form action="{% url 'delete_renda' renda.id %}" method="post">
-                {% csrf_token %}
-                <button type="submit" onclick="return confirm('Tem certeza que deseja deletar essa renda?')">X</button>
-            </form>
-        </li>
-        {% endfor %}
-        <li><span style="font-weight: bold;">Total: R$ {{ total_rendas|floatformat:2 }}</span></li>
-    </ul>
-    {% include 'shared/pagination.html' %}
+    <table class="custom-table">
+        <thead>
+            <tr>
+                <th>VALOR</th>
+                <th>CATEGORIA</th>
+                <th>PAGAMENTO</th>
+                <th>DATA</th>
+                <th>DELETE</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for renda in page_obj %}
+            <tr>
+                <td>R$ {{ renda.valor|floatformat:2 }}</td>
+                <td>{{ renda.categoria }}</td>
+                <td>{{ renda.metodo_pagamento }}</td>
+                <td>{{ renda.data|date:"d-m-Y" }}</td>
+                <td style="text-align: center;">
+                    <form action="{% url 'delete_renda' renda.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="delete-button" onclick="return confirm('Tem certeza que deseja deletar essa renda?')">X</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="5" style="font-weight: bold;">Total: R$ {{ total_rendas|floatformat:2 }}</td>
+            </tr>
+        </tbody>
+    </table>    
+    <div style="margin-left: 230px;">{% include 'shared/pagination.html' %}</div>
+    
     <div class="container">
         <div class="box">
             <h2>Rendas do mês atual</h2>

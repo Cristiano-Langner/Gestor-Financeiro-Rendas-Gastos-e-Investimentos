@@ -1,4 +1,4 @@
-<table>
+<table class="custom-table">
     <thead>
         <tr>
         <th>Ticker</th>
@@ -33,10 +33,7 @@
         {% if tipo_investimento != "criptos" %}
         <tr>
             <td>TOTAL</td>
-            <td><span class="{% if tickers_consolidados_total.total_valor >= tickers_consolidados_total.total_preco_medio %}negative{% else %}positive{% endif %}">
-                R$ {{ tickers_consolidados_total.total_valor }}</td>
-            </span>
-            </td>
+            <td> - </td>
             <td> - </td>
             <td>R$ {{ tickers_consolidados_total.total_dividendos }}</td>
             <td> - </td>

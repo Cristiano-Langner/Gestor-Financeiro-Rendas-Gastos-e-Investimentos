@@ -11,32 +11,44 @@
         {% csrf_token %}
         {% include 'shared/cadastro_template.html' %}
         <div style="text-align: center;">
-            <button type="submit">Cadastrar BDR</button>
+            <button type="submit" name="compra" class="botao-compra">Cadastrar Compra</button>
+            <button type="submit" name="venda" class="botao-venda">Cadastrar Venda</button>
         </div>
     </form>
 
-    <ul class="item-list">
-        <li>
-            <span><strong>TICKER</strong></span>
-            <span><strong>TOTAL</strong></span>
-            <span><strong>CATEGORIA</strong></span>
-            <span style="padding-right: 30px;"><strong>ULTIMA COMPRA</strong></span>
-        </li>
-        {% for bdr in page_obj %}
-        <li class="item-fii">
-            <span>{{ bdr.ticker }}</span>
-            <span>R$ {{ bdr.valor|floatformat:2 }}</span>
-            <span>{{ bdr.categoria }}</span>
-            <span>{{ bdr.data|date:"d-m-Y" }}</span>
-            <form action="{% url 'delete_bdr' bdr.id %}" method="post">
-                {% csrf_token %}
-                <button type="submit" onclick="return confirm('Tem certeza que deseja deletar esse BDR? Todos os dados vinculados também serão excluídos.')">X</button>
-            </form>
-        </li>
-        {% endfor %}
-        <li><span>Total: R$ {{ total_bdrs|floatformat:2 }}</span></li>
-    </ul>
-    {% include 'shared/pagination.html' %}
+    <table class="custom-table">
+        <thead>
+            <tr>
+                <th>TICKER</th>
+                <th>TOTAL</th>
+                <th>CATEGORIA</th>
+                <th>ULTIMA COMPRA</th>
+                <th>DELETE</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bdr in page_obj %}
+            <tr class="item-fii">
+                <td>{{ bdr.ticker }}</td>
+                <td>R$ {{ bdr.valor|floatformat:2 }}</td>
+                <td>{{ bdr.categoria }}</td>
+                <td>{{ bdr.data|date:"d-m-Y" }}</td>
+                <td style="text-align: center;">
+                    <form action="{% url 'delete_bdr' bdr.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="delete-button" onclick="return confirm('Tem certeza que deseja deletar esse BDR? Todos os dados vinculados também serão excluídos.')">X</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="3">Total:</td>
+                <td>R$ {{ total_bdrs|floatformat:2 }}</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>    
+    <div style="margin-left: 230px;">{% include 'shared/pagination.html' %}</div>
 
     <div class="container">
         <div class="box">

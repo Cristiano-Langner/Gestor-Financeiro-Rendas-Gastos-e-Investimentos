@@ -33,9 +33,7 @@
         datasets: [{
             label: 'Grafico',
             data: data_compra,
-            backgroundColor: [
-            'blue',
-            ]
+            backgroundColor: data_compra.map(value => value < 0 ? 'red' : 'blue')
         }]
     };
     var ChartCompra = new Chart(document.getElementById('grafico-compra').getContext('2d'), {

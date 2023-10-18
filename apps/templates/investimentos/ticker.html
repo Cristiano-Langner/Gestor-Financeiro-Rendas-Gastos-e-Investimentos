@@ -11,28 +11,37 @@
         {% csrf_token %}
         {% include 'shared/cadastro_template.html' %}
         <div style="text-align: center;">
-            <button type="submit">Cadastrar Dividendo</button>
+            <button type="submit" class="botao-normal">Cadastrar Dividendo</button>
         </div>
     </form>
 
-    <ul class="item-list" style="width: 500px; margin-left: 365px;">
-        <li>
-            <span><strong>VALOR</strong></span>
-            <span><strong>DATA</strong></span>
-        </li>
-        {% for div in page_obj %}
-        <li>
-            <span>R$ {{ div.valor|floatformat:2 }}</span>
-            <span>{{ div.data|date:"d-m-Y" }}</span>
-            <form action="{% url 'delete_div' tipo_investimento=tipo_investimento ticker=ticker div_id=div.id%}" method="post">
-                {% csrf_token %}
-                <button type="submit" onclick="return confirm('Tem certeza que deseja deletar esse dividendo?')">X</button>
-            </form>
-        </li>
-        {% endfor %}
-        <li><span style="font-weight: bold;">Total dividendos: R$ {{ total_div|floatformat:2 }}</span></li>
-    </ul>
-    <div style="margin-left: 365px;"> {% include 'shared/pagination.html' %} </div>
+    <table class="custom-table" style="width: 500px; margin-left: 365px;">
+        <thead>
+            <tr>
+                <th>VALOR</th>
+                <th>DATA</th>
+                <th>DELETE</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for div in page_obj %}
+            <tr>
+                <td>R$ {{ div.valor|floatformat:2 }}</td>
+                <td>{{ div.data|date:"d-m-Y" }}</td>
+                <td style="text-align: center;">
+                    <form action="{% url 'delete_div' tipo_investimento=tipo_investimento ticker=ticker div_id=div.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="delete-button" onclick="return confirm('Tem certeza que deseja deletar esse dividendo?')">X</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="3" style="font-weight: bold;">Total dividendos: R$ {{ total_div|floatformat:2 }}</td>
+            </tr>
+        </tbody>
+    </table>    
+    <div style="margin-left: 325px;"> {% include 'shared/pagination.html' %} </div>
 
     <div class="graficos-container">
         <div class="grafico">

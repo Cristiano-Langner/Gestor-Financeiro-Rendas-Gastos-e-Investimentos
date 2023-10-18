@@ -126,7 +126,7 @@ ul li.item-menu a .icon > img{
     background-color: white;
 }
 
-.form-cadastro button[type="submit"] {
+.botao-normal[type="submit"] {
     background-color: #032549;
     color: white;
     padding: 10px 20px;
@@ -134,6 +134,34 @@ ul li.item-menu a .icon > img{
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+}
+
+.botao-compra {
+    background-color: #068106;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.botao-venda {
+    background-color: #b90505;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.botao-compra:hover {
+    background-color: #04A504;
+}
+
+.botao-venda:hover {
+    background-color: #d30404;
 }
 
 .form-columns {
@@ -195,47 +223,11 @@ ul li.item-menu a .icon > img{
     background-color: #032549;
 }
 
-.item-list {
-    list-style-type: none;
-    padding: 0;
-    margin-right: 10px;
-}
-
-.item-list li {
-    border-radius: 5px;
-    margin: 8px 40px;
-    padding: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.item-list li span {
-    flex: 1;
-}
-
-.item-list li form button {
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 5px 10px;
-    cursor: pointer;
-}
-
-.item-list li:hover {
-    background-color: #f0f0f0;
-}
-
-.item-list li form button:hover {
-    background-color: #ff0019;
-}
-
 .graficos-container {
     display: flex;
     justify-content: space-between;
     margin-bottom: 40px;
-    margin-left: 270px;
+    margin-left: 250px;
 }
 
 .grafico {
@@ -249,6 +241,19 @@ ul li.item-menu a .icon > img{
     margin-top: 40px;
     margin-left: 150px;
     margin-right: 150px;
+}
+
+.delete-button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.delete-button:hover {
+    background-color: #ff0019;
 }
 
 .grafico-pie {
@@ -325,6 +330,7 @@ ul li.item-menu a .icon > img{
     font-size: 24px;
     color: #fff;
     margin: 0;
+    margin-left: 100px;
     font-weight: bold;
     text-transform: uppercase;
 }
@@ -423,12 +429,29 @@ li {
     margin-bottom: 8px; 
 }
 
-table {
+.custom-table {
     width: 700px;
     border-collapse: collapse;
     margin: 0 auto;
-    margin-bottom: 40px;
+    margin-bottom: 0px;
     margin-top: 20px;
+}
+
+.custom-table tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+.custom-table tr:nth-child(odd) {
+    background-color: #ebe6e6;
+}
+
+.custom-table tr:hover {
+    background-color: #d0d0d0;
+}
+
+thead {
+    background-color: #333;
+    color: black;
 }
 
 th {

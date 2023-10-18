@@ -1,6 +1,6 @@
-from apps.investimentos.forms import AcoesForm, FiisForm, BdrsForm, CriptosForm, RendaFixaForm, DividendoForm, VendaForm
 from apps.investimentos.models import Acoes, Fiis, Bdrs, Criptos, RendasFixa, HistoricoCompra, HistoricoDividendo
 from apps.investimentos.models import AcoesConsolidadas, FiisConsolidadas, BdrsConsolidadas, CriptosConsolidadas
+from apps.investimentos.forms import AcoesForm, FiisForm, BdrsForm, CriptosForm, RendaFixaForm, DividendoForm
 from apps.investimentos.forms import OpcoesAcoes, OpcoesBdrs, OpcoesCriptos, OpcoesFiis, OpcoesRendaFixa
 from django.shortcuts import render, redirect, get_object_or_404
 from apps.rendas_gastos.utils import check_authentication
@@ -204,25 +204,50 @@ def process_form_invest(request, form_class, created_class, success_message):
             preco_medio = valor if valor > 0 else 0
             valor_total = valor * quantidade
             ja_cadastrado = created_class.objects.filter(ticker=ticker, created_by=request.user).first()
-            if ja_cadastrado:
-                ja_cadastrado.valor += valor_total
-                ja_cadastrado.quantidade += quantidade
-                ja_cadastrado.preco_medio = ((ja_cadastrado.valor)/ja_cadastrado.quantidade)
-                if data > ja_cadastrado.data: ja_cadastrado.data = data
-                ja_cadastrado.save(user=request.user)
-                historico_compra = HistoricoCompra.objects.create(ticker=ticker, valor=valor_total, quantidade=quantidade,
-                                                    data=data, created_by=request.user)
-                historico_compra.save()
-                messages.success(request, f'Compra do {ticker} adicionada.')
-            else:
-                novo = created_class.objects.create(ticker=ticker, valor=valor_total, quantidade=quantidade,
-                                                    preco_medio=preco_medio, data=data,
-                                                    categoria=categoria, created_by=request.user)
-                novo.save(user=request.user)
-                historico_compra = HistoricoCompra.objects.create(ticker=ticker, valor=valor_total, quantidade=quantidade,
-                                                    data=data, created_by=request.user)
-                historico_compra.save()
-                messages.success(request, success_message)
+            if 'compra' in request.POST:
+                if ja_cadastrado:
+                    ja_cadastrado.valor += valor_total
+                    ja_cadastrado.quantidade += quantidade
+                    ja_cadastrado.preco_medio = ((ja_cadastrado.valor)/ja_cadastrado.quantidade)
+                    if data > ja_cadastrado.data: ja_cadastrado.data = data
+                    ja_cadastrado.save(user=request.user)
+                    historico_compra = HistoricoCompra.objects.create(ticker=ticker, valor=valor_total, quantidade=quantidade,
+                                                        data=data, created_by=request.user)
+                    historico_compra.save()
+                    messages.success(request, f'Compra do {ticker} adicionada.')
+                else:
+                    novo = created_class.objects.create(ticker=ticker, valor=valor_total, quantidade=quantidade,
+                                                        preco_medio=preco_medio, data=data,
+                                                        categoria=categoria, created_by=request.user)
+                    novo.save(user=request.user)
+                    historico_compra = HistoricoCompra.objects.create(ticker=ticker, valor=valor_total, quantidade=quantidade,
+                                                        data=data, created_by=request.user)
+                    historico_compra.save()
+                    messages.success(request, success_message)
+            if 'venda' in request.POST:
+                if ja_cadastrado:
+                    liquidou = ja_cadastrado.quantidade - quantidade
+                    if liquidou >= 0:
+                        if liquidou != 0:
+                            ja_cadastrado.valor -= valor_total
+                            ja_cadastrado.quantidade -= quantidade
+                            ja_cadastrado.preco_medio = ((ja_cadastrado.valor)/ja_cadastrado.quantidade)
+                        else:
+                            ja_cadastrado.valor = 0
+                            ja_cadastrado.quantidade = 0
+                            ja_cadastrado.preco_medio = 0
+                        if data > ja_cadastrado.data: ja_cadastrado.data = data
+                        ja_cadastrado.save(user=request.user)
+                        quantidade = quantidade*-1
+                        valor_total = valor_total*-1
+                        historico_compra = HistoricoCompra.objects.create(ticker=ticker, valor=valor_total, quantidade=quantidade,
+                                                            data=data, created_by=request.user)
+                        historico_compra.save()
+                        messages.success(request, f'Venda do {ticker} adicionada.')
+                    else:
+                        messages.error(request, "Quantidade de venda superior ao possuído! ")
+                else:
+                    messages.error(request, "Impossível registrar venda de um ativo não cadastrado! ")
     form = form_class()
     return form
 
@@ -240,16 +265,21 @@ def cadastrar_dividendo(request, ticker, tipo_investimento):
             )
             novo_dividendo.save()
             messages.success(request, 'Dividendo registrado com sucesso!')
-        if tipo_investimento == 'fiis':
+        if tipo_investimento == 'acoes':
+            ativo_cadastrado = Acoes.objects.filter(ticker=ticker, created_by=request.user).first()
+        elif tipo_investimento == 'fiis':
             ativo_cadastrado = Fiis.objects.filter(ticker=ticker, created_by=request.user).first()
-            ativo_cadastrado.dividendo = ativo_cadastrado.dividendo + valor
-            ativo_cadastrado.save(user=request.user)
+        elif tipo_investimento == 'bdrs':
+            ativo_cadastrado = Bdrs.objects.filter(ticker=ticker, created_by=request.user).first()
+        elif tipo_investimento == 'rendasfixa':
+            ativo_cadastrado = RendasFixa.objects.filter(ticker=ticker, created_by=request.user).first()
+        else:
+            ativo_cadastrado = Criptos.objects.filter(ticker=ticker, created_by=request.user).first()
+        ativo_cadastrado.dividendo = ativo_cadastrado.dividendo + valor
+        ativo_cadastrado.save(user=request.user)
     else:
         form = DividendoForm()
     return form
-
-def cadastrar_venda(request):
-    pass
 
 #Função calcula os valores que foram investidos, recebidos e somados de cada ativo financeiro.
 def investimentos_total_view(request):

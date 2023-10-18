@@ -123,7 +123,7 @@ class RendasFixa(BaseTransaction):
 class HistoricoCompra(models.Model):
     ticker = models.CharField(max_length=10)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
-    quantidade = models.PositiveIntegerField()
+    quantidade = models.IntegerField()
     data = models.DateField(null=False, blank=False, default=timezone.now)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_created_by')
     modified_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_modified_by')
