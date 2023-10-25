@@ -433,7 +433,7 @@ li {
     width: 700px;
     border-collapse: collapse;
     margin: 0 auto;
-    margin-bottom: 0px;
+    margin-bottom: 20px;
     margin-top: 20px;
 }
 
@@ -541,6 +541,7 @@ font-weight: normal;
     justify-content: center;
     align-items: center;
     z-index: 1;
+    border-radius: 10px;
 }
 
 .modal-content {
@@ -559,4 +560,25 @@ font-weight: normal;
     font-size: 22px;
     color: #080808;
     margin-top: 8px;
+}
+
+.carregando{
+    width: 60px;
+    height: 60px;
+    margin-left: 75px;
+    background-color: transparent;
+    display: block;
+    border: 12px solid red;
+    border-top: 12px solid transparent;
+    border-radius: 50%;
+    animation: loading 1s linear infinite;
+}
+
+@keyframes loading{
+    0%{
+        transform: rotate(0deg);
+    }
+    100%{
+        transform: rotate(360deg);
+    }
 }

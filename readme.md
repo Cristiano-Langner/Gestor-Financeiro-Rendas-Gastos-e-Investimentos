@@ -18,7 +18,7 @@ Sinta-se a vontade em utilizar e fazer suas próprias melhorias. É um projeto q
     ```bash
     pip install -r requirements.txt
 
-4. Agora crie as tabelas que representam os modelos do aplicativo:
+4. Crie as tabelas que representam os modelos do aplicativo:
     ```bash
     python manage.py makemigrations
 
@@ -26,7 +26,7 @@ Sinta-se a vontade em utilizar e fazer suas próprias melhorias. É um projeto q
     ```bash
     python manage.py migrate
 
-6. Agora será necessário criar o usuário. Insira o nome, email (não precisa ser real) e a senha. Caso apareça alguma mensagem de senha muito fraca ou muito parecida com o nome de usuário é só escolher "Y" ou mudar a senha a seu gosto.
+6. Agora será necessário criar o usuário. Insira o nome, email (não precisa ser real) e a senha. Caso apareça alguma mensagem de senha muito fraca ou muito parecida com o nome de usuário é só escolher "Y" ou mudar a senha a seu gosto:
     ```bash
     python manage.py createsuperuser
 

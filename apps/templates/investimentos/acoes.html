@@ -7,6 +7,11 @@
     {% include 'partials/_alertas.html' %}
 </div>
 <div class="pagina">
+
+    {% with tipo_investimento="acoes" %}
+    {% include 'shared/tabela_invest.html' %}
+    {% endwith %}
+
     <form action="{% url 'acoes' %}" method="POST" class="form-cadastro" style="max-width: 905px;">
         {% csrf_token %}
         {% include 'shared/cadastro_template.html' %}
@@ -86,10 +91,6 @@
     </div>
 
     {% include 'shared/script_grafico_invest.html' %}
-
-    {% with tipo_investimento="acoes" %}
-    {% include 'shared/tabela_invest.html' %}
-    {% endwith %}
     
 </div>
 {% include 'shared/footer.html' %}
