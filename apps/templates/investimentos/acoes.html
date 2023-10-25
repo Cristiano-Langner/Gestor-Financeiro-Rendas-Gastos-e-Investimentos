@@ -28,7 +28,7 @@
         </thead>
         <tbody>
             {% for acao in page_obj %}
-            <tr class="item-fii">
+            <tr>
                 <td>{{ acao.ticker }}</td>
                 <td>R$ {{ acao.valor|floatformat:2 }}</td>
                 <td>{{ acao.categoria }}</td>
@@ -61,17 +61,17 @@
             </p>
         </div>
     </div>
-    <div class="graficos-container">
-        <div class="grafico">
-            <h2>
-                Ações
-                <span class="info-icon">i
-                    <span class="info-text">Gráfico representando a soma possuída em cada ação.</span>
-                </span>
-            </h2>
-            <canvas id="grafico-ticker"></canvas>
+        <div class="graficos-container">
+            <div class="grafico">
+                <h2>
+                    Ações
+                    <span class="info-icon">i
+                        <span class="info-text">Gráfico representando a soma possuída em cada ação.</span>
+                    </span>
+                </h2>
+                <canvas id="grafico-ticker"></canvas>
+            </div>
         </div>
-    </div>
     <div class="graficos-container">
         <div class="grafico">
             <h2>

@@ -47,6 +47,17 @@
             </thead>
             <tbody>
                 <tr>
+                    <td>Renda Fixa</td>
+                    <td><span class="positive">
+                        R$ {{ context_investimentos.investido_rendasfixa|floatformat:2 }}</td>
+                    </span>
+                    <td>R$ {{ context_investimentos.investido_rendasfixa|floatformat:2 }}</td>
+                    <td>R$ {{ context_investimentos.dividendo_rendasfixa|floatformat:2 }}</td>
+                    <td><span class="positive">
+                        R$ {{ context_investimentos.dividendo_rendasfixa|floatformat:2 }}</td>
+                    </span>
+                </tr>
+                <tr>
                     <td>Ações</td>
                     <td><span class="{% if context_investimentos.investido_acoes_consolidado >= context_investimentos.investido_acoes %}positive{% else %}negative{% endif %}">
                         R$ {{ context_investimentos.investido_acoes_consolidado|floatformat:2 }}</td>
@@ -104,7 +115,7 @@
             </tbody>
         </table>
     </div>
-    <div class="graficos-container-index">
+    <div class="graficos-container-index" style="margin-bottom: 80px;">
         <div class="grafico">
             <canvas id="grafico-investimentos"></canvas>
         </div>

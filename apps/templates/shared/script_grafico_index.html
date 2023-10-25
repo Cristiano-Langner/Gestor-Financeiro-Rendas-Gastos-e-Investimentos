@@ -4,6 +4,7 @@
         var labels_rendas_gastos = Object.keys(rendas_gastos);
         var data_rendas_gastos = Object.values(rendas_gastos);
         var context_investimentos = {{ context_investimentos|safe }};
+        var investido_rendasfixa = context_investimentos.investido_rendasfixa;
         var investido_acoes = context_investimentos.investido_acoes_consolidado;
         var investido_fiis = context_investimentos.investido_fiis_consolidado;
         var investido_bdrs = context_investimentos.investido_bdrs_consolidado;
@@ -22,7 +23,7 @@
                 label: 'Grafico',
                 data: data_rendas_gastos,
                 backgroundColor: [
-                    'red', 'green', 'blue',
+                    'blue', 'red', 'green',
                 ]
             }]
         };
@@ -32,12 +33,12 @@
             options: chartOptions,
         });
         var Data_Investimentos = {
-            labels: ['Ações', 'Fundos Imobiliários', 'BDRs', 'Criptomoedas'],
+            labels: ['Renda Fixa', 'Ações', 'Fundos Imobiliários', 'BDRs', 'Criptomoedas'],
             datasets: [{
                 label: 'Grafico',
-                data: [investido_acoes, investido_fiis, investido_bdrs, investido_criptos],
+                data: [investido_rendasfixa, investido_acoes, investido_fiis, investido_bdrs, investido_criptos],
                 backgroundColor: [
-                    'red', 'green', 'blue', 'purple',
+                    'blue', 'red', 'green', 'purple', 'yellow',
                 ]
             }]
         };

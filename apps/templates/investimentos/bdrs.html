@@ -28,7 +28,7 @@
         </thead>
         <tbody>
             {% for bdr in page_obj %}
-            <tr class="item-fii">
+            <tr>
                 <td>{{ bdr.ticker }}</td>
                 <td>R$ {{ bdr.valor|floatformat:2 }}</td>
                 <td>{{ bdr.categoria }}</td>

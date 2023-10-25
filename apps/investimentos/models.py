@@ -160,7 +160,7 @@ class ConsolidacaoCarteira(models.Model):
         return ticker.upper()
     class Meta:
         abstract = True
-        
+
 class AcoesConsolidadas(ConsolidacaoCarteira):
     def __str__(self):
         return f"Ações consolidadas [ticker={self.ticker}]"
@@ -180,6 +180,7 @@ class BdrsConsolidadas(ConsolidacaoCarteira):
         verbose_name_plural = "Bdrs consolidados"
         
 class CriptosConsolidadas(ConsolidacaoCarteira):
+    quantidade = models.DecimalField(max_digits=10, decimal_places=8, default=Decimal('0.00000000'), validators=[MinValueValidator(Decimal('0.00000000'))])
     def __str__(self):
         return f"Criptos consolidadas [ticker={self.ticker}]"
     class Meta:

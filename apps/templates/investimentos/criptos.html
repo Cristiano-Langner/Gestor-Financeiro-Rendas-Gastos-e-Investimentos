@@ -28,7 +28,7 @@
         </thead>
         <tbody>
             {% for cripto in page_obj %}
-            <tr class="item-fii">
+            <tr>
                 <td>{{ cripto.ticker }}</td>
                 <td>R$ {{ cripto.valor|floatformat:2 }}</td>
                 <td>{{ cripto.categoria }}</td>

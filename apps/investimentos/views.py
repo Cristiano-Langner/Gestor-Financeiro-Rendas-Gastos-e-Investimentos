@@ -177,6 +177,9 @@ def detalhes_ticker(request, tipo_investimento, ticker):
     paginator = Paginator(dividendos_cadastrados, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    paginator_cv = Paginator(compras_cadastradas, 6)
+    page_number_cv = request.GET.get('page')
+    page_obj_cv = paginator_cv.get_page(page_number_cv)
     total_div = dividendos_cadastrados.aggregate(total=Sum('valor'))['total']
     total_compra = compras_cadastradas.aggregate(total=Sum('valor'))['total']
     context = {
@@ -186,6 +189,7 @@ def detalhes_ticker(request, tipo_investimento, ticker):
         'somados_por_mes': somados_por_mes,
         'somados_compras_por_mes': somados_compras_por_mes,
         'page_obj': page_obj,
+        'page_obj_cv': page_obj_cv,
         'total_div': total_div,
         'total_compra': total_compra
     }
@@ -283,6 +287,10 @@ def cadastrar_dividendo(request, ticker, tipo_investimento):
 
 #Função calcula os valores que foram investidos, recebidos e somados de cada ativo financeiro.
 def investimentos_total_view(request):
+    investido_rendasfixa_user = RendasFixa.objects.filter(created_by=request.user)
+    investido_rendasfixa = round(sum(float(rendafixa.valor) for rendafixa in investido_rendasfixa_user), 2)
+    dividendo_rendasfixa = round(sum(float(rendafixa.dividendo) for rendafixa in investido_rendasfixa_user), 2)
+    total_rendasfixa = round(investido_rendasfixa + dividendo_rendasfixa, 2)
     investido_acoes_user = Acoes.objects.filter(created_by=request.user)
     investido_acoes = round(sum(float(acao.valor) for acao in investido_acoes_user), 2)
     dividendo_acoes = round(sum(float(acao.dividendo) for acao in investido_acoes_user), 2)
@@ -306,10 +314,6 @@ def investimentos_total_view(request):
         dividendo_criptos += valor_reais
     investido_criptos = round(sum(float(cripto.valor) for cripto in investido_criptos_user), 2)
     total_criptos = round(investido_criptos + dividendo_criptos, 2)
-    investido_rendasfixa_user = RendasFixa.objects.filter(created_by=request.user)
-    investido_rendasfixa = round(sum(float(rendafixa.valor) for rendafixa in investido_rendasfixa_user), 2)
-    dividendo_rendasfixa = round(sum(float(rendafixa.dividendo) for rendafixa in investido_rendasfixa_user), 2)
-    total_rendasfixa = round(investido_rendasfixa + dividendo_rendasfixa, 2)
     investido_acoes_consolidado_user = AcoesConsolidadas.objects.filter(created_by=request.user)
     investido_acoes_consolidado = round(sum(float(acao.valor) * float(acao.quantidade) for acao in investido_acoes_consolidado_user), 2)
     investido_fiis_consolidado_user = FiisConsolidadas.objects.filter(created_by=request.user)
@@ -322,11 +326,14 @@ def investimentos_total_view(request):
     lucro_fii = round((investido_fiis_consolidado - investido_fiis) + dividendo_fiis, 2)
     lucro_bdr = round((investido_bdrs_consolidado - investido_bdrs) + dividendo_bdrs, 2)
     lucro_cripto = round((investido_criptos_consolidado - investido_criptos) + dividendo_criptos, 2)
-    total_lucro = round((lucro_acao + lucro_fii + lucro_bdr + lucro_cripto), 2)
-    total_dividendos = round(dividendo_acoes + dividendo_fiis + dividendo_bdrs + dividendo_criptos, 2)
-    total_comprado = round((investido_acoes + investido_fiis + investido_bdrs + investido_criptos), 2)
-    total_consolidado = round((investido_acoes_consolidado + investido_fiis_consolidado + investido_bdrs_consolidado + investido_criptos_consolidado), 2)
+    total_lucro = round((dividendo_rendasfixa + lucro_acao + lucro_fii + lucro_bdr + lucro_cripto), 2)
+    total_dividendos = round(dividendo_rendasfixa + dividendo_acoes + dividendo_fiis + dividendo_bdrs + dividendo_criptos, 2)
+    total_comprado = round((investido_rendasfixa + investido_acoes + investido_fiis + investido_bdrs + investido_criptos), 2)
+    total_consolidado = round((investido_rendasfixa + investido_acoes_consolidado + investido_fiis_consolidado + investido_bdrs_consolidado + investido_criptos_consolidado), 2)
     context = {
+        'investido_rendasfixa': investido_rendasfixa,
+        'dividendo_rendasfixa': dividendo_rendasfixa,
+        'total_rendasfixa': total_rendasfixa,
         'investido_acoes': investido_acoes,
         'dividendo_acoes': dividendo_acoes,
         'total_acoes': total_acoes,
@@ -644,4 +651,10 @@ def delete_div(request, tipo_investimento, ticker, div_id,):
     dividendo = get_object_or_404(HistoricoDividendo, pk=div_id)
     dividendo.delete()
     messages.success(request, 'Dividendo deletado com sucesso!')
+    return redirect('detalhes_ticker', tipo_investimento, ticker)
+
+def delete_cv(request, tipo_investimento, ticker, cv_id,):
+    cv = get_object_or_404(HistoricoCompra, pk=cv_id)
+    cv.delete()
+    messages.success(request, 'Compra/venda deletada com sucesso!')
     return redirect('detalhes_ticker', tipo_investimento, ticker)

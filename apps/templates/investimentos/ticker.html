@@ -55,6 +55,51 @@
             <canvas id="grafico-div"></canvas>
         </div>
     </div>
+
+    <table class="custom-table" style="width: 500px; margin-left: 365px;">
+        <thead>
+            <tr>
+                <th>VALOR</th>
+                <th>DATA</th>
+                <th>DELETE</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cv in page_obj_cv %}
+            <tr>
+                <td>R$ {{ cv.valor|floatformat:2 }}</td>
+                <td>{{ cv.data|date:"d-m-Y" }}</td>
+                <td style="text-align: center;">
+                    <form action="{% url 'delete_cv' tipo_investimento=tipo_investimento ticker=ticker cv_id=cv.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="delete-button" onclick="return confirm('Tem certeza que deseja deletar esta compra/venda?')">X</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="3" style="font-weight: bold;">Total: R$ {{ total_compra|floatformat:2 }}</td>
+            </tr>
+        </tbody>
+    </table>    
+    <div style="margin: 8px 40px; margin-left: 365px;">
+        <span>
+            {% if page_obj_cv.has_previous %}
+                <a href="?page=1{% if request.GET.selected_month %}&selected_month={{ request.GET.selected_month }}{% endif %}{% if request.GET.selected_category %}&selected_category={{ request.GET.selected_category }}{% endif %}{% if request.GET.selected_payment %}&selected_payment={{ request.GET.selected_payment }}{% endif %}">&laquo; primeira</a>
+                <a href="?page={{ page_obj_cv.previous_page_number }}{% if request.GET.selected_month %}&selected_month={{ request.GET.selected_month }}{% endif %}{% if request.GET.selected_category %}&selected_category={{ request.GET.selected_category }}{% endif %}{% if request.GET.selected_payment %}&selected_payment={{ request.GET.selected_payment }}{% endif %}">anterior</a>
+            {% endif %}
+            
+            <span>
+                Página {{ page_obj_cv.number }} de {{ page_obj_cv.paginator.num_pages }}.
+            </span>
+    
+            {% if page_obj_cv.has_next %}
+                <a href="?page={{ page_obj_cv.next_page_number }}{% if request.GET.selected_month %}&selected_month={{ request.GET.selected_month }}{% endif %}{% if request.GET.selected_category %}&selected_category={{ request.GET.selected_category }}{% endif %}{% if request.GET.selected_payment %}&selected_payment={{ request.GET.selected_payment }}{% endif %}">próxima</a>
+                <a href="?page={{ page_obj_cv.paginator.num_pages }}{% if request.GET.selected_month %}&selected_month={{ request.GET.selected_month }}{% endif %}{% if request.GET.selected_category %}&selected_category={{ request.GET.selected_category }}{% endif %}{% if request.GET.selected_payment %}&selected_payment={{ request.GET.selected_payment }}{% endif %}">última &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
     <div class="graficos-container">
         <div class="grafico">
             <h2>
