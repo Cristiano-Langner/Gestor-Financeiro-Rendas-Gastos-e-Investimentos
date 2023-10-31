@@ -16,37 +16,41 @@
         </div>
     </form>
 
-    <table class="custom-table">
-        <thead>
-            <tr>
-                <th>VALOR</th>
-                <th>CATEGORIA</th>
-                <th>ULTIMA COMPRA</th>
-                <th>DELETE</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for rendafixa in page_obj %}
-            <tr>
-                <td>R$ {{ rendafixa.valor|floatformat:2 }}</td>
-                <td>{{ rendafixa.categoria }}</td>
-                <td>{{ rendafixa.data|date:"d-m-Y" }}</td>
-                <td style="text-align: center;">
-                    <form action="{% url 'delete_rendafixa' rendafixa.id %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit" class="delete-button" onclick="return confirm('Tem certeza que deseja deletar essa renda fixa?')">X</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-            <tr>
-                <td colspan="2">Total:</td>
-                <td>R$ {{ total_rendasfixa|floatformat:2 }}</td>
-                <td></td>
-            </tr>
-        </tbody>
-    </table>    
-    <div style="margin-left: 230px;">{% include 'shared/pagination.html' %}</div>
+    {% with tipo_investimento="rendafixa" %}
+        <table class="custom-table" style="margin-bottom: 0px;">
+            <thead>
+                <tr>
+                    <th>Ticker</th>
+                    <th>Total</th>
+                    <th>Categoria</th>
+                    <th>Última compra</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rendafixa in page_obj %}
+                <tr>
+                    <td>{{ rendafixa.ticker }}</td>
+                    <td>R$ {{ rendafixa.valor|floatformat:2 }}</td>
+                    <td>{{ rendafixa.categoria }}</td>
+                    <td>{{ rendafixa.data|date:"d-m-Y" }}</td>
+                    <td style="text-align: center;">
+                        <form action="{% url 'delete_rendafixa' rendafixa.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="delete-button" onclick="return confirm('Tem certeza que deseja deletar essa renda fixa?')">X</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td>Total:</td>
+                    <td>R$ {{ total_rendasfixa|floatformat:2 }}</td>
+                    <td colspan="3"></td>
+                </tr>
+            </tbody>
+        </table>    
+        <div style="margin-left: 230px;">{% include 'shared/pagination.html' %}</div>
+    {% endwith %}
 
     <div class="container">
         <div class="box">
@@ -83,47 +87,6 @@
             <canvas id="grafico-cat"></canvas>
         </div>
     </div>
-
-    {% with tipo_investimento="rendafixa" %}
-        <table class="custom-table">
-            <thead>
-                <tr>
-                <th>Ticker</th>
-                <th>Preço atual</th>
-                <th>Média compra</th>
-                <th>Dividendos</th>
-                <th>Quantidade</th>
-                <th>Lucro</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for ticker, dados  in rendasfixa_cadastradas.items %}
-                <tr>
-                    <td><a href="/{{ tipo_investimento }}/{{ ticker }}">{{ ticker }}</td>
-                    <td><span class="{% if dados.valor >= dados.preco_medio %}positive{% else %}negative{% endif %}">
-                        R$ {{ dados.valor }}</td>
-                    </span>
-                    <td>R$ {{ dados.preco_medio }}</td>
-                    <td>R$ {{ dados.dividendo }}</td>
-                    <td> {{ dados.quantidade }}</td>
-                    <td><span class="{% if dados.lucro >= 0 %}positive{% else %}negative{% endif %}">
-                        R$ {{ dados.lucro }}</td>
-                    </span>
-                </tr>
-                {% endfor %}
-                <tr>
-                    <td>TOTAL</td>
-                    <td> - </td>
-                    <td> - </td>
-                    <td>R$ {{ tickers_consolidados_total.total_dividendos }}</td>
-                    <td> - </td>
-                    <td><span class="{% if tickers_consolidados_total.total_lucro >= 0 %}positive{% else %}negative{% endif %}">
-                        R$ {{ tickers_consolidados_total.total_lucro }}</td>
-                    </span>
-                </tr>
-            </tbody>
-        </table>
-    {% endwith %}
 
     {% include 'shared/script_grafico_invest.html' %}
 

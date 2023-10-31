@@ -6,7 +6,42 @@
     {% include 'partials/_alertas.html' %}
 </div>    
 <div class="pagina">
-    <a href="{% url 'logout' %}">Logout</a></p>
+    <div style="margin-bottom: 20px;">
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button class="consolidar-button">Logout</button>
+        </form>
+    </div>
+
+    <form method="POST" class="form-cadastro" style="max-width: 400px;">
+        {% csrf_token %}
+        <div>
+            {% for field in form.visible_fields %}
+            <div>
+                <label for="{{ field.id_for_label }}">{{field.label}}
+                {{ field }}
+            </div>
+            {% endfor %}
+        </div>
+        <div style="text-align: center;">
+            <button type="submit" class="botao-normal">Mudar Senha</button>
+        </div>
+    </form>
+
+    <div class="perguntas-frequentes">
+        <h2>Perguntas Frequentes: </h2>
+        <ul>
+            {% for pergunta_resposta in perguntas_respostas %}
+                <li>
+                    <strong>{{ pergunta_resposta.pergunta }}</strong>
+                    <div class="resposta">
+                        {{ pergunta_resposta.resposta }}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 </div>
+
 {% include 'shared/footer.html' %}
 {% endblock %}
