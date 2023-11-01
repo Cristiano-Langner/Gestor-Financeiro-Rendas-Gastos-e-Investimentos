@@ -1,0 +1,15 @@
+{% extends 'shared/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="pagina">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h1>Erro 404 - Página Não Encontrada</h1>
+            <p>A página que você está procurando não foi encontrada.</p>
+            <a href="{% url 'index' %}">Voltar para a página inicial</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

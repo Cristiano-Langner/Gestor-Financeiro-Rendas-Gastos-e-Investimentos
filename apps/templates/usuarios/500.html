@@ -1,0 +1,15 @@
+{% extends 'shared/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="pagina">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h1>Erro 500 - Ocorreu um problema no servidor</h1>
+            <p>Desculpe, algo deu errado no nosso servidor. Nossa equipe técnica já foi notificada e está trabalhando para resolver o problema.</p>
+            <a href="{% url 'index' %}">Voltar para a página inicial</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

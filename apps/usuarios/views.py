@@ -83,3 +83,9 @@ def config(request):
             {"pergunta": "Como funciona o filtro das rendas e gastos?", "resposta": "O filtro é bem simples, basta apenas escolher oque deseja filtrar e clicar no botão Filtrar, caso queira remover todos os filtros da pesquisa clique em Limpar Filtros."},
         ]
     return render(request, 'usuarios/config.html', {'form': form, 'perguntas_respostas': perguntas_respostas})
+
+def pagina_erro_404(request):
+    return render(request, 'usuarios/404.html', status=404)
+
+def pagina_erro_500(request):
+    return render(request, 'usuarios/500.html', status=500)

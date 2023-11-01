@@ -93,7 +93,10 @@ class CadastroForms(forms.Form):
         return senha_2
     
 class TrocaSenhaForm(forms.Form):
-    senha_atual = forms.CharField(widget=forms.PasswordInput)
+    senha_atual = forms.CharField(widget=forms.PasswordInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Digite a senha atual',
+            }))
     nova_senha_1=forms.CharField(
         label='Nova senha', 
         required=True, 
@@ -101,7 +104,7 @@ class TrocaSenhaForm(forms.Form):
         widget=forms.PasswordInput(
             attrs={
                 'class': 'form-control',
-                'placeholder': 'Digite a sua senha',
+                'placeholder': 'Digite a nova senha',
             }
         ),
         validators=[
@@ -115,7 +118,7 @@ class TrocaSenhaForm(forms.Form):
         widget=forms.PasswordInput(
             attrs={
                 'class': 'form-control',
-                'placeholder': 'Digite a sua senha novamente',
+                'placeholder': 'Digite a nova senha novamente',
             }
         ),
     )

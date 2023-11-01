@@ -469,9 +469,9 @@ def obter_cotacao(request, tickers, cotacoes, class_name):
             cotacoes[ticker] = valor.info["regularMarketPreviousClose"]
         except Exception as e:
             cotacao_consolidada = class_name.objects.filter(ticker=ticker, created_by=request.user).first()
-            cotacao_salva = cotacao_consolidada.valor
-            if cotacao_salva:
-                cotacoes[ticker] = cotacao_salva
+            if cotacao_consolidada:
+                cotacao_salva = cotacao_consolidada.valor
+                cotacoes[ticker] = cotacao_salva if cotacao_salva is not None else 0
             else:
                 cotacoes[ticker] = 0
         cotacoes = {chave.replace(".SA", ""): valor for chave, valor in cotacoes.items()}
@@ -488,9 +488,9 @@ def obter_cotacao_cripto(request, tickers, cotacoes, class_name):
             cotacoes[ticker] = valor.info["regularMarketPreviousClose"]*cotacao_dolar
         except Exception as e:
             cotacao_consolidada = class_name.objects.filter(ticker=ticker, created_by=request.user).first()
-            cotacao_salva = cotacao_consolidada.valor
-            if cotacao_salva:
-                cotacoes[ticker] = cotacao_salva
+            if cotacao_consolidada:
+                cotacao_salva = cotacao_consolidada.valor
+                cotacoes[ticker] = cotacao_salva if cotacao_salva is not None else 0
             else:
                 cotacoes[ticker] = 0
         cotacoes = {chave.replace("-USD", ""): valor for chave, valor in cotacoes.items()}
