@@ -8,10 +8,6 @@
 </div>
 <div class="pagina">
 
-    {% with tipo_investimento="fiis" %}
-    {% include 'shared/tabela_invest.html' %}
-    {% endwith %}
-
     <form action="{% url 'fiis' %}" method="POST" class="form-cadastro" style="max-width: 995px;">
         {% csrf_token %}
         {% include 'shared/cadastro_template.html' %}
@@ -95,6 +91,10 @@
             <canvas id="grafico-cat"></canvas>
         </div>
     </div>
+
+    {% with tipo_investimento="fiis" %}
+    {% include 'shared/tabela_invest.html' %}
+    {% endwith %}
 
     {% include 'shared/script_grafico_invest.html' %}
 
