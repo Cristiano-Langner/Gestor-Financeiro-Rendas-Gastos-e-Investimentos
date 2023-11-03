@@ -15,6 +15,8 @@ class MetodoPagamento(models.TextChoices):
     
 class OpcoesRendas(models.TextChoices):
     SALÁRIO = "Salário"
+    VA_VR = "VA_VR"
+    FREELA = "Freela"
     VENDA_ATIVOS = "Venda ativos"
     CASHBACK = "Cashback"
     OUTROS = "Outros"
@@ -24,6 +26,7 @@ class OpcoesGastos(models.TextChoices):
     MERCADO ="Mercado"
     LUZ = "Luz"
     ÁGUA = "Água"
+    GÁS = "Gás"
     GASOLINA = "Gasolina"
     PET = "Pet"
     INTERNET = "Internet"
@@ -41,6 +44,7 @@ class OpcoesGastos(models.TextChoices):
     SEGUROS = "Seguros"
     RESTAURANTE = "Restaurante"
     CASA = "Casa"
+    PRESENTE = "Presente"
     OUTROS = "Outros"
     
 class BaseTransaction(models.Model):

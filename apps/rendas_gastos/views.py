@@ -49,6 +49,7 @@ def rendas(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context_view = rendas_gastos_view(request)
+    tipo = "renda"
     context = {
         'form': form,
         'rendas_cadastradas': rendas_cadastradas,
@@ -60,7 +61,8 @@ def rendas(request):
         'page_obj': page_obj,
         'context_view': context_view,
         'context_total': context_total,
-        'porcentagem_categorias': porcentagem_categorias
+        'porcentagem_categorias': porcentagem_categorias,
+        'tipo': tipo
     }
     return render(request, 'rendas_gastos/rendas.html', context)
 
@@ -90,6 +92,7 @@ def gastos(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context_view = rendas_gastos_view(request)
+    tipo = "gasto"
     context = {
         'form': form,
         'gastos_cadastrados': gastos_cadastrados,
@@ -101,7 +104,8 @@ def gastos(request):
         'page_obj': page_obj,
         'context_view': context_view,
         'context_total': context_total,
-        'porcentagem_categorias': porcentagem_categorias
+        'porcentagem_categorias': porcentagem_categorias,
+        'tipo': tipo
     }
     return render(request, 'rendas_gastos/gastos.html', context)
 

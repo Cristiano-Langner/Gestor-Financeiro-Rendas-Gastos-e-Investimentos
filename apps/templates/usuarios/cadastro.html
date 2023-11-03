@@ -6,17 +6,9 @@
     <h4>CADASTRO</h4>
     {% include 'partials/_alertas.html' %}
 </div>
-<div class="pagina">
+<div class="pagina" style="margin-bottom: 300px;">
     <form action="{% url 'cadastro' %}" method="POST" class="form-cadastro" style="max-width: 400px;">
-        {% csrf_token %}
-        <div>
-            {% for field in form.visible_fields %}
-            <div>
-                <label for="{{ field.id_for_label }}">{{field.label}}
-                {{ field }}
-            </div>
-            {% endfor %}
-        </div>
+        {% include 'shared/form_formulario.html' %}
         <div style="text-align: center;">
             <button type="submit" class="botao-normal">Cadastrar</button>
         </div>

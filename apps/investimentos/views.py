@@ -429,10 +429,10 @@ def consolidar_carteira(request):
         dados_fiis = defaultdict(list)
         dados_bdrs = defaultdict(list)
         dados_criptos = defaultdict(list)
-        acoes = Acoes.objects.values('ticker', 'quantidade', 'preco_medio', 'dividendo')
-        fiis = Fiis.objects.values('ticker', 'quantidade', 'preco_medio', 'dividendo')
-        bdrs = Bdrs.objects.values('ticker', 'quantidade', 'preco_medio', 'dividendo')
-        criptos = Criptos.objects.values('ticker', 'quantidade', 'preco_medio', 'dividendo')
+        acoes = investido_acoes.values('ticker', 'quantidade', 'preco_medio', 'dividendo')
+        fiis = investido_fiis.values('ticker', 'quantidade', 'preco_medio', 'dividendo')
+        bdrs = investido_bdrs.values('ticker', 'quantidade', 'preco_medio', 'dividendo')
+        criptos = investido_criptos.values('ticker', 'quantidade', 'preco_medio', 'dividendo')
         Valores_acoes = preencher_dicionario(dados_acoes, acoes)
         Valores_fiis = preencher_dicionario(dados_fiis, fiis)
         Valores_bdrs = preencher_dicionario(dados_bdrs, bdrs)
@@ -474,7 +474,7 @@ def obter_cotacao(request, tickers, cotacoes, class_name):
                 cotacoes[ticker] = cotacao_salva if cotacao_salva is not None else 0
             else:
                 cotacoes[ticker] = 0
-        cotacoes = {chave.replace(".SA", ""): valor for chave, valor in cotacoes.items()}
+    cotacoes = {chave.replace(".SA", ""): valor for chave, valor in cotacoes.items()}
     return cotacoes
 
 def obter_cotacao_cripto(request, tickers, cotacoes, class_name):
@@ -493,7 +493,7 @@ def obter_cotacao_cripto(request, tickers, cotacoes, class_name):
                 cotacoes[ticker] = cotacao_salva if cotacao_salva is not None else 0
             else:
                 cotacoes[ticker] = 0
-        cotacoes = {chave.replace("-USD", ""): valor for chave, valor in cotacoes.items()}
+    cotacoes = {chave.replace("-USD", ""): valor for chave, valor in cotacoes.items()}
     return cotacoes
 
 def preencher_dicionario(dados, lista):

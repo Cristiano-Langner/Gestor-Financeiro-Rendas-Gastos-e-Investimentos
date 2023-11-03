@@ -9,12 +9,30 @@
     </thead>
     <tbody>
         {% for categoria in porcentagem_categorias %}
-        <tr>
-            <td>{{ categoria.categoria }}</td>
-            <td>{{ categoria.porcentagem_total }}%</td>
-            <td>{{ categoria.porcentagem_12meses }}%</td>
-            <td>{{ categoria.porcentagem_mes }}%</td>
-        </tr>
+            {% if tipo == "renda" %}
+                <tr>
+                    <td>{{ categoria.categoria }}</td>
+                    <td>{{ categoria.porcentagem_total }}%</td>
+                    <td><span class="{% if categoria.porcentagem_12meses >= categoria.porcentagem_total %}positive{% else %}negative{% endif %}">
+                        {{ categoria.porcentagem_12meses }}%</td>
+                    </span>
+                    <td><span class="{% if categoria.porcentagem_mes >= categoria.porcentagem_total %}positive{% else %}negative{% endif %}">
+                        {{ categoria.porcentagem_mes }}%</td>
+                    </span>
+                </tr>
+            {% endif %}
+            {% if tipo == "gasto" %}
+                <tr>
+                    <td>{{ categoria.categoria }}</td>
+                    <td>{{ categoria.porcentagem_total }}%</td>
+                    <td><span class="{% if categoria.porcentagem_12meses >= categoria.porcentagem_total %}negative{% else %}positive{% endif %}">
+                        {{ categoria.porcentagem_12meses }}%</td>
+                    </span>
+                    <td><span class="{% if categoria.porcentagem_mes >= categoria.porcentagem_total %}negative{% else %}positive{% endif %}">
+                        {{ categoria.porcentagem_mes }}%</td>
+                    </span>
+                </tr>
+            {% endif %}
         {% endfor %}
     </tbody>
 </table>
