@@ -17,42 +17,9 @@
         </div>
     </form>
 
-    <table class="custom-table" style="margin-bottom: 0px;">
-        <thead>
-            <tr>
-                <th colspan="5" style="text-align: center;">TABELA DE ATIVOS CADASTRADOS</th>
-            </tr>
-            <tr>
-                <th>Ticker</th>
-                <th>Total</th>
-                <th>Categoria</th>
-                <th>Última compra</th>
-                <th>Delete</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for bdr in page_obj %}
-            <tr>
-                <td>{{ bdr.ticker }}</td>
-                <td>R$ {{ bdr.valor|floatformat:2 }}</td>
-                <td>{{ bdr.categoria }}</td>
-                <td>{{ bdr.data|date:"d-m-Y" }}</td>
-                <td style="text-align: center;">
-                    <form action="{% url 'delete_bdr' bdr.id %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit" class="delete-button" onclick="return confirm('Tem certeza que deseja deletar esse BDR? Todos os dados vinculados também serão excluídos.')">X</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-            <tr>
-                <td colspan="3">Total:</td>
-                <td>R$ {{ total_bdrs|floatformat:2 }}</td>
-                <td></td>
-            </tr>
-        </tbody>
-    </table>    
-    <div style="margin-left: 230px;">{% include 'shared/pagination.html' %}</div>
+    {% with tipo_investimento="bdrs" %}
+        {% include 'shared/tabela_invest.html' %}
+    {% endwith %}
 
     <div class="container">
         <div class="box">
@@ -88,10 +55,6 @@
             <canvas id="grafico-cat"></canvas>
         </div>
     </div>
-
-    {% with tipo_investimento="bdrs" %}
-    {% include 'shared/tabela_invest.html' %}
-    {% endwith %}
 
     {% include 'shared/script_grafico_invest.html' %}
 

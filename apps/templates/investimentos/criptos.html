@@ -17,42 +17,9 @@
         </div>
     </form>
 
-    <table class="custom-table" style="margin-bottom: 0px;">
-        <thead>
-            <tr>
-                <th colspan="5" style="text-align: center;">TABELA DE ATIVOS CADASTRADOS</th>
-            </tr>
-            <tr>
-                <th>Ticker</th>
-                <th>Total</th>
-                <th>Categoria</th>
-                <th>Última compra</th>
-                <th>Delete</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for cripto in page_obj %}
-            <tr>
-                <td>{{ cripto.ticker }}</td>
-                <td>R$ {{ cripto.valor|floatformat:2 }}</td>
-                <td>{{ cripto.categoria }}</td>
-                <td>{{ cripto.data|date:"d-m-Y" }}</td>
-                <td style="text-align: center;">
-                    <form action="{% url 'delete_cripto' cripto.id %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit" class="delete-button" onclick="return confirm('Tem certeza que deseja deletar essa cripto? Todos os dados vinculados também serão excluídos.')">X</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-            <tr>
-                <td colspan="3">Total:</td>
-                <td>R$ {{ total_fiis|floatformat:2 }}</td>
-                <td></td>
-            </tr>
-        </tbody>
-    </table>    
-    <div style="margin-left: 230px;">{% include 'shared/pagination.html' %}</div>
+    {% with tipo_investimento="criptos" %}
+        {% include 'shared/tabela_invest.html' %}
+    {% endwith %}
 
     <div class="container">
         <div class="box">
@@ -89,10 +56,6 @@
             <canvas id="grafico-cat"></canvas>
         </div>
     </div>
-
-    {% with tipo_investimento="criptos" %}
-    {% include 'shared/tabela_invest.html' %}
-    {% endwith %}
 
     {% include 'shared/script_grafico_invest.html' %}
 

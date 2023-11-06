@@ -1,4 +1,4 @@
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.db import models
@@ -64,7 +64,9 @@ class OpcoesRendaFixa(models.TextChoices):
     
 class BaseTransaction(models.Model):
     ticker = models.CharField(max_length=10,null=False,blank=False)
-    valor = models.DecimalField(max_digits=14, decimal_places=8, default=Decimal('0.00'))
+    valor_mercado = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
+    valor_total_mercado = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
+    valor = models.DecimalField(max_digits=10, decimal_places=0, default=Decimal('0.00'))
     quantidade = models.IntegerField(default=0)
     dividendo = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), validators=[MinValueValidator(Decimal('0.00'))])
     preco_medio = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), validators=[MinValueValidator(Decimal('0.00'))])
@@ -106,6 +108,8 @@ class Bdrs(BaseTransaction):
         verbose_name_plural = "BDRs"
 
 class Criptos(BaseTransaction):
+    valor_mercado = models.DecimalField(max_digits=14, decimal_places=8, default=Decimal('0.00'))
+    valor = models.DecimalField(max_digits=14, decimal_places=8, default=Decimal('0.00'))
     quantidade = models.DecimalField(max_digits=14, decimal_places=8, default=0.0)
     categoria = models.CharField(max_length=100, choices=OpcoesCriptos.choices, default=OpcoesCriptos.OUTROS)
     def __str__(self):
@@ -138,50 +142,3 @@ class HistoricoDividendo(models.Model):
     modified_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_modified_by')
     def __str__(self):
         return f"{self.ticker} - {self.valor} - {self.data}"
-    
-class ConsolidacaoCarteira(models.Model):
-    ticker = models.CharField(max_length=10,null=False,blank=False)
-    quantidade = models.PositiveIntegerField(default=0)
-    preco_medio = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), validators=[MinValueValidator(Decimal('0.00'))])
-    dividendo = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), validators=[MinValueValidator(Decimal('0.00'))])
-    valor = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
-    lucro = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
-    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_created_by')
-    modified_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_modified_by')
-    def save(self, user=None, *args, **kwargs):
-        self.created_by = user
-        self.modified_by = user
-        super().save(*args, **kwargs)
-    def update_modified_by(self, user=None, *args, **kwargs):
-        self.modified_by = user
-        super().save(*args, **kwargs)
-    def clean_ticker(self):
-        ticker = self.cleaned_data['ticker']
-        return ticker.upper()
-    class Meta:
-        abstract = True
-
-class AcoesConsolidadas(ConsolidacaoCarteira):
-    def __str__(self):
-        return f"Ações consolidadas [ticker={self.ticker}]"
-    class Meta:
-        verbose_name_plural = "Ações consolidadas"
-        
-class FiisConsolidadas(ConsolidacaoCarteira):
-    def __str__(self):
-        return f"Fiis consolidados [ticker={self.ticker}]"
-    class Meta:
-        verbose_name_plural = "Fundos Imobiliários consolidados"
-        
-class BdrsConsolidadas(ConsolidacaoCarteira):
-    def __str__(self):
-        return f"Bdrs consolidados [ticker={self.ticker}]"
-    class Meta:
-        verbose_name_plural = "Bdrs consolidados"
-        
-class CriptosConsolidadas(ConsolidacaoCarteira):
-    quantidade = models.DecimalField(max_digits=10, decimal_places=8, default=Decimal('0.00000000'), validators=[MinValueValidator(Decimal('0.00000000'))])
-    def __str__(self):
-        return f"Criptos consolidadas [ticker={self.ticker}]"
-    class Meta:
-        verbose_name_plural = "Criptos consolidadas"

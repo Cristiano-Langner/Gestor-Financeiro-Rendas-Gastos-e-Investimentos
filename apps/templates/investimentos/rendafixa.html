@@ -16,40 +16,8 @@
         </div>
     </form>
 
-    {% with tipo_investimento="rendafixa" %}
-        <table class="custom-table" style="margin-bottom: 0px;">
-            <thead>
-                <tr>
-                    <th>Ticker</th>
-                    <th>Total</th>
-                    <th>Categoria</th>
-                    <th>Última compra</th>
-                    <th>Delete</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for rendafixa in page_obj %}
-                <tr>
-                    <td>{{ rendafixa.ticker }}</td>
-                    <td>R$ {{ rendafixa.valor|floatformat:2 }}</td>
-                    <td>{{ rendafixa.categoria }}</td>
-                    <td>{{ rendafixa.data|date:"d-m-Y" }}</td>
-                    <td style="text-align: center;">
-                        <form action="{% url 'delete_rendafixa' rendafixa.id %}" method="post">
-                            {% csrf_token %}
-                            <button type="submit" class="delete-button" onclick="return confirm('Tem certeza que deseja deletar essa renda fixa?')">X</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-                <tr>
-                    <td>Total:</td>
-                    <td>R$ {{ total_rendasfixa|floatformat:2 }}</td>
-                    <td colspan="3"></td>
-                </tr>
-            </tbody>
-        </table>    
-        <div style="margin-left: 230px;">{% include 'shared/pagination.html' %}</div>
+    {% with tipo_investimento="rendasfixa" %}
+        {% include 'shared/tabela_invest.html' %}
     {% endwith %}
 
     <div class="container">
