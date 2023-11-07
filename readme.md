@@ -1,4 +1,4 @@
-# Minha carteira de Rendas, Gastos e Investimentos
+# Gestor Financeiro - Rendas, Gastos e Investimentos
 
 Este projeto oferece aos usuários a capacidade de registrar suas receitas, despesas e investimentos em ações, BDRs, fundos imobiliários e criptomoedas. Ele fornece uma visão abrangente das finanças do usuário por meio de gráficos e tabelas informativas. Todo o aplicativo foi desenvolvido com a poderosa estrutura Django, abrangendo tanto o desenvolvimento do backend quanto do frontend, garantindo uma experiência completa e eficiente.
 
