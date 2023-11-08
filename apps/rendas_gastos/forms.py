@@ -46,6 +46,17 @@ class RendasForm(BaseRendasGastos):
             }
         )
     )
+    descricao = forms.CharField(
+        label='Descrição',
+        max_length=20,
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Digite informação',
+            }
+        )
+    )
     
 class GastosForm(BaseRendasGastos):
     categoria = forms.ChoiceField(
@@ -55,6 +66,17 @@ class GastosForm(BaseRendasGastos):
         widget=forms.Select(
             attrs={
                 'class': 'form-control',
+            }
+        )
+    )
+    descricao = forms.CharField(
+        label='Descrição',
+        max_length=20,
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Digite informação',
             }
         )
     )

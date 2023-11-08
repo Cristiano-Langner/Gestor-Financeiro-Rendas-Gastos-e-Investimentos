@@ -18,9 +18,9 @@ def acoes(request):
         return redirect('login')
     else:
         if request.method == 'POST':
-            form = process_form_invest(request, AcoesForm, Acoes, 'Ação registrada com sucesso!')
-        else:
-            form = AcoesForm()
+            veio_rendafixa = False
+            process_form_invest(request, AcoesForm, Acoes, 'Ação registrada com sucesso!', veio_rendafixa)
+        form = AcoesForm()
         context_view, acoes_cadastradas, invest_ticker_dict = investimento_view(request, Acoes)
         total_acoes = acoes_cadastradas.aggregate(total=Sum('valor'))['total']
         categorias = OpcoesAcoes.choices
@@ -48,9 +48,9 @@ def fiis(request):
         return redirect('login')
     else:
         if request.method == 'POST':
-            form = process_form_invest(request, FiisForm, Fiis, 'Fundo imobiliário registrado com sucesso!')
-        else:
-            form = FiisForm()
+            veio_rendafixa = False
+            process_form_invest(request, FiisForm, Fiis, 'Fundo imobiliário registrado com sucesso!', veio_rendafixa)
+        form = FiisForm()
         context_view, fiis_cadastrados, invest_ticker_dict = investimento_view(request, Fiis)
         total_fiis = fiis_cadastrados.aggregate(total=Sum('valor'))['total']
         categorias = OpcoesFiis.choices
@@ -78,9 +78,9 @@ def bdrs(request):
         return redirect('login')
     else:
         if request.method == 'POST':
-            form = process_form_invest(request, BdrsForm, Bdrs, 'BDR registrado com sucesso!')
-        else:
-            form = BdrsForm()
+            veio_rendafixa = False
+            process_form_invest(request, BdrsForm, Bdrs, 'BDR registrado com sucesso!', veio_rendafixa)
+        form = BdrsForm()
         context_view, bdrs_cadastrados, invest_ticker_dict = investimento_view(request, Bdrs)
         total_bdrs = bdrs_cadastrados.aggregate(total=Sum('valor'))['total']
         categorias = OpcoesBdrs.choices
@@ -108,9 +108,9 @@ def criptos(request):
         return redirect('login')
     else:
         if request.method == 'POST':
-            form = process_form_invest(request, CriptosForm, Criptos, 'Cripto moeda registrada com sucesso!')
-        else:
-            form = CriptosForm()
+            veio_rendafixa = False
+            process_form_invest(request, CriptosForm, Criptos, 'Cripto moeda registrada com sucesso!', veio_rendafixa)
+        form = CriptosForm()
         context_view, criptos_cadastradas, invest_ticker_dict = investimento_view(request, Criptos)
         total_criptos = criptos_cadastradas.aggregate(total=Sum('valor'))['total']
         categorias = OpcoesCriptos.choices
@@ -138,9 +138,9 @@ def rendafixa(request):
         return redirect('login')
     else:
         if request.method == 'POST':
-            form = process_form_invest(request, RendaFixaForm, RendasFixa, 'Renda fixa registrada com sucesso!')
-        else:
-            form = RendaFixaForm()
+            veio_rendafixa = True
+            process_form_invest(request, RendaFixaForm, RendasFixa, 'Renda fixa registrada com sucesso!', veio_rendafixa)
+        form = RendaFixaForm()
         context_view, rendasfixa_cadastradas, invest_ticker_dict = investimento_view(request, RendasFixa)
         total_rendasfixa = rendasfixa_cadastradas.aggregate(total=Sum('valor'))['total']
         categorias = OpcoesRendaFixa.choices
@@ -167,11 +167,10 @@ def detalhes_ticker(request, tipo_investimento, ticker):
         return redirect('login')
     else:
         if request.method == 'POST':
-            form = cadastrar_dividendo(request, ticker, tipo_investimento)
-            form_cv = cadastrar_cv(request, ticker, tipo_investimento)
-        else:
-            form = DividendoForm()
-            form_cv = CVForm()
+            cadastrar_dividendo(request, ticker, tipo_investimento)
+            cadastrar_cv(request, ticker, tipo_investimento)
+        form = DividendoForm()
+        form_cv = CVForm()
         dividendos_cadastrados = HistoricoDividendo.objects.filter(created_by=request.user, ticker=ticker)
         compras_cadastradas = HistoricoCompra.objects.filter(created_by=request.user, ticker=ticker)
         dividendos_cadastrados = dividendos_cadastrados.order_by('-data')
@@ -201,10 +200,10 @@ def detalhes_ticker(request, tipo_investimento, ticker):
     return render(request, 'investimentos/ticker.html', context)
 
 #Função que faz a verificação da válidade dos dados, alguns tratamentos de dados e salvamentos das informações.
-def process_form_invest(request, form_class, created_class, success_message):
+def process_form_invest(request, form_class, created_class, success_message, origem):
     if request.method == 'POST':
         form = form_class(request.POST)
-        if form.is_valid():
+        if form.is_valid() and not origem:
             ticker = form.cleaned_data['ticker']
             valor = form.cleaned_data['valor']
             quantidade = form.cleaned_data['quantidade']
@@ -224,8 +223,21 @@ def process_form_invest(request, form_class, created_class, success_message):
                                                     data=data, created_by=request.user)
                 historico_compra.save()
                 messages.success(request, success_message)
-    form = form_class()
-    return form
+        elif form.is_valid():
+            ticker = form.cleaned_data['ticker']
+            valor = form.cleaned_data['valor']
+            data = form.cleaned_data['data']
+            categoria = form.cleaned_data['categoria']
+            ja_cadastrado = created_class.objects.filter(ticker=ticker, created_by=request.user).first()
+            if ja_cadastrado:
+                messages.warning(request, f'{ticker} já está cadastrado. Para registrar nova compra ou venda entre na página do {ticker}.')
+            else:
+                novo = created_class.objects.create(ticker=ticker, valor=valor, data=data,
+                                                    categoria=categoria, created_by=request.user)
+                novo.save(user=request.user)
+                historico_compra = HistoricoCompra.objects.create(ticker=ticker, valor=valor, data=data, created_by=request.user)
+                historico_compra.save()
+                messages.success(request, success_message)
 
 def cadastrar_cv(request, ticker, tipo_investimento):
     if not check_authentication(request):
@@ -282,9 +294,6 @@ def cadastrar_cv(request, ticker, tipo_investimento):
                             messages.error(request, "Quantidade de venda superior ao possuído! ")
                     else:
                         messages.error(request, "Impossível registrar venda de um ativo não cadastrado! ")
-        else:
-            form_cv = CVForm()
-    return form_cv
 
 def cadastrar_dividendo(request, ticker, tipo_investimento):
     if request.method == 'POST':

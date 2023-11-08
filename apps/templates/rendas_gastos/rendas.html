@@ -7,7 +7,7 @@
     {% include 'partials/_alertas.html' %}
 </div>
 <div class="pagina">
-    <form action="{% url 'rendas' %}" method="POST" class="form-cadastro" style="max-width: 610px; margin-top: 40px;">
+    <form action="{% url 'rendas' %}" method="POST" class="form-cadastro" style="max-width: 810px; margin-top: 40px;">
         {% csrf_token %}
         {% include 'shared/cadastro_template.html' %}
         <div style="text-align: center;">
@@ -54,6 +54,7 @@
                 <th>CATEGORIA</th>
                 <th>PAGAMENTO</th>
                 <th>DATA</th>
+                <th>DESCRIÇÃO</th>
                 <th>DELETE</th>
             </tr>
         </thead>
@@ -64,6 +65,7 @@
                 <td>{{ renda.categoria }}</td>
                 <td>{{ renda.metodo_pagamento }}</td>
                 <td>{{ renda.data|date:"d-m-Y" }}</td>
+                <td>{{ renda.descricao }}</td>
                 <td style="text-align: center;">
                     <form action="{% url 'delete_renda' renda.id %}" method="post">
                         {% csrf_token %}
@@ -73,11 +75,11 @@
             </tr>
             {% endfor %}
             <tr>
-                <td colspan="5" style="font-weight: bold;">Total: R$ {{ total_rendas|floatformat:2 }}</td>
+                <td colspan="6" style="font-weight: bold;">Total: R$ {{ total_rendas|floatformat:2 }}</td>
             </tr>
         </tbody>
     </table>    
-    <div style="margin-left: 230px;">{% include 'shared/pagination.html' %}</div>
+    <div style="margin-left: 130px;">{% include 'shared/pagination.html' %}</div>
     
     <div class="container">
         <div class="box">
@@ -105,10 +107,10 @@
     <div class="container">
         <div class="box">
             <h2>Rendas totais</h2>
-            <p>Total: R$ {{ context_total.renda_total|floatformat:2 }}</p>
-            <p>Gastos: R$ {{ context_total.gasto_total|floatformat:2 }}</p>
-            <p>Saldo: <span class="{% if context_total.saldo_total >= 0 %}positive{% else %}negative{% endif %}">
-                R$ {{ context_total.saldo_total|floatformat:2 }}
+            <p>Total: R$ {{ context_total.Rendas|floatformat:2 }}</p>
+            <p>Gastos: R$ {{ context_total.Gastos|floatformat:2 }}</p>
+            <p>Saldo: <span class="{% if context_total.Saldo >= 0 %}positive{% else %}negative{% endif %}">
+                R$ {{ context_total.Saldo|floatformat:2 }}
                 </span>
             </p>
         </div>
@@ -125,11 +127,6 @@
             <canvas id="grafico"></canvas>
         </div>
     </div>
-    <h6>
-        A tabela abaixo apresenta uma visão das rendas, expressas em porcentagem,
-        organizadas em ordem decrescente da soma total de despesas. Levando como ordenador a coluna de total,
-        que contém todos os dados cadastrados.
-    </h6>
 
     {% include 'shared/tabela.html' %}
     

@@ -1,6 +1,14 @@
 <table class="custom-table">
     <thead>
         <tr>
+            <th colspan="4" style="text-align: center;">PORCENTAGENS <span class="info-icon">i
+                <span class="info-text">A tabela abaixo apresenta os valores expressos em porcentagem,
+                    organizadas em ordem decrescente da soma total. Levando como ordenador 
+                    a coluna de total, que contém todos os dados cadastrados.</span>
+            </span></th>
+            
+        </tr>
+        <tr>
         <th>Categorias</th>
         <th>Total desde o ínicio</th>
         <th>Últimos 12 meses</th>
@@ -13,10 +21,10 @@
                 <tr>
                     <td>{{ categoria.categoria }}</td>
                     <td>{{ categoria.porcentagem_total }}%</td>
-                    <td><span class="{% if categoria.porcentagem_12meses >= categoria.porcentagem_total %}positive{% else %}negative{% endif %}">
+                    <td><span class=" {% if categoria.porcentagem_12meses == 0 %}{% elif categoria.porcentagem_12meses >= categoria.porcentagem_total %}positive{% else %}negative{% endif %}">
                         {{ categoria.porcentagem_12meses }}%</td>
                     </span>
-                    <td><span class="{% if categoria.porcentagem_mes >= categoria.porcentagem_total %}positive{% else %}negative{% endif %}">
+                    <td><span class="{% if categoria.porcentagem_mes == 0 %}{% elif categoria.porcentagem_mes >= categoria.porcentagem_total %}positive{% else %}negative{% endif %}">
                         {{ categoria.porcentagem_mes }}%</td>
                     </span>
                 </tr>
@@ -25,10 +33,10 @@
                 <tr>
                     <td>{{ categoria.categoria }}</td>
                     <td>{{ categoria.porcentagem_total }}%</td>
-                    <td><span class="{% if categoria.porcentagem_12meses >= categoria.porcentagem_total %}negative{% else %}positive{% endif %}">
+                    <td><span class="{% if categoria.porcentagem_12meses == 0 %}{% elif categoria.porcentagem_12meses >= categoria.porcentagem_total %}negative{% else %}positive{% endif %}">
                         {{ categoria.porcentagem_12meses }}%</td>
                     </span>
-                    <td><span class="{% if categoria.porcentagem_mes >= categoria.porcentagem_total %}negative{% else %}positive{% endif %}">
+                    <td><span class="{% if categoria.porcentagem_mes == 0 %}{% elif categoria.porcentagem_mes >= categoria.porcentagem_total %}negative{% else %}positive{% endif %}">
                         {{ categoria.porcentagem_mes }}%</td>
                     </span>
                 </tr>

@@ -8,7 +8,7 @@
 </div>
 
 <div class="pagina">
-    <form action="{% url 'gastos' %}" method="POST" class="form-cadastro" style="max-width: 610px; margin-top: 40px;">
+    <form action="{% url 'gastos' %}" method="POST" class="form-cadastro" style="max-width: 815px; margin-top: 40px;">
         {% csrf_token %}
         {% include 'shared/cadastro_template.html' %}
         <div style="text-align: center;">
@@ -55,6 +55,7 @@
                 <th>CATEGORIA</th>
                 <th>PAGAMENTO</th>
                 <th>DATA</th>
+                <th>DESCRIÇÃO</th>
                 <th>DELETE</th>
             </tr>
         </thead>
@@ -65,6 +66,7 @@
                 <td>{{ gasto.categoria }}</td>
                 <td>{{ gasto.metodo_pagamento }}</td>
                 <td>{{ gasto.data|date:"d-m-Y" }}</td>
+                <td>{{ gasto.descricao }}</td>
                 <td style="text-align: center;">
                     <form action="{% url 'delete_gasto' gasto.id %}" method="post">
                         {% csrf_token %}
@@ -74,11 +76,11 @@
             </tr>
             {% endfor %}
             <tr>
-                <td colspan="5" style="font-weight: bold;">Total: R$ {{ total_gastos|floatformat:2 }}</td>
+                <td colspan="6" style="font-weight: bold;">Total: R$ {{ total_gastos|floatformat:2 }}</td>
             </tr>
         </tbody>
     </table>    
-    <div style="margin-left: 230px;">{% include 'shared/pagination.html' %}</div>
+    <div style="margin-left: 130px;">{% include 'shared/pagination.html' %}</div>
 
     <div class="container">
         <div class="box" style="width: 240px;">
@@ -115,13 +117,7 @@
             </h2>
             <canvas id="grafico"></canvas>
         </div>
-    </div>
-    <h6>
-        A tabela abaixo apresenta uma visão dos gastos, expressos em porcentagem,
-        organizados em ordem decrescente da soma total de despesas. Levando como ordenador a coluna de total,
-        que contém todos os dados cadastrados.
-    </h6>
-    
+    </div> 
     
     {% include 'shared/tabela.html' %}
 

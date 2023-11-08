@@ -34,7 +34,7 @@ class Cripto(admin.ModelAdmin):
 admin.site.register(Criptos, Cripto)
 
 class RendaFixa(admin.ModelAdmin):
-    list_display = ('id', 'ticker', 'valor', 'quantidade', 'dividendo', 'preco_medio',  'data', 'categoria', 'created_by', 'modified_by')
+    list_display = ('id', 'ticker', 'valor', 'dividendo', 'data', 'categoria', 'created_by', 'modified_by')
     list_display_links = ('id', 'ticker')
     search_fields = ('ticker',)
     list_per_page = 20

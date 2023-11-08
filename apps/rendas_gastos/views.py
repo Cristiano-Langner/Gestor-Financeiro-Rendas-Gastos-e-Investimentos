@@ -182,16 +182,13 @@ def graph(categorias_ref, name_cadastrado):
 def porcentagem(dicionario):
     total = sum(dicionario.values())
     categoria_porcentagem = {}
-    contador = 0
     for categoria, valor in dicionario.items():
-        if contador < 10:
-            if total > 0:
-                percentage = (valor / total) * 100
-                percentage = round(percentage, 2)
-            else:
-                percentage = 0.00
-            categoria_porcentagem[categoria] = percentage
-        contador += 1
+        if total > 0:
+            percentage = (valor / total) * 100
+            percentage = round(percentage, 2)
+        else:
+            percentage = 0.00
+        categoria_porcentagem[categoria] = percentage
     return categoria_porcentagem
 
 #Função para apenas ordenar as categorias e facilitar a exibição na página.

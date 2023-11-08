@@ -7,7 +7,7 @@
     {% include 'partials/_alertas.html' %}
 </div>
 <div class="pagina">
-    <form action="{% url 'rendafixa' %}" method="POST" class="form-cadastro" style="max-width: 945px;">
+    <form action="{% url 'rendafixa' %}" method="POST" class="form-cadastro" style="max-width: 750px;">
         {% csrf_token %}
         {% include 'shared/cadastro_template.html' %}
         <div style="text-align: center;">
@@ -16,7 +16,45 @@
     </form>
 
     {% with tipo_investimento="rendasfixa" %}
-        {% include 'shared/tabela_invest.html' %}
+        <table class="custom-table" style="margin-bottom: 0px;">
+            <thead>
+                <tr>
+                    <th colspan="8" style="text-align: center;">TABELA DE ATIVOS CADASTRADOS</th>
+                </tr>
+                <tr>
+                    <th>Ticker</th>
+                    <th>Valor investido</th>
+                    <th>Dividendos</th>
+                    <th>Categoria</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for invest in page_obj %}
+                <tr>
+                    {% with entidade=invest.ticker %}
+                    <td><a href="detalhes_ticker/{{ tipo_investimento }}/{{ entidade  }}">{{ entidade  }}</td>
+                    {% endwith %}
+                    <td>R$ {{ invest.valor|floatformat:2 }}</td>
+                    <td>R$ {{ invest.dividendo|floatformat:2 }}</td>
+                    <td>{{ invest.categoria }}</td>
+                    <td style="text-align: center;">
+                        <form action="{% url 'delete_investimento' tipo_investimento invest.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="delete-button" onclick="return confirm('Tem certeza que deseja deletar esse investimento? Todos os dados vinculados também serão excluídos.')">X</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td>Total:</td>
+                    <td>R$ {{ context_view.investido|floatformat:2 }}</td>
+                    <td>R$ {{ context_view.dividendo|floatformat:2 }}</td>
+                    <td colspan="2"></td>
+                </tr>
+            </tbody>
+        </table>
+        <div style="margin-left: 200px;">{% include 'shared/pagination.html' %}</div>
     {% endwith %}
 
     <div class="container">
