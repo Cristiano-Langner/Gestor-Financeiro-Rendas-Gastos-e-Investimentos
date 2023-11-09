@@ -1,4 +1,4 @@
-apps/templates/shared/script_grafico_index.html linguist-language=JavaScript
-apps/templates/shared/script_grafico_invest.html linguist-language=JavaScript
-apps/templates/shared/script_grafico_ticker.html linguist-language=JavaScript
-apps/templates/shared/script_grafico.html linguist-language=JavaScript
+apps/templates/shared/scripts/script_grafico_index.html linguist-language=JavaScript
+apps/templates/shared/scripts/script_grafico_invest.html linguist-language=JavaScript
+apps/templates/shared/scripts/script_grafico_ticker.html linguist-language=JavaScript
+apps/templates/shared/scripts/script_grafico.html linguist-language=JavaScript

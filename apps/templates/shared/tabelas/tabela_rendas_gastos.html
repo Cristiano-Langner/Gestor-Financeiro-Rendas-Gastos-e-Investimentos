@@ -1,0 +1,41 @@
+<table class="custom-table" style="margin-bottom: 0px;">
+    <thead>
+        <tr>
+            <th>VALOR</th>
+            <th>CATEGORIA</th>
+            <th>PAGAMENTO</th>
+            <th>DATA</th>
+            <th>DESCRIÇÃO</th>
+            <th>EDITAR</th>
+            <th>DELETE</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for obj in page_obj %}
+        <tr>
+            <td>R$ {{ obj.valor|floatformat:2 }}</td>
+            <td>{{ obj.categoria }}</td>
+            <td>{{ obj.metodo_pagamento }}</td>
+            <td>{{ obj.data|date:"d-m-Y" }}</td>
+            <td>{{ obj.descricao }}</td>
+            <td>
+                <a>✏️</a>
+            </td>
+            <td>
+                <form action="{%  url 'delete_renda_gasto' tipo obj.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="delete-button" onclick="return confirm('Tem certeza que deseja deletar essa renda?')">X</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        <tr>
+            {% if tipo == 'renda' %}
+            <td colspan="6" style="font-weight: bold;">Total: R$ {{ total_rendas|floatformat:2 }}</td>
+            {% else %}
+            <td colspan="6" style="font-weight: bold;">Total: R$ {{ total_gastos|floatformat:2 }}</td>
+            {% endif %}
+        </tr>
+    </tbody>
+</table>    
+<div style="margin-left: 130px;">{% include 'shared/pagination.html' %}</div>

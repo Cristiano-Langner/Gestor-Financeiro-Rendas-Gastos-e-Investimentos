@@ -1,0 +1,20 @@
+<div class="container" style="margin: 0px auto 0px auto;">
+    <table class="custom-table">
+        <thead>
+            <tr>
+            <th>Rendas Totais</th>
+            <th>Gastos Totais</th>
+            <th>Saldo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="font-weight: normal;">R$ {{ context_renda_gasto.Rendas }}</td>
+                <td>R$ {{ context_renda_gasto.Gastos }}</td>
+                <td><span class="{% if context_renda_gasto.Saldo >= 0 %}positive{% else %}negative{% endif %}">
+                    R$ {{ context_renda_gasto.Saldo }}
+                    </span>
+            </tr>
+        </tbody>
+    </table>
+</div>

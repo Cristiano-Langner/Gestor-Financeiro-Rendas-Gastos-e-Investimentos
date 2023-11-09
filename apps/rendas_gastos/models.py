@@ -52,7 +52,7 @@ class BaseTransaction(models.Model):
     valor = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), validators=[MinValueValidator(Decimal('0.00'))])
     data = models.DateField(null=False, blank=False, default=timezone.now)
     metodo_pagamento = models.CharField(max_length=100, choices=MetodoPagamento.choices, default=MetodoPagamento.OUTROS)
-    descricao = models.CharField(max_length=20, default="-")
+    descricao = models.CharField(max_length=20, blank=True, null=True, default="-")
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_created_by')
     modified_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_modified_by')
     

@@ -1,6 +1,7 @@
 from apps.rendas_gastos.forms import GastosForm, RendasForm, OpcoesRendas, OpcoesGastos, MetodoPagamento
 from django.shortcuts import render, redirect, get_object_or_404
-from apps.investimentos.views import investimentos_total_view 
+from apps.investimentos.views import investimentos_total_view
+from django.contrib.auth.decorators import login_required
 from apps.rendas_gastos.utils import check_authentication
 from apps.rendas_gastos.models import Rendas, Gastos
 from django.http import HttpResponseRedirect
@@ -11,24 +12,20 @@ from django.db.models import Sum
 from django.urls import reverse
 
 #Index responsável pela página inicial.
+@login_required(login_url='login')
 def index(request):
-    if not check_authentication(request):
-        return redirect('login')
-    else:
-        context_investimentos = investimentos_total_view(request)
-        context_renda_gasto = rendas_gastos_view_total(request)
-        context = {
-            'context_renda_gasto': context_renda_gasto,
-            'context_investimentos': context_investimentos
-        }
-        return render(request, 'index.html', context)
+    context_investimentos = investimentos_total_view(request)
+    context_renda_gasto = rendas_gastos_view_total(request)
+    context = {
+        'context_renda_gasto': context_renda_gasto,
+        'context_investimentos': context_investimentos
+    }
+    return render(request, 'index.html', context)
 
 #Rendas responsável pela página de rendas.
+@login_required(login_url='login')
 def rendas(request):
-    if not check_authentication(request):
-        return redirect('login')
-    else:
-        form = process_form(request, RendasForm, Rendas, 'Renda registrada com sucesso!')
+    form = process_form(request, RendasForm, Rendas, 'Renda registrada com sucesso!')
     rendas_cadastradas = Rendas.objects.filter(created_by=request.user)
     context_total = rendas_gastos_view_total(request)
     today = datetime.today()
@@ -54,7 +51,7 @@ def rendas(request):
         'form': form,
         'rendas_cadastradas': rendas_cadastradas,
         'total_rendas': total_rendas,
-        'opcoes_rendas': OpcoesRendas.choices,
+        'opcoes': OpcoesRendas.choices,
         'grafico_mes': grafico_mes,
         'grafico': grafico,
         'opcoes_pagamentos': MetodoPagamento.choices,
@@ -67,11 +64,9 @@ def rendas(request):
     return render(request, 'rendas_gastos/rendas.html', context)
 
 #Gastos responsável pela página de gastos.
+@login_required(login_url='login')
 def gastos(request):
-    if not check_authentication(request):
-        return redirect('login')
-    else:
-        form = process_form(request, GastosForm, Gastos, 'Gasto registrado com sucesso!')
+    form = process_form(request, GastosForm, Gastos, 'Gasto registrado com sucesso!')
     gastos_cadastrados = Gastos.objects.filter(created_by=request.user)
     context_total = rendas_gastos_view_total(request)
     today = datetime.today()
@@ -97,7 +92,7 @@ def gastos(request):
         'form': form,
         'gastos_cadastrados': gastos_cadastrados,
         'total_gastos': total_gastos,
-        'opcoes_gastos': OpcoesGastos.choices,
+        'opcoes': OpcoesGastos.choices,
         'grafico_mes': grafico_mes,
         'grafico': grafico,
         'opcoes_pagamentos': MetodoPagamento.choices,
@@ -109,7 +104,7 @@ def gastos(request):
     }
     return render(request, 'rendas_gastos/gastos.html', context)
 
-#Função para verificar a válidade dos dados a serem cadastrados e efetuar o salvamento.
+#Verifica a válidade dos dados a serem cadastrados e efetua o salvamento.
 def process_form(request, form_class, created_class, success_message):
     if request.method == 'POST':
         form = form_class(request.POST)
@@ -121,7 +116,7 @@ def process_form(request, form_class, created_class, success_message):
         form = form_class()
     return form
 
-#Função para filtrar os dados de acordo com o solicitado na página.
+#Filtra os dados de acordo com o solicitado na página.
 def filter_selections(request, name_cadastrado_categoria):
     selected_month = request.GET.get('selected_month')
     selected_category = request.GET.get('selected_category')
@@ -139,7 +134,7 @@ def filter_selections(request, name_cadastrado_categoria):
     total = name_cadastrado_categoria.aggregate(total=Sum('valor'))['total']
     return total, name_cadastrado_categoria
 
-#Função para calcular os valores de renda, gasto e saldo no mês corrente.
+#Calcula os valores de renda, gasto e saldo no mês corrente.
 def rendas_gastos_view(request):
     today = datetime.today()
     rendas_do_mes = Rendas.objects.filter(created_by=request.user, data__year=today.year, data__month=today.month)
@@ -154,7 +149,7 @@ def rendas_gastos_view(request):
     }
     return context_view
 
-#Função para calcular os valores de renda, gasto e saldo de todo o período cadastrado.
+#Calcula os valores de renda, gasto e saldo de todo o período cadastrado.
 def rendas_gastos_view_total(request):
     rendas_usuario = Rendas.objects.filter(created_by=request.user)
     renda_total = round(sum(float(renda.valor) for renda in rendas_usuario), 2)
@@ -168,7 +163,7 @@ def rendas_gastos_view_total(request):
     }
     return context_total
 
-#Função para gerar os dados para os gráficos, que também são usadas nas porcentagens.
+#Gera os dados para os gráficos, que também são usados nas porcentagens.
 def graph(categorias_ref, name_cadastrado):
     totais_dict = {categoria[1]: 0.0 for categoria in categorias_ref}
     for categoria in categorias_ref:
@@ -178,7 +173,7 @@ def graph(categorias_ref, name_cadastrado):
     totais_dict_ordenado = {k: v for k, v in sorted(totais_dict.items(), key=lambda item: item[1], reverse=True)}
     return totais_dict_ordenado
 
-#Função para calcular as porcentagens sobre as categorias em relação ao total analisado.
+#Calcula as porcentagens sobre as categorias em relação ao total analisado.
 def porcentagem(dicionario):
     total = sum(dicionario.values())
     categoria_porcentagem = {}
@@ -191,7 +186,7 @@ def porcentagem(dicionario):
         categoria_porcentagem[categoria] = percentage
     return categoria_porcentagem
 
-#Função para apenas ordenar as categorias e facilitar a exibição na página.
+#Ordena as categorias e facilita a exibição na página.
 def ordenador_porcentagem(porcentagem_total, porcentagem_12meses, porcentagem_mes):
     categorias_ordenadas = sorted(porcentagem_total, key=lambda x: porcentagem_total[x], reverse=True)
     porcentagem_categorias = []
@@ -205,20 +200,50 @@ def ordenador_porcentagem(porcentagem_total, porcentagem_12meses, porcentagem_me
         porcentagem_categorias.append(categoria_dict)
     return porcentagem_categorias
 
-#Função para limpar o filtro.
+#Limpar a seleção do filtro.
 def limpar_filtros(pagina):
     return HttpResponseRedirect(reverse(pagina))
 
-#Função para deletar uma renda.
-def delete_renda(request, renda_id):
-    renda = get_object_or_404(Rendas, pk=renda_id)
-    renda.delete()
-    messages.success(request, 'Renda deletada com sucesso!')
-    return redirect('rendas')
+def editar_renda_gasto(request, tipo, obj_id):
+    if not check_authentication(request):
+        return redirect('login')
+    else:
+        if tipo == 'renda':
+            obj = Rendas.objects.get(pk=obj_id)
+            form = RendasForm(
+                initial={
+                    'valor': obj.valor,
+                    'data': obj.data,
+                    'metodo_pagamento': obj.metodo_pagamento,
+                    'categoria': obj.categoria,
+                    'descricao': obj.descricao,
+                }
+            )
+        else:
+            obj = Gastos.objects.get(pk=obj_id)
+            form = GastosForm(
+                initial={
+                    'valor': obj.valor,
+                    'data': obj.data,
+                    'metodo_pagamento': obj.metodo_pagamento,
+                    'categoria': obj.categoria,
+                    'descricao': obj.descricao,
+                }
+            )
+        if request.method == 'POST':
+            if form.is_valid():
+                form.save(user=request.user)
+                messages.success(request, "Objeto atualizado com sucesso!")
+                if tipo == 'renda': return redirect('rendas')
+                else: return redirect('gastos')
+    return render(request, 'rendas_gastos/editar.html', {'tipo': tipo, 'obj_id': obj_id})
 
-#Função para deletar um gasto.
-def delete_gasto(request, gasto_id):
-    gasto = get_object_or_404(Gastos, pk=gasto_id)
-    gasto.delete()
-    messages.success(request, 'Gasto deletado com sucesso!')
-    return redirect('gastos')
+#Deletar uma renda/gasto.
+@login_required(login_url='login')
+def delete_renda_gasto(request, tipo, obj_id):
+    if tipo == 'renda': obj = get_object_or_404(Rendas, pk=obj_id)
+    else: obj = get_object_or_404(Gastos, pk=obj_id)
+    obj.delete()
+    messages.success(request, 'Deletado com sucesso!')
+    if tipo == 'renda': return redirect('rendas')
+    else: return redirect('gastos')

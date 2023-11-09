@@ -1,4 +1,4 @@
-from apps.investimentos.forms import AcoesForm, FiisForm, BdrsForm, CriptosForm, RendaFixaForm, DividendoForm, CVForm
+from apps.investimentos.forms import AcoesForm, FiisForm, BdrsForm, CriptosForm, RendaFixaForm, DividendoForm, CVForm, CVRendaFixaForm
 from apps.investimentos.models import Acoes, Fiis, Bdrs, Criptos, RendasFixa, HistoricoCompra, HistoricoDividendo
 from apps.investimentos.forms import OpcoesAcoes, OpcoesBdrs, OpcoesCriptos, OpcoesFiis, OpcoesRendaFixa
 from django.shortcuts import render, redirect, get_object_or_404
@@ -168,9 +168,15 @@ def detalhes_ticker(request, tipo_investimento, ticker):
     else:
         if request.method == 'POST':
             cadastrar_dividendo(request, ticker, tipo_investimento)
-            cadastrar_cv(request, ticker, tipo_investimento)
+            if tipo_investimento == 'rendasfixa':
+                cadastrar_cv_rendafixa(request, ticker, tipo_investimento) 
+            else:
+                cadastrar_cv(request, ticker, tipo_investimento)                
         form = DividendoForm()
-        form_cv = CVForm()
+        if tipo_investimento == 'rendasfixa':
+            form_cv = CVRendaFixaForm()
+        else:
+            form_cv = CVForm()
         dividendos_cadastrados = HistoricoDividendo.objects.filter(created_by=request.user, ticker=ticker)
         compras_cadastradas = HistoricoCompra.objects.filter(created_by=request.user, ticker=ticker)
         dividendos_cadastrados = dividendos_cadastrados.order_by('-data')
@@ -254,8 +260,6 @@ def cadastrar_cv(request, ticker, tipo_investimento):
                 if tipo_investimento == 'acoes': created_class = Acoes
                 elif tipo_investimento == 'fiis': created_class = Fiis
                 elif tipo_investimento == 'bdrs': created_class = Bdrs
-                elif tipo_investimento == 'criptos': created_class = Criptos
-                elif tipo_investimento == 'rendafixa': created_class = RendasFixa
                 ja_cadastrado = created_class.objects.filter(ticker=ticker, created_by=request.user).first()
                 if 'compra' in request.POST:
                     if ja_cadastrado:
@@ -287,6 +291,48 @@ def cadastrar_cv(request, ticker, tipo_investimento):
                             quantidade = quantidade*-1
                             valor_total = valor_total*-1
                             historico_compra = HistoricoCompra.objects.create(ticker=ticker, valor=valor_total, quantidade=quantidade,
+                                                                data=data, created_by=request.user)
+                            historico_compra.save()
+                            messages.success(request, f'Venda do {ticker} adicionada.')
+                        else:
+                            messages.error(request, "Quantidade de venda superior ao possuído! ")
+                    else:
+                        messages.error(request, "Impossível registrar venda de um ativo não cadastrado! ")
+
+def cadastrar_cv_rendafixa(request, ticker, tipo_investimento):
+    if not check_authentication(request):
+        messages.error(request, 'Usuário não logado')
+        return redirect('login')
+    else:
+        if request.method == 'POST':
+            form_cv = CVRendaFixaForm(request.POST)
+            if form_cv.is_valid():
+                valor = form_cv.cleaned_data['valor']
+                data = form_cv.cleaned_data['data']
+                ja_cadastrado = RendasFixa.objects.filter(ticker=ticker, created_by=request.user).first()
+                if 'compra' in request.POST:
+                    if ja_cadastrado:
+                        ja_cadastrado.valor += valor
+                        if data < ja_cadastrado.data: ja_cadastrado.data = data
+                        ja_cadastrado.save(user=request.user)
+                        historico_compra = HistoricoCompra.objects.create(ticker=ticker, valor=valor,
+                                                            data=data, created_by=request.user)
+                        historico_compra.save()
+                        messages.success(request, f'Compra do {ticker} adicionada.')
+                    else:
+                        messages.error(request, "Impossível registrar compra de um ativo não cadastrado! ")
+                if 'venda' in request.POST:
+                    if ja_cadastrado:
+                        liquidou = ja_cadastrado.valor - valor
+                        if liquidou >= 0:
+                            if liquidou != 0:
+                                ja_cadastrado.valor -= valor
+                            else:
+                                ja_cadastrado.valor = 0
+                            if data > ja_cadastrado.data: ja_cadastrado.data = data
+                            ja_cadastrado.save(user=request.user)
+                            valor = valor*-1
+                            historico_compra = HistoricoCompra.objects.create(ticker=ticker, valor=valor,
                                                                 data=data, created_by=request.user)
                             historico_compra.save()
                             messages.success(request, f'Venda do {ticker} adicionada.')
@@ -497,7 +543,6 @@ def obter_cotacao(request, cotacoes, dados, class_name, data_atual):
 def obter_cotacao_cripto(request, cotacoes, dados, class_name, data_atual):
     cotacao_dolar = yf.download("BRL=X")
     cotacao_dolar = round(cotacao_dolar["Close"][-1], 2)
-    print(cotacao_dolar)
     for ticker in dados:
         ticker_temporario = ticker.replace("-USD", "")
         dados_salvos = class_name.objects.filter(ticker=ticker_temporario, created_by=request.user).first()
@@ -593,6 +638,27 @@ def delete_cv(request, tipo_investimento, ticker, cv_id,):
         return redirect('login')
     else:
         cv = get_object_or_404(HistoricoCompra, pk=cv_id)
+        if tipo_investimento == 'acoes': investimento = Acoes.objects.filter(ticker=ticker, created_by=request.user).first()
+        elif tipo_investimento == 'fiis': investimento = Fiis.objects.filter(ticker=ticker, created_by=request.user).first()
+        elif tipo_investimento == 'bdrs': investimento = Bdrs.objects.filter(ticker=ticker, created_by=request.user).first()
+        elif tipo_investimento == 'criptos': investimento = Criptos.objects.filter(ticker=ticker, created_by=request.user).first()
+        elif tipo_investimento == 'rendasfixa': investimento = RendasFixa.objects.filter(ticker=ticker, created_by=request.user).first()
+        valor = cv.valor
+        quantidade = cv.quantidade
+        if valor < 0:
+            valor = valor*-1
+            quantidade = quantidade*-1
+        if tipo_investimento == 'rendasfixa':
+            if cv.valor > 0: investimento.valor -= valor
+            else: investimento.valor += valor
+        else:
+            if cv.valor > 0:
+                investimento.valor -= valor
+                investimento.quantidade -= quantidade
+            else:
+                investimento.valor += valor
+                investimento.quantidade += quantidade
+        investimento.save(user=request.user)
         cv.delete()
-        messages.success(request, 'Compra/venda deletada com sucesso!')
+        messages.success(request, 'Deletada com sucesso!')
         return redirect('detalhes_ticker', tipo_investimento, ticker)

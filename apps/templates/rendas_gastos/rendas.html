@@ -15,71 +15,10 @@
         </div>
     </form>
 
-    <form method="get" class="filter-form">
-        <div>
-            <label for="selected_month">Mês:</label>
-            <input type="month" id="selected_month" name="selected_month">
-        </div>
-        
-        <div>
-            <label for="selected_category">Categoria:</label>
-            <select id="selected_category" name="selected_category">
-                <option value="">Todas as categorias</option>
-                {% for category in opcoes_rendas %}
-                    <option value="{{ category.0 }}">{{ category.1 }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        
-        <div>
-            <label for="selected_payment">Pagamento:</label>
-            <select id="selected_payment" name="selected_payment">
-                <option value="">Todos pagamento</option>
-                {% for payment in opcoes_pagamentos %}
-                    <option value="{{ payment.0 }}">{{ payment.1 }}</option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <button type="submit">Filtrar</button>
-        <form action="{% url 'limpar_filtros' 'gastos' %}" method="get">
-            <button type="submit">Limpar Filtros</button>
-        </form>   
-    </form>
-
-    <table class="custom-table" style="margin-bottom: 0px;">
-        <thead>
-            <tr>
-                <th>VALOR</th>
-                <th>CATEGORIA</th>
-                <th>PAGAMENTO</th>
-                <th>DATA</th>
-                <th>DESCRIÇÃO</th>
-                <th>DELETE</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for renda in page_obj %}
-            <tr>
-                <td>R$ {{ renda.valor|floatformat:2 }}</td>
-                <td>{{ renda.categoria }}</td>
-                <td>{{ renda.metodo_pagamento }}</td>
-                <td>{{ renda.data|date:"d-m-Y" }}</td>
-                <td>{{ renda.descricao }}</td>
-                <td style="text-align: center;">
-                    <form action="{% url 'delete_renda' renda.id %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit" class="delete-button" onclick="return confirm('Tem certeza que deseja deletar essa renda?')">X</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-            <tr>
-                <td colspan="6" style="font-weight: bold;">Total: R$ {{ total_rendas|floatformat:2 }}</td>
-            </tr>
-        </tbody>
-    </table>    
-    <div style="margin-left: 130px;">{% include 'shared/pagination.html' %}</div>
+    {% with tipo="renda" %}
+        {% include 'shared/filter_selection.html' %}
+        {% include 'shared/tabelas/tabela_rendas_gastos.html' %}
+    {% endwith %}
     
     <div class="container">
         <div class="box">
@@ -128,9 +67,9 @@
         </div>
     </div>
 
-    {% include 'shared/tabela.html' %}
+    {% include 'shared/tabelas/tabela.html' %}
     
-    {% include 'shared/script_grafico.html' %}
+    {% include 'shared/scripts/script_grafico.html' %}
 
 </div>
 {% include 'shared/footer.html' %}

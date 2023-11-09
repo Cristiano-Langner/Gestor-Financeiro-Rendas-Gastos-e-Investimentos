@@ -49,7 +49,7 @@ class RendasForm(BaseRendasGastos):
     descricao = forms.CharField(
         label='Descrição',
         max_length=20,
-        required=True,
+        required=False,
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
@@ -72,7 +72,7 @@ class GastosForm(BaseRendasGastos):
     descricao = forms.CharField(
         label='Descrição',
         max_length=20,
-        required=True,
+        required=False,
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',

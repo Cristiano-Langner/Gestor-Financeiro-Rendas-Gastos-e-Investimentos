@@ -179,6 +179,31 @@ class CVForm(forms.Form):
             }
         )
     )
+    
+class CVRendaFixaForm(forms.Form):
+    valor=forms.DecimalField(
+        label='Valor unidade ', 
+        required=True,
+        max_digits=14,
+        decimal_places=8, 
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Ex.: 1000.00',
+            }
+        )
+    )
+    data = forms.DateField(
+        label='Data',
+        required=True,
+        widget=forms.DateInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Ex.: DD/MM/AAAA',
+                'type': 'date',
+            }
+        )
+    )
 
 class DividendoForm(forms.Form):
     valor = forms.DecimalField(
