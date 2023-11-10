@@ -18,10 +18,10 @@
             <td>{{ obj.metodo_pagamento }}</td>
             <td>{{ obj.data|date:"d-m-Y" }}</td>
             <td>{{ obj.descricao }}</td>
-            <td>
-                <a>✏️</a>
+            <td style="text-align: center;">
+                <a href="{% url 'editar_renda_gasto' tipo=tipo obj_id=obj.id %}">✏️</a>
             </td>
-            <td>
+            <td style="text-align: center;">
                 <form action="{%  url 'delete_renda_gasto' tipo obj.id %}" method="post">
                     {% csrf_token %}
                     <button type="submit" class="delete-button" onclick="return confirm('Tem certeza que deseja deletar essa renda?')">X</button>
@@ -31,9 +31,9 @@
         {% endfor %}
         <tr>
             {% if tipo == 'renda' %}
-            <td colspan="6" style="font-weight: bold;">Total: R$ {{ total_rendas|floatformat:2 }}</td>
+            <td colspan="7" style="font-weight: bold;">Total: R$ {{ total_rendas|floatformat:2 }}</td>
             {% else %}
-            <td colspan="6" style="font-weight: bold;">Total: R$ {{ total_gastos|floatformat:2 }}</td>
+            <td colspan="7" style="font-weight: bold;">Total: R$ {{ total_gastos|floatformat:2 }}</td>
             {% endif %}
         </tr>
     </tbody>

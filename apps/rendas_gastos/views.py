@@ -2,7 +2,6 @@ from apps.rendas_gastos.forms import GastosForm, RendasForm, OpcoesRendas, Opcoe
 from django.shortcuts import render, redirect, get_object_or_404
 from apps.investimentos.views import investimentos_total_view
 from django.contrib.auth.decorators import login_required
-from apps.rendas_gastos.utils import check_authentication
 from apps.rendas_gastos.models import Rendas, Gastos
 from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator
@@ -204,39 +203,49 @@ def ordenador_porcentagem(porcentagem_total, porcentagem_12meses, porcentagem_me
 def limpar_filtros(pagina):
     return HttpResponseRedirect(reverse(pagina))
 
+@login_required(login_url='login')
 def editar_renda_gasto(request, tipo, obj_id):
-    if not check_authentication(request):
-        return redirect('login')
+    if tipo == 'renda':
+        form_class = RendasForm
+        obj = Rendas.objects.get(pk=obj_id)
+        form_editar = RendasForm(
+            instance=obj,
+            initial={
+                'valor': obj.valor,
+                'data': obj.data.strftime('%Y-%m-%d') if obj.data else None,
+                'metodo_pagamento': obj.metodo_pagamento,
+                'categoria': obj.categoria,
+                'descricao': obj.descricao,
+            }
+        )
     else:
-        if tipo == 'renda':
-            obj = Rendas.objects.get(pk=obj_id)
-            form = RendasForm(
-                initial={
-                    'valor': obj.valor,
-                    'data': obj.data,
-                    'metodo_pagamento': obj.metodo_pagamento,
-                    'categoria': obj.categoria,
-                    'descricao': obj.descricao,
-                }
-            )
+        form_class = GastosForm
+        obj = get_object_or_404(Gastos, id=obj_id, created_by=request.user)
+        form_editar = GastosForm(
+            instance=obj,
+            initial={
+                'valor': obj.valor,
+                'data': obj.data.strftime('%Y-%m-%d') if obj.data else None,
+                'metodo_pagamento': obj.metodo_pagamento,
+                'categoria': obj.categoria,
+                'descricao': obj.descricao,
+            }
+        )
+    if request.method == 'POST':
+        form = form_class(request.POST, instance=obj)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.created_by = request.user
+            print("Usuário:", request.user)
+            instance.created_by = request.user
+            print("Criado por:", instance.created_by)
+            instance.save(user=request.user)
+            messages.success(request, "Atualizado com sucesso!")
+            if tipo == 'renda': return redirect('rendas')
+            else: return redirect('gastos')
         else:
-            obj = Gastos.objects.get(pk=obj_id)
-            form = GastosForm(
-                initial={
-                    'valor': obj.valor,
-                    'data': obj.data,
-                    'metodo_pagamento': obj.metodo_pagamento,
-                    'categoria': obj.categoria,
-                    'descricao': obj.descricao,
-                }
-            )
-        if request.method == 'POST':
-            if form.is_valid():
-                form.save(user=request.user)
-                messages.success(request, "Objeto atualizado com sucesso!")
-                if tipo == 'renda': return redirect('rendas')
-                else: return redirect('gastos')
-    return render(request, 'rendas_gastos/editar.html', {'tipo': tipo, 'obj_id': obj_id})
+            print("Formulario invalido")
+    return render(request, 'rendas_gastos/editar.html', {'form_editar': form_editar, 'tipo': tipo, 'obj_id': obj_id})
 
 #Deletar uma renda/gasto.
 @login_required(login_url='login')

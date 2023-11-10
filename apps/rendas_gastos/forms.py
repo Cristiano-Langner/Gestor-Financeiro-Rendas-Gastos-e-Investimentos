@@ -1,7 +1,7 @@
+from apps.rendas_gastos.models import MetodoPagamento, OpcoesGastos, OpcoesRendas, Rendas, Gastos
 from django import forms
-from apps.rendas_gastos.models import MetodoPagamento, OpcoesGastos, OpcoesRendas
 
-class BaseRendasGastos(forms.Form):
+class BaseRendasGastos(forms.ModelForm):
     valor=forms.DecimalField(
         label='Valor', 
         required=True, 
@@ -34,6 +34,8 @@ class BaseRendasGastos(forms.Form):
             }
         )
     )
+    class Meta:
+        abstract = True
     
 class RendasForm(BaseRendasGastos):
     categoria = forms.ChoiceField(
@@ -57,6 +59,9 @@ class RendasForm(BaseRendasGastos):
             }
         )
     )
+    class Meta:
+        model = Rendas
+        fields = '__all__'
     
 class GastosForm(BaseRendasGastos):
     categoria = forms.ChoiceField(
@@ -80,3 +85,6 @@ class GastosForm(BaseRendasGastos):
             }
         )
     )
+    class Meta:
+        model = Gastos
+        fields = '__all__'

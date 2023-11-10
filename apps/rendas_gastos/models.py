@@ -55,7 +55,6 @@ class BaseTransaction(models.Model):
     descricao = models.CharField(max_length=20, blank=True, null=True, default="-")
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_created_by')
     modified_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, editable=False, related_name='%(class)s_modified_by')
-    
     def save(self, user=None, *args, **kwargs):
         self.created_by = user
         self.modified_by = user

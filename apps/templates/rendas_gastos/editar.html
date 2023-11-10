@@ -1,0 +1,31 @@
+{% extends 'shared/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="titulo">
+    <h4>EDITAR</h4>
+    {% include 'partials/_alertas.html' %}
+</div>
+<div class="pagina">
+
+    <form action="{% url 'editar_renda_gasto' tipo=tipo obj_id=obj_id %}" method="POST" class="form-cadastro" style="max-width: 815px; margin-top: 40px; margin-bottom: 300px;">
+        {% csrf_token %}
+        <div class="form-columns">
+            <div class="form-column" style="white-space: nowrap;">
+                {% for field in form_editar.visible_fields %}
+                <div class="form-field" style="display: inline-block; margin-right: 10px;">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field.as_widget }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div style="text-align: center;">
+            <button type="submit" class="botao-normal">Salvar</button>
+        </div>
+    </form>
+
+</div>
+{% include 'shared/footer.html' %}
+
+{% endblock %}

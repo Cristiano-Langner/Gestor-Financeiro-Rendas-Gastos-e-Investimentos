@@ -1,4 +1,4 @@
-from apps.rendas_gastos.views import index, rendas, gastos, limpar_filtros, delete_renda_gasto
+from apps.rendas_gastos.views import index, rendas, gastos, limpar_filtros, delete_renda_gasto, editar_renda_gasto
 from django.urls import path
 
 urlpatterns = [
@@ -7,4 +7,5 @@ urlpatterns = [
     path('gastos', gastos, name='gastos'),
     path('limpar_filtros/<str:pagina>/', limpar_filtros, name='limpar_filtros'),
     path('delete_renda_gasto/<str:tipo>/<int:obj_id>/', delete_renda_gasto, name='delete_renda_gasto'),
+    path('editar_renda_gasto/<str:tipo>/<int:obj_id>/', editar_renda_gasto, name='editar_renda_gasto'),
 ]
