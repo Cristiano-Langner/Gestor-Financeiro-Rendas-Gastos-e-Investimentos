@@ -20,7 +20,9 @@
             {% with entidade=invest.ticker %}
             <td><a href="detalhes_ticker/{{ tipo_investimento }}/{{ entidade  }}">{{ entidade  }}</td>
             {% endwith %}
-            <td>R$ {{ invest.valor_mercado|floatformat:2 }}</td>
+            {% if invest.valor_mercado > 1 or invest.valor_mercado == 0 %} <td>R$ {{ invest.valor_mercado|floatformat:2 }}</td>
+            {% else %} <td>R$ {{ invest.valor_mercado|floatformat:8 }}</td>
+            {% endif %}
             <td>R$ {{ invest.valor_total_mercado|floatformat:2 }}</td>
             <td>R$ {{ invest.valor|floatformat:2 }}</td>
             <td>R$ {{ invest.dividendo|floatformat:2 }}</td>
@@ -43,4 +45,4 @@
         </tr>
     </tbody>
 </table>
-<div style="margin-left: 200px;">{% include 'shared/pagination.html' %}</div>
+<div style="margin-left: 130px;">{% include 'shared/pagination.html' %}</div>

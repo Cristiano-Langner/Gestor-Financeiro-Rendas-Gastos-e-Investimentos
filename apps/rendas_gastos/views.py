@@ -203,6 +203,7 @@ def ordenador_porcentagem(porcentagem_total, porcentagem_12meses, porcentagem_me
 def limpar_filtros(pagina):
     return HttpResponseRedirect(reverse(pagina))
 
+#Editar uma renda os gasto.
 @login_required(login_url='login')
 def editar_renda_gasto(request, tipo, obj_id):
     if tipo == 'renda':
