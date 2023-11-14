@@ -7,7 +7,7 @@
     {% include 'partials/_alertas.html' %}
 </div>
 <div class="pagina">
-    <form action="{% url 'detalhes_ticker' tipo_investimento=tipo_investimento ticker=ticker %}" method="POST" class="form-cadastro" {% if tipo_investimento == 'rendasfixa' %} style="max-width: 475px;" {% else %} style="max-width: 375px;" {% endif %}>
+    <form action="{% url 'detalhes_ticker' tipo_investimento=tipo_investimento ticker=ticker %}" method="POST" class="form-cadastro" {% if tipo_investimento == 'rendasfixa' %} style="max-width: 375px;" {% else %} style="max-width: 575px;" {% endif %}>
         {% csrf_token %}
         <div class="form-columns">
             <div class="form-column" style="white-space: nowrap;">

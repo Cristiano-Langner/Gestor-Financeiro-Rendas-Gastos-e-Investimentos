@@ -156,10 +156,8 @@ def detalhes_ticker(request, tipo_investimento, ticker):
         else:
             cadastrar_cv(request, ticker, tipo_investimento)                
     form = DividendoForm()
-    if tipo_investimento == 'rendasfixa':
-        form_cv = CVRendaFixaForm()
-    else:
-        form_cv = CVForm()
+    if tipo_investimento == 'rendasfixa': form_cv = CVRendaFixaForm()
+    else: form_cv = CVForm()
     dividendos_cadastrados = HistoricoDividendo.objects.filter(created_by=request.user, ticker=ticker)
     compras_cadastradas = HistoricoCompra.objects.filter(created_by=request.user, ticker=ticker)
     dividendos_cadastrados = dividendos_cadastrados.order_by('-data')
@@ -172,8 +170,10 @@ def detalhes_ticker(request, tipo_investimento, ticker):
     paginator_cv = Paginator(compras_cadastradas, 6)
     page_number_cv = request.GET.get('page')
     page_obj_cv = paginator_cv.get_page(page_number_cv)
+    print("Compras: ", page_obj_cv)
     total_div = dividendos_cadastrados.aggregate(total=Sum('valor'))['total']
     total_compra = compras_cadastradas.aggregate(total=Sum('valor'))['total']
+    if total_compra < 0: total_compra = 0
     context = {
         'tipo_investimento': tipo_investimento,
         'ticker': ticker,
@@ -241,6 +241,7 @@ def cadastrar_cv(request, ticker, tipo_investimento):
             if tipo_investimento == 'acoes': created_class = Acoes
             elif tipo_investimento == 'fiis': created_class = Fiis
             elif tipo_investimento == 'bdrs': created_class = Bdrs
+            elif tipo_investimento == 'criptos': created_class = Criptos
             ja_cadastrado = created_class.objects.filter(ticker=ticker, created_by=request.user).first()
             if 'compra' in request.POST:
                 if ja_cadastrado:

@@ -182,7 +182,7 @@ class CVForm(forms.Form):
     
 class CVRendaFixaForm(forms.Form):
     valor=forms.DecimalField(
-        label='Valor unidade ', 
+        label='Valor ', 
         required=True,
         max_digits=14,
         decimal_places=8, 
