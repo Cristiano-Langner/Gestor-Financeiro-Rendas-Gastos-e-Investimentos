@@ -39,10 +39,11 @@
         <tr>
             <td>Total:</td>
             <td></td>
-            <td></td>
-            <td>R$ {{ total_invest|floatformat:2 }}</td>
-            <td colspan="4"></td>
+            <td>R$ {{ context_view.total_mercado|floatformat:2 }}</td>
+            <td>R$ {{ context_view.investido|floatformat:2 }}</td>
+            <td>R$ {{ context_view.dividendo|floatformat:2 }}</td>
+            <td colspan="3"></td>
         </tr>
     </tbody>
 </table>
-<div style="margin-left: 130px;">{% include 'shared/pagination.html' %}</div>
+<div style="margin-left: 80px;">{% include 'shared/pagination.html' %}</div>

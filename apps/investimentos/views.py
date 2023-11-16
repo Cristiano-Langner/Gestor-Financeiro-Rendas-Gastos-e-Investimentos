@@ -14,12 +14,11 @@ import datetime
 #Responsável pela página das ações.
 @login_required(login_url='login')
 def acoes(request):
+    veio_rendafixa = False
     if request.method == 'POST':
-        veio_rendafixa = False
         process_form_invest(request, AcoesForm, Acoes, 'Ação registrada com sucesso!', veio_rendafixa)
     form = AcoesForm()
-    context_view, acoes_cadastradas, invest_ticker_dict = investimento_view(request, Acoes)
-    total_acoes = acoes_cadastradas.aggregate(total=Sum('valor'))['total']
+    context_view, acoes_cadastradas, invest_ticker_dict = investimento_view(request, Acoes, veio_rendafixa)
     categorias = OpcoesAcoes.choices
     grafico = graph(categorias, acoes_cadastradas)
     acoes_cadastradas = acoes_cadastradas.order_by('-data')
@@ -29,7 +28,6 @@ def acoes(request):
     context = {
         'form': form,
         'acoes_cadastradas': acoes_cadastradas,
-        'total_acoes': total_acoes,
         'opcoes_acoes': OpcoesAcoes.choices,
         'page_obj': page_obj,
         'context_view': context_view,
@@ -41,12 +39,11 @@ def acoes(request):
 #Responsável pela página dos fundos imobiliários.
 @login_required(login_url='login')
 def fiis(request):
+    veio_rendafixa = False
     if request.method == 'POST':
-        veio_rendafixa = False
         process_form_invest(request, FiisForm, Fiis, 'Fundo imobiliário registrado com sucesso!', veio_rendafixa)
     form = FiisForm()
-    context_view, fiis_cadastrados, invest_ticker_dict = investimento_view(request, Fiis)
-    total_fiis = fiis_cadastrados.aggregate(total=Sum('valor'))['total']
+    context_view, fiis_cadastrados, invest_ticker_dict = investimento_view(request, Fiis, veio_rendafixa)
     categorias = OpcoesFiis.choices
     grafico = graph(categorias, fiis_cadastrados)
     fiis_cadastrados = fiis_cadastrados.order_by('-data')
@@ -56,7 +53,6 @@ def fiis(request):
     context = {
         'form': form,
         'fiis_cadastrados': fiis_cadastrados,
-        'total_fiis': total_fiis,
         'opcoes_fiis': OpcoesFiis.choices,
         'page_obj': page_obj,
         'context_view': context_view,
@@ -68,12 +64,11 @@ def fiis(request):
 #Responsável pela página das BDRs.
 @login_required(login_url='login')
 def bdrs(request):
+    veio_rendafixa = False
     if request.method == 'POST':
-        veio_rendafixa = False
         process_form_invest(request, BdrsForm, Bdrs, 'BDR registrado com sucesso!', veio_rendafixa)
     form = BdrsForm()
-    context_view, bdrs_cadastrados, invest_ticker_dict = investimento_view(request, Bdrs)
-    total_bdrs = bdrs_cadastrados.aggregate(total=Sum('valor'))['total']
+    context_view, bdrs_cadastrados, invest_ticker_dict = investimento_view(request, Bdrs, veio_rendafixa)
     categorias = OpcoesBdrs.choices
     grafico = graph(categorias, bdrs_cadastrados)
     bdrs_cadastrados = bdrs_cadastrados.order_by('-data')
@@ -83,7 +78,6 @@ def bdrs(request):
     context = {
         'form': form,
         'bdrs_cadastrados': bdrs_cadastrados,
-        'total_bdrs': total_bdrs,
         'opcoes_bdrs': OpcoesBdrs.choices,
         'page_obj': page_obj,
         'context_view': context_view,
@@ -95,12 +89,11 @@ def bdrs(request):
 #Responsável pela página das cripto moedas.
 @login_required(login_url='login')
 def criptos(request):
+    veio_rendafixa = False
     if request.method == 'POST':
-        veio_rendafixa = False
         process_form_invest(request, CriptosForm, Criptos, 'Cripto moeda registrada com sucesso!', veio_rendafixa)
     form = CriptosForm()
-    context_view, criptos_cadastradas, invest_ticker_dict = investimento_view(request, Criptos)
-    total_criptos = criptos_cadastradas.aggregate(total=Sum('valor'))['total']
+    context_view, criptos_cadastradas, invest_ticker_dict = investimento_view(request, Criptos, veio_rendafixa)
     categorias = OpcoesCriptos.choices
     grafico = graph(categorias, criptos_cadastradas)
     criptos_cadastradas = criptos_cadastradas.order_by('-data')
@@ -110,7 +103,6 @@ def criptos(request):
     context = {
         'form': form,
         'criptos_cadastradas': criptos_cadastradas,
-        'total_criptos': total_criptos,
         'opcoes_criptos': OpcoesCriptos.choices,
         'page_obj': page_obj,
         'context_view': context_view,
@@ -122,12 +114,11 @@ def criptos(request):
 #Responsável pela página de renda fixa.
 @login_required(login_url='login')
 def rendafixa(request):
+    veio_rendafixa = True
     if request.method == 'POST':
-        veio_rendafixa = True
         process_form_invest(request, RendaFixaForm, RendasFixa, 'Renda fixa registrada com sucesso!', veio_rendafixa)
     form = RendaFixaForm()
-    context_view, rendasfixa_cadastradas, invest_ticker_dict = investimento_view(request, RendasFixa)
-    total_rendasfixa = rendasfixa_cadastradas.aggregate(total=Sum('valor'))['total']
+    context_view, rendasfixa_cadastradas, invest_ticker_dict = investimento_view(request, RendasFixa, veio_rendafixa)
     categorias = OpcoesRendaFixa.choices
     grafico = graph(categorias, rendasfixa_cadastradas)
     rendasfixa_cadastradas = rendasfixa_cadastradas.order_by('-data')
@@ -137,7 +128,6 @@ def rendafixa(request):
     context = {
         'form': form,
         'rendasfixa_cadastradas': rendasfixa_cadastradas,
-        'total_rendasfixa': total_rendasfixa,
         'opcoes_rendasfixa': OpcoesRendaFixa.choices,
         'page_obj': page_obj,
         'context_view': context_view,
@@ -170,7 +160,6 @@ def detalhes_ticker(request, tipo_investimento, ticker):
     paginator_cv = Paginator(compras_cadastradas, 6)
     page_number_cv = request.GET.get('page')
     page_obj_cv = paginator_cv.get_page(page_number_cv)
-    print("Compras: ", page_obj_cv)
     total_div = dividendos_cadastrados.aggregate(total=Sum('valor'))['total']
     total_compra = compras_cadastradas.aggregate(total=Sum('valor'))['total']
     if total_compra < 0: total_compra = 0
@@ -428,10 +417,12 @@ def investimentos_total_view(request):
     return context
 
 #Função calcula os valores que foram investidos, recebidos e somados do ativo financeiro em análise.
-def investimento_view(request, classe):
+def investimento_view(request, classe, veio_rendafixa):
     investido_user = classe.objects.filter(created_by=request.user)
     investido = sum(invest.valor for invest in investido_user)
     dividendo = sum(invest.dividendo for invest in investido_user)
+    if not veio_rendafixa: total_mercado =  sum(invest.valor_total_mercado for invest in investido_user) 
+    else: total_mercado = 0
     total = investido + dividendo
     invest_ticker = []
     for ticker in investido_user:
@@ -442,16 +433,9 @@ def investimento_view(request, classe):
         'investido': investido,
         'dividendo': dividendo,
         'total': total,
+        'total_mercado': total_mercado,
     }
     return context, investido_user, invest_ticker_dict
-
-#Função responsável pela organização e paginação dos elementos na página.
-def paginacao(request, invest_cadastrados):
-    invest_cadastrados = invest_cadastrados.order_by('-data')
-    paginator = Paginator(invest_cadastrados, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    return page_obj, invest_cadastrados
 
 #Função para gerar os dados para os gráficos, que também são usadas nas porcentagens.
 def graph(categorias_ref, name_cadastrado):
@@ -544,7 +528,6 @@ def salvar_consolidacao(request, dados, class_name):
         if investimento:
             quantidade = investimento.quantidade
             investimento.valor_mercado = cotacao
-            print("Cotação: ", cotacao)
             if isinstance(investimento, Criptos): investimento.valor_total_mercado = Decimal(cotacao) * quantidade
             else: investimento.valor_total_mercado = cotacao * quantidade
             investimento.save(user=request.user)

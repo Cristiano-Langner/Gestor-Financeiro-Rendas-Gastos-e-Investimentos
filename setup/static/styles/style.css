@@ -494,8 +494,8 @@ font-weight: normal;
 
 .alert {
     padding: 10px;
-    margin: 10px;
-    margin-left: 580px;
+    margin: 10px auto;
+    transform: translateX(50px);
     border: 1px solid #ccc;
     background-color: #f7f7f7;
     color: #333;

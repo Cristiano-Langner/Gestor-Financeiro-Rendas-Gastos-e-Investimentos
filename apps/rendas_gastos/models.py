@@ -36,6 +36,7 @@ class OpcoesGastos(models.TextChoices):
     INVESTIMENTOS = "Investimentos"
     INTERNET = "Internet"
     LANCHES = "Lanches"
+    LAZER = "Lazer"
     LUZ = "Luz"
     MERCADO = "Mercado"
     PET = "Pet"
@@ -44,7 +45,7 @@ class OpcoesGastos(models.TextChoices):
     SAÚDE = "Saúde"
     SEGUROS = "Seguros"
     TRANSPORTE = "Transporte"
-    Vestuário = "Vestuário"
+    VESTUÁRIO = "Vestuário"
     VIAGENS = "Viagens"
     OUTROS = "Outros"
     
