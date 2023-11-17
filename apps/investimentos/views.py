@@ -14,127 +14,51 @@ import datetime
 #Responsável pela página das ações.
 @login_required(login_url='login')
 def acoes(request):
-    veio_rendafixa = False
-    if request.method == 'POST':
-        process_form_invest(request, AcoesForm, Acoes, 'Ação registrada com sucesso!', veio_rendafixa)
-    form = AcoesForm()
-    context_view, acoes_cadastradas, invest_ticker_dict = investimento_view(request, Acoes, veio_rendafixa)
-    categorias = OpcoesAcoes.choices
-    grafico = graph(categorias, acoes_cadastradas)
-    acoes_cadastradas = acoes_cadastradas.order_by('-data')
-    paginator = Paginator(acoes_cadastradas, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    context = {
-        'form': form,
-        'acoes_cadastradas': acoes_cadastradas,
-        'opcoes_acoes': OpcoesAcoes.choices,
-        'page_obj': page_obj,
-        'context_view': context_view,
-        'grafico': grafico,
-        'invest_ticker_dict': invest_ticker_dict
-    }
+    context = investimento_paginas_views(request, AcoesForm, Acoes, 'Ação registrada com sucesso!', OpcoesAcoes, False)
     return render(request, 'investimentos/acoes.html', context)
 
 #Responsável pela página dos fundos imobiliários.
 @login_required(login_url='login')
 def fiis(request):
-    veio_rendafixa = False
-    if request.method == 'POST':
-        process_form_invest(request, FiisForm, Fiis, 'Fundo imobiliário registrado com sucesso!', veio_rendafixa)
-    form = FiisForm()
-    context_view, fiis_cadastrados, invest_ticker_dict = investimento_view(request, Fiis, veio_rendafixa)
-    categorias = OpcoesFiis.choices
-    grafico = graph(categorias, fiis_cadastrados)
-    fiis_cadastrados = fiis_cadastrados.order_by('-data')
-    paginator = Paginator(fiis_cadastrados, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    context = {
-        'form': form,
-        'fiis_cadastrados': fiis_cadastrados,
-        'opcoes_fiis': OpcoesFiis.choices,
-        'page_obj': page_obj,
-        'context_view': context_view,
-        'grafico': grafico,
-        'invest_ticker_dict': invest_ticker_dict
-    }
+    context = investimento_paginas_views(request, FiisForm, Fiis, 'Fundo imobiliário registrado com sucesso!', OpcoesFiis, False)
     return render(request, 'investimentos/fiis.html', context)
 
 #Responsável pela página das BDRs.
 @login_required(login_url='login')
 def bdrs(request):
-    veio_rendafixa = False
-    if request.method == 'POST':
-        process_form_invest(request, BdrsForm, Bdrs, 'BDR registrado com sucesso!', veio_rendafixa)
-    form = BdrsForm()
-    context_view, bdrs_cadastrados, invest_ticker_dict = investimento_view(request, Bdrs, veio_rendafixa)
-    categorias = OpcoesBdrs.choices
-    grafico = graph(categorias, bdrs_cadastrados)
-    bdrs_cadastrados = bdrs_cadastrados.order_by('-data')
-    paginator = Paginator(bdrs_cadastrados, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    context = {
-        'form': form,
-        'bdrs_cadastrados': bdrs_cadastrados,
-        'opcoes_bdrs': OpcoesBdrs.choices,
-        'page_obj': page_obj,
-        'context_view': context_view,
-        'grafico': grafico,
-        'invest_ticker_dict': invest_ticker_dict
-    }
+    context = investimento_paginas_views(request, BdrsForm, Bdrs, 'BDR registrado com sucesso!', OpcoesBdrs, False)
     return render(request, 'investimentos/bdrs.html', context)
 
 #Responsável pela página das cripto moedas.
 @login_required(login_url='login')
 def criptos(request):
-    veio_rendafixa = False
-    if request.method == 'POST':
-        process_form_invest(request, CriptosForm, Criptos, 'Cripto moeda registrada com sucesso!', veio_rendafixa)
-    form = CriptosForm()
-    context_view, criptos_cadastradas, invest_ticker_dict = investimento_view(request, Criptos, veio_rendafixa)
-    categorias = OpcoesCriptos.choices
-    grafico = graph(categorias, criptos_cadastradas)
-    criptos_cadastradas = criptos_cadastradas.order_by('-data')
-    paginator = Paginator(criptos_cadastradas, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    context = {
-        'form': form,
-        'criptos_cadastradas': criptos_cadastradas,
-        'opcoes_criptos': OpcoesCriptos.choices,
-        'page_obj': page_obj,
-        'context_view': context_view,
-        'grafico': grafico,
-        'invest_ticker_dict': invest_ticker_dict
-    }
+    context = investimento_paginas_views(request, CriptosForm, Criptos, 'Cripto moeda registrada com sucesso!', OpcoesCriptos, False)
     return render(request, 'investimentos/criptos.html', context)
 
 #Responsável pela página de renda fixa.
 @login_required(login_url='login')
 def rendafixa(request):
-    veio_rendafixa = True
-    if request.method == 'POST':
-        process_form_invest(request, RendaFixaForm, RendasFixa, 'Renda fixa registrada com sucesso!', veio_rendafixa)
-    form = RendaFixaForm()
-    context_view, rendasfixa_cadastradas, invest_ticker_dict = investimento_view(request, RendasFixa, veio_rendafixa)
-    categorias = OpcoesRendaFixa.choices
-    grafico = graph(categorias, rendasfixa_cadastradas)
-    rendasfixa_cadastradas = rendasfixa_cadastradas.order_by('-data')
-    paginator = Paginator(rendasfixa_cadastradas, 10)
+    context = investimento_paginas_views(request, RendaFixaForm, RendasFixa, 'Renda fixa registrada com sucesso!', OpcoesRendaFixa, True)
+    return render(request, 'investimentos/rendafixa.html', context)
+
+#Executa as funções para as páginas de investimentos.
+def investimento_paginas_views(request, form_process, class_process, message, opcoes_process, veio_rendafixa):
+    form = process_form_invest(request, form_process, class_process, message, veio_rendafixa)
+    context_view, dados_cadastrados, invest_ticker_dict = investimento_view(request, class_process, veio_rendafixa)
+    categorias = opcoes_process.choices
+    grafico = graph(categorias, dados_cadastrados)
+    dados_cadastrados = dados_cadastrados.order_by('-data')
+    paginator = Paginator(dados_cadastrados, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context = {
         'form': form,
-        'rendasfixa_cadastradas': rendasfixa_cadastradas,
-        'opcoes_rendasfixa': OpcoesRendaFixa.choices,
         'page_obj': page_obj,
         'context_view': context_view,
         'grafico': grafico,
         'invest_ticker_dict': invest_ticker_dict
     }
-    return render(request, 'investimentos/rendafixa.html', context)
+    return context
 
 #Responsável pela página de detalhes dos ativos.
 @login_required(login_url='login')
@@ -216,6 +140,9 @@ def process_form_invest(request, form_class, created_class, success_message, ori
                 historico_compra = HistoricoCompra.objects.create(ticker=ticker, valor=valor, data=data, created_by=request.user)
                 historico_compra.save()
                 messages.success(request, success_message)
+    else:
+        form = form_class()
+    return form
 
 #Cadastrar uma compra ou venda de ativos.
 @login_required(login_url='login')

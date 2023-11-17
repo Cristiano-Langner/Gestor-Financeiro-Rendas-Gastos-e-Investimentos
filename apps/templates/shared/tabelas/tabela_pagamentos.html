@@ -1,22 +1,22 @@
-<table class="custom-table">
+<table class="custom-table" style="margin-top: 50px;">
     <thead>
         <tr>
-            <th colspan="4" style="text-align: center;">PORCENTAGENS CATEGORIAS <span class="info-icon">i
-                <span class="info-text">A tabela abaixo apresenta os valores em porcentagem,
+            <th colspan="4" style="text-align: center;">PORCENTAGENS FORMAS DE PAGAMENTOS <span class="info-icon">i
+                <span class="info-text">A tabela abaixo apresenta os valores em porcentagem das formas de pagamento,
                     organizadas em ordem decrescente da soma total. Levando como ordenador 
                     a coluna de total, que contém todos os dados cadastrados.</span>
             </span></th>
             
         </tr>
         <tr>
-        <th>Categorias</th>
+        <th>Pagamento</th>
         <th>Total desde o ínicio</th>
         <th>Últimos 12 meses</th>
         <th>Mês atual</th>
         </tr>
     </thead>
     <tbody>
-        {% for categoria in porcentagem_categorias %}
+        {% for categoria in porcentagem_categorias_pagamento %}
             {% if tipo == "renda" %}
                 <tr>
                     <td>{{ categoria.categoria }}</td>

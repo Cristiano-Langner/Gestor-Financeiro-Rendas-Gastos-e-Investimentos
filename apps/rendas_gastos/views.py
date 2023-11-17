@@ -21,77 +21,52 @@ def index(request):
     }
     return render(request, 'index.html', context)
 
-#Rendas responsável pela página de rendas.
+#Responsável pela página de rendas.
 @login_required(login_url='login')
 def rendas(request):
-    form = process_form(request, RendasForm, Rendas, 'Renda registrada com sucesso!')
-    rendas_cadastradas = Rendas.objects.filter(created_by=request.user)
-    context_total = rendas_gastos_view_total(request)
-    today = datetime.today()
-    rendas_cadastradas_mes = Rendas.objects.filter(created_by=request.user, data__year=today.year, data__month=today.month)
-    start_date = today - timedelta(days=365)
-    rendas_cadastradas_12meses = Rendas.objects.filter(created_by=request.user, data__range=(start_date, today))
-    categorias_renda = OpcoesRendas.choices
-    grafico_mes = graph(categorias_renda, rendas_cadastradas_mes)
-    porcentagem_mes = porcentagem(grafico_mes)
-    grafico = graph(categorias_renda, rendas_cadastradas)
-    porcentagem_total = porcentagem(grafico)
-    grafico_12meses = graph(categorias_renda, rendas_cadastradas_12meses)
-    porcentagem_12meses = porcentagem(grafico_12meses)
-    porcentagem_categorias = ordenador_porcentagem(porcentagem_total, porcentagem_12meses, porcentagem_mes)
-    total_rendas, rendas_cadastradas = filter_selections(request, rendas_cadastradas)
-    rendas_cadastradas = rendas_cadastradas.order_by('-data')
-    paginator = Paginator(rendas_cadastradas, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    context_view = rendas_gastos_view(request)
-    tipo = "renda"
-    context = {
-        'form': form,
-        'rendas_cadastradas': rendas_cadastradas,
-        'total_rendas': total_rendas,
-        'opcoes': OpcoesRendas.choices,
-        'grafico_mes': grafico_mes,
-        'grafico': grafico,
-        'opcoes_pagamentos': MetodoPagamento.choices,
-        'page_obj': page_obj,
-        'context_view': context_view,
-        'context_total': context_total,
-        'porcentagem_categorias': porcentagem_categorias,
-        'tipo': tipo
-    }
+    context = rendas_gastos(request, RendasForm, Rendas, 'Renda registrada com sucesso!', OpcoesRendas, "renda")
     return render(request, 'rendas_gastos/rendas.html', context)
 
-#Gastos responsável pela página de gastos.
+#Responsável pela página de gastos.
 @login_required(login_url='login')
 def gastos(request):
-    form = process_form(request, GastosForm, Gastos, 'Gasto registrado com sucesso!')
-    gastos_cadastrados = Gastos.objects.filter(created_by=request.user)
+    context = rendas_gastos(request, GastosForm, Gastos, 'Gasto registrado com sucesso!', OpcoesGastos, "gasto")
+    return render(request, 'rendas_gastos/gastos.html', context)
+
+#Executa as funções para rendas e gastos.
+def rendas_gastos(request, form_process, class_process, message, opcoes_process, tipo):
+    form = process_form(request, form_process, class_process, message)
+    dados_cadastrados = class_process.objects.filter(created_by=request.user)
     context_total = rendas_gastos_view_total(request)
     today = datetime.today()
-    gastos_cadastrados_mes = Gastos.objects.filter(created_by=request.user, data__year=today.year, data__month=today.month)
+    dados_cadastrados_mes = class_process.objects.filter(created_by=request.user, data__year=today.year, data__month=today.month)
     start_date = today - timedelta(days=365)
-    gastos_cadastrados_12meses = Gastos.objects.filter(created_by=request.user, data__range=(start_date, today))
-    categorias = OpcoesGastos.choices
-    grafico_mes = graph(categorias, gastos_cadastrados_mes)
+    dados_cadastrados_12meses = class_process.objects.filter(created_by=request.user, data__range=(start_date, today))
+    categorias = opcoes_process.choices
+    formas_pagamento = MetodoPagamento.choices
+    grafico_mes = graph(categorias, dados_cadastrados_mes)
     porcentagem_mes = porcentagem(grafico_mes)
-    grafico = graph(categorias, gastos_cadastrados)
+    grafico = graph(categorias, dados_cadastrados)
     porcentagem_total = porcentagem(grafico)
-    grafico_12meses = graph(categorias, gastos_cadastrados_12meses)
+    grafico_12meses = graph(categorias, dados_cadastrados_12meses)
     porcentagem_12meses = porcentagem(grafico_12meses)
     porcentagem_categorias = ordenador_porcentagem(porcentagem_total, porcentagem_12meses, porcentagem_mes)
-    total_gastos, gastos_cadastrados = filter_selections(request, gastos_cadastrados)
-    gastos_cadastrados = gastos_cadastrados.order_by('-data')
-    paginator = Paginator(gastos_cadastrados, 10)
+    pagamentos_mes = pagamentos(formas_pagamento, dados_cadastrados_mes)
+    procentagem_mes_pagamentos = porcentagem(pagamentos_mes)
+    pagamentos_12meses = pagamentos(formas_pagamento, dados_cadastrados_12meses)
+    porcentagem_12meses_pagamentos = porcentagem(pagamentos_12meses)
+    pagamentos_total = pagamentos(formas_pagamento, dados_cadastrados)
+    procentagem_total_pagamentos = porcentagem(pagamentos_total)
+    porcentagem_categorias_pagamento = ordenador_porcentagem(procentagem_total_pagamentos, porcentagem_12meses_pagamentos, procentagem_mes_pagamentos)
+    total, dados_cadastrados = filter_selections(request, dados_cadastrados)
+    dados_cadastrados = dados_cadastrados.order_by('-data')
+    paginator = Paginator(dados_cadastrados, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context_view = rendas_gastos_view(request)
-    tipo = "gasto"
     context = {
         'form': form,
-        'gastos_cadastrados': gastos_cadastrados,
-        'total_gastos': total_gastos,
-        'opcoes': OpcoesGastos.choices,
+        'total': total,
         'grafico_mes': grafico_mes,
         'grafico': grafico,
         'opcoes_pagamentos': MetodoPagamento.choices,
@@ -99,9 +74,10 @@ def gastos(request):
         'context_view': context_view,
         'context_total': context_total,
         'porcentagem_categorias': porcentagem_categorias,
+        'porcentagem_categorias_pagamento': porcentagem_categorias_pagamento,
         'tipo': tipo
     }
-    return render(request, 'rendas_gastos/gastos.html', context)
+    return context
 
 #Verifica a válidade dos dados a serem cadastrados e efetua o salvamento.
 def process_form(request, form_class, created_class, success_message):
@@ -172,6 +148,16 @@ def graph(categorias_ref, name_cadastrado):
     totais_dict_ordenado = {k: v for k, v in sorted(totais_dict.items(), key=lambda item: item[1], reverse=True)}
     return totais_dict_ordenado
 
+#Gera os dados das categorias de pagamentos usadas na tabela de porcentagens.
+def pagamentos(pagamento_ref, name_cadastrado):
+    totais_dict = {categoria[1]: 0.0 for categoria in pagamento_ref}
+    for metodo_pagamento in pagamento_ref:
+        total_pagamento = name_cadastrado.filter(metodo_pagamento=metodo_pagamento[0]).aggregate(total=Sum('valor'))['total']
+        total_pagamento_formatted = round(float(total_pagamento), 2) if total_pagamento else 0.0
+        totais_dict[metodo_pagamento[1]] = total_pagamento_formatted
+    totais_dict_pagamento_ordenado  = {k: v for k, v in sorted(totais_dict.items(), key=lambda item: item[1], reverse=True)}
+    return totais_dict_pagamento_ordenado 
+
 #Calcula as porcentagens sobre as categorias em relação ao total analisado.
 def porcentagem(dicionario):
     total = sum(dicionario.values())
@@ -203,7 +189,7 @@ def ordenador_porcentagem(porcentagem_total, porcentagem_12meses, porcentagem_me
 def limpar_filtros(pagina):
     return HttpResponseRedirect(reverse(pagina))
 
-#Editar uma renda os gasto.
+#Editar uma renda/gasto.
 @login_required(login_url='login')
 def editar_renda_gasto(request, tipo, obj_id):
     if tipo == 'renda':

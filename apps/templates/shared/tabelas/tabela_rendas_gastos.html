@@ -30,11 +30,7 @@
         </tr>
         {% endfor %}
         <tr>
-            {% if tipo == 'renda' %}
-            <td colspan="7" style="font-weight: bold;">Total: R$ {{ total_rendas|floatformat:2 }}</td>
-            {% else %}
-            <td colspan="7" style="font-weight: bold;">Total: R$ {{ total_gastos|floatformat:2 }}</td>
-            {% endif %}
+            <td colspan="7" style="font-weight: bold;">Total: R$ {{ total|floatformat:2 }}</td>
         </tr>
     </tbody>
 </table>    
