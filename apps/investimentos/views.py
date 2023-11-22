@@ -47,7 +47,7 @@ def investimento_paginas_views(request, form_process, class_process, message, op
     context_view, dados_cadastrados, invest_ticker_dict = investimento_view(request, class_process, veio_rendafixa)
     categorias = opcoes_process.choices
     grafico = graph(categorias, dados_cadastrados)
-    dados_cadastrados = dados_cadastrados.order_by('-data')
+    dados_cadastrados = dados_cadastrados.order_by('-valor')
     paginator = Paginator(dados_cadastrados, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)

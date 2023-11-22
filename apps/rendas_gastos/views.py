@@ -1,4 +1,4 @@
-from apps.rendas_gastos.forms import GastosForm, RendasForm, OpcoesRendas, OpcoesGastos, MetodoPagamento
+from apps.rendas_gastos.forms import GastosForm, RendasForm, OpcoesRendas, OpcoesGastos, MetodoPagamento 
 from django.shortcuts import render, redirect, get_object_or_404
 from apps.investimentos.views import investimentos_total_view
 from django.contrib.auth.decorators import login_required
@@ -70,6 +70,7 @@ def rendas_gastos(request, form_process, class_process, message, opcoes_process,
         'grafico_mes': grafico_mes,
         'grafico': grafico,
         'opcoes_pagamentos': MetodoPagamento.choices,
+        'opcoes': OpcoesGastos.choices,
         'page_obj': page_obj,
         'context_view': context_view,
         'context_total': context_total,

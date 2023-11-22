@@ -1,11 +1,12 @@
 <table class="custom-table" style="margin-bottom: 0px;">
     <thead>
         <tr>
-            <th colspan="8" style="text-align: center;">TABELA DE ATIVOS CADASTRADOS</th>
+            <th colspan="9" style="text-align: center;">TABELA DE ATIVOS CADASTRADOS</th>
         </tr>
         <tr>
             <th>Ticker</th>
             <th>Cotação atual</th>
+            <th>Média compra</th>
             <th>Valor possuído</th>
             <th>Valor investido</th>
             <th>Dividendos</th>
@@ -20,10 +21,14 @@
             {% with entidade=invest.ticker %}
             <td><a href="detalhes_ticker/{{ tipo_investimento }}/{{ entidade  }}">{{ entidade  }}</td>
             {% endwith %}
-            {% if invest.valor_mercado > 1 or invest.valor_mercado == 0 %} <td>R$ {{ invest.valor_mercado|floatformat:2 }}</td>
-            {% else %} <td>R$ {{ invest.valor_mercado|floatformat:8 }}</td>
+            {% if invest.valor_mercado > 1 or invest.valor_mercado == 0 %} <td><span class=" {% if invest.valor_mercado > invest.preco_medio and invest.preco_medio > 0 %}positive{% elif invest.preco_medio > 0 %}negative{% endif %}">
+                R$ {{ invest.valor_mercado|floatformat:2 }}</span></td>
+            {% else %} <td><span class=" {% if invest.valor_mercado > invest.preco_medio %}positive{% elif invest.preco_medio > 0 %}negative{% endif %}">
+                R$ {{ invest.valor_mercado|floatformat:8 }}</span></td>
             {% endif %}
-            <td>R$ {{ invest.valor_total_mercado|floatformat:2 }}</td>
+            <td>R$ {{ invest.preco_medio|floatformat:2 }}</td>
+            <td><span class=" {% if invest.valor_total_mercado > invest.valor and invest.preco_medio > 0 %}positive{% elif invest.preco_medio > 0 %}negative{% endif %}">
+                R$ {{ invest.valor_total_mercado|floatformat:2 }}</span></td>
             <td>R$ {{ invest.valor|floatformat:2 }}</td>
             <td>R$ {{ invest.dividendo|floatformat:2 }}</td>
             <td>{{ invest.quantidade }}</td>
@@ -38,12 +43,13 @@
         {% endfor %}
         <tr>
             <td>Total:</td>
-            <td></td>
-            <td>R$ {{ context_view.total_mercado|floatformat:2 }}</td>
+            <td colspan="2"></td>
+            <td><span class=" {% if context_view.total_mercado > context_view.investido %}positive{% else %}negative{% endif %}">
+                R$ {{ context_view.total_mercado|floatformat:2 }}</span></td>
             <td>R$ {{ context_view.investido|floatformat:2 }}</td>
             <td>R$ {{ context_view.dividendo|floatformat:2 }}</td>
             <td colspan="3"></td>
         </tr>
     </tbody>
 </table>
-<div style="margin-left: 80px;">{% include 'shared/pagination.html' %}</div>
+<div style="margin-left: 30px;">{% include 'shared/pagination.html' %}</div>
