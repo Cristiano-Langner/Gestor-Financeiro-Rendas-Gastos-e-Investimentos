@@ -2,10 +2,16 @@ document.addEventListener('DOMContentLoaded', function() {
     var menuItem = document.querySelectorAll('.item-menu');
     var currentPage = window.location.pathname;
 
+    function getSecondElementFromPath(path) {
+        var pathParts = path.split('/');
+        return pathParts.length > 2 ? pathParts[2] : null;
+    }
+
     function markActiveMenu() {
         menuItem.forEach((item) => {
             var link = item.querySelector('a');
-            if (link.getAttribute('href') === currentPage) {
+            var currentSecondElement = getSecondElementFromPath(currentPage);
+            if (link.getAttribute('href') === currentPage || link.getAttribute('href') === '/' + currentSecondElement) {
                 item.classList.add('ativo');
             }
         });

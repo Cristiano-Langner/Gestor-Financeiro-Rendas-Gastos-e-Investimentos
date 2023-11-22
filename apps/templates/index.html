@@ -15,12 +15,15 @@
         </div>
     </div>
 
-    {% include 'shared/tabelas/tabela_index_investimentos.html' %}
-    <div class="graficos-container-index" style="margin-bottom: 80px;">
-        <div class="grafico">
-            <canvas id="grafico-investimentos"></canvas>
+    {% if context_investimentos.total_comprado > 0 %}
+        {% include 'shared/tabelas/tabela_index_investimentos.html' %}
+        <div class="graficos-container-index" style="margin-bottom: 80px;">
+            <div class="grafico">
+                <canvas id="grafico-investimentos"></canvas>
+            </div>
         </div>
-    </div>
+    {% else %} <div style="margin-bottom: 120px;"></div>
+    {% endif %}
 
 </div>
 {% include 'shared/scripts/script_grafico_index.html' %}
