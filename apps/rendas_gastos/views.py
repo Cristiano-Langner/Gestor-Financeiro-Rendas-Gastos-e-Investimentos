@@ -46,8 +46,10 @@ def rendas_gastos(request, form_process, class_process, message, opcoes_process,
     formas_pagamento = MetodoPagamento.choices
     grafico_mes = graph(categorias, dados_cadastrados_mes)
     porcentagem_mes = porcentagem(grafico_mes)
+    grafico_mes = {chave: valor for chave, valor in grafico_mes.items() if valor != 0.0}
     grafico = graph(categorias, dados_cadastrados)
     porcentagem_total = porcentagem(grafico)
+    grafico = {chave: valor for chave, valor in grafico.items() if valor != 0.0}
     grafico_12meses = graph(categorias, dados_cadastrados_12meses)
     porcentagem_12meses = porcentagem(grafico_12meses)
     porcentagem_categorias = ordenador_porcentagem(porcentagem_total, porcentagem_12meses, porcentagem_mes)

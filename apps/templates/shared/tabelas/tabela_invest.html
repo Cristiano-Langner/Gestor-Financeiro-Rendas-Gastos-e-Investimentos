@@ -26,7 +26,11 @@
             {% else %} <td><span class=" {% if invest.valor_mercado > invest.preco_medio %}positive{% elif invest.preco_medio > 0 %}negative{% endif %}">
                 R$ {{ invest.valor_mercado|floatformat:8 }}</span></td>
             {% endif %}
-            <td>R$ {{ invest.preco_medio|floatformat:2 }}</td>
+            {% if tipo_investimento == 'criptos' %}
+                <td>R$ {{ invest.preco_medio|floatformat:8 }}</td>
+            {% else %}
+                <td>R$ {{ invest.preco_medio|floatformat:2 }}</td>
+            {% endif %}
             <td><span class=" {% if invest.valor_total_mercado > invest.valor and invest.preco_medio > 0 %}positive{% elif invest.preco_medio > 0 %}negative{% endif %}">
                 R$ {{ invest.valor_total_mercado|floatformat:2 }}</span></td>
             <td>R$ {{ invest.valor|floatformat:2 }}</td>

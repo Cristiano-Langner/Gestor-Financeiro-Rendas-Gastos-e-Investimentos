@@ -111,6 +111,8 @@ class Criptos(BaseTransaction):
     valor_mercado = models.DecimalField(max_digits=14, decimal_places=8, default=Decimal('0.00'))
     valor = models.DecimalField(max_digits=14, decimal_places=8, default=Decimal('0.00'))
     quantidade = models.DecimalField(max_digits=14, decimal_places=8, default=0.0)
+    dividendo = models.DecimalField(max_digits=14, decimal_places=8, default=Decimal('0.00'), validators=[MinValueValidator(Decimal('0.00'))])
+    preco_medio = models.DecimalField(max_digits=14, decimal_places=8, default=Decimal('0.00'), validators=[MinValueValidator(Decimal('0.00'))])
     categoria = models.CharField(max_length=100, choices=OpcoesCriptos.choices, default=OpcoesCriptos.OUTROS)
     def __str__(self):
         return f"Criptos [ticker={self.ticker}]"

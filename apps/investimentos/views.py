@@ -14,36 +14,36 @@ import datetime
 #Responsável pela página das ações.
 @login_required(login_url='login')
 def acoes(request):
-    context = investimento_paginas_views(request, AcoesForm, Acoes, 'Ação registrada com sucesso!', OpcoesAcoes, False)
+    context = investimento_paginas_views(request, AcoesForm, Acoes, 'Ação registrada com sucesso!', OpcoesAcoes, False, False)
     return render(request, 'investimentos/acoes.html', context)
 
 #Responsável pela página dos fundos imobiliários.
 @login_required(login_url='login')
 def fiis(request):
-    context = investimento_paginas_views(request, FiisForm, Fiis, 'Fundo imobiliário registrado com sucesso!', OpcoesFiis, False)
+    context = investimento_paginas_views(request, FiisForm, Fiis, 'Fundo imobiliário registrado com sucesso!', OpcoesFiis, False, False)
     return render(request, 'investimentos/fiis.html', context)
 
 #Responsável pela página das BDRs.
 @login_required(login_url='login')
 def bdrs(request):
-    context = investimento_paginas_views(request, BdrsForm, Bdrs, 'BDR registrado com sucesso!', OpcoesBdrs, False)
+    context = investimento_paginas_views(request, BdrsForm, Bdrs, 'BDR registrado com sucesso!', OpcoesBdrs, False, False)
     return render(request, 'investimentos/bdrs.html', context)
 
 #Responsável pela página das cripto moedas.
 @login_required(login_url='login')
 def criptos(request):
-    context = investimento_paginas_views(request, CriptosForm, Criptos, 'Cripto moeda registrada com sucesso!', OpcoesCriptos, False)
+    context = investimento_paginas_views(request, CriptosForm, Criptos, 'Cripto moeda registrada com sucesso!', OpcoesCriptos, False, True)
     return render(request, 'investimentos/criptos.html', context)
 
 #Responsável pela página de renda fixa.
 @login_required(login_url='login')
 def rendafixa(request):
-    context = investimento_paginas_views(request, RendaFixaForm, RendasFixa, 'Renda fixa registrada com sucesso!', OpcoesRendaFixa, True)
+    context = investimento_paginas_views(request, RendaFixaForm, RendasFixa, 'Renda fixa registrada com sucesso!', OpcoesRendaFixa, True, False)
     return render(request, 'investimentos/rendafixa.html', context)
 
 #Executa as funções para as páginas de investimentos.
-def investimento_paginas_views(request, form_process, class_process, message, opcoes_process, veio_rendafixa):
-    form = process_form_invest(request, form_process, class_process, message, veio_rendafixa)
+def investimento_paginas_views(request, form_process, class_process, message, opcoes_process, veio_rendafixa, veio_cripto):
+    form = process_form_invest(request, form_process, class_process, message, veio_rendafixa, veio_cripto)
     context_view, dados_cadastrados, invest_ticker_dict = investimento_view(request, class_process, veio_rendafixa)
     categorias = opcoes_process.choices
     grafico = graph(categorias, dados_cadastrados)
@@ -102,17 +102,21 @@ def detalhes_ticker(request, tipo_investimento, ticker):
     return render(request, 'investimentos/ticker.html', context)
 
 #Função que faz a verificação da válidade dos dados, alguns tratamentos de dados e salvamentos das informações.
-def process_form_invest(request, form_class, created_class, success_message, origem):
+def process_form_invest(request, form_class, created_class, success_message, origem, origem_cripto):
     if request.method == 'POST':
         form = form_class(request.POST)
         if form.is_valid() and not origem:
-            ticker = form.cleaned_data['ticker']
-            valor = form.cleaned_data['valor']
-            quantidade = form.cleaned_data['quantidade']
-            data = form.cleaned_data['data']
-            categoria = form.cleaned_data['categoria']
+            if origem_cripto:
+                valor = float(form.cleaned_data['valor'])
+                quantidade = float(form.cleaned_data['quantidade'])
+            else:
+                valor = form.cleaned_data['valor']
+                quantidade = form.cleaned_data['quantidade']
             preco_medio = valor if valor > 0 else 0
             valor_total = valor * quantidade
+            ticker = form.cleaned_data['ticker']
+            data = form.cleaned_data['data']
+            categoria = form.cleaned_data['categoria']
             ja_cadastrado = created_class.objects.filter(ticker=ticker, created_by=request.user).first()
             if ja_cadastrado:
                 messages.warning(request, f'{ticker} já está cadastrado. Para registrar nova compra ou venda entre na página do {ticker}.')
@@ -150,9 +154,13 @@ def cadastrar_cv(request, ticker, tipo_investimento):
     if request.method == 'POST':
         form_cv = CVForm(request.POST)
         if form_cv.is_valid():
-            valor = form_cv.cleaned_data['valor']
+            if tipo_investimento == 'criptos':
+                valor = float(form_cv.cleaned_data['valor'])
+                quantidade = float(form_cv.cleaned_data['quantidade'])
+            else:
+                valor = form_cv.cleaned_data['valor']
+                quantidade = form_cv.cleaned_data['quantidade']
             data = form_cv.cleaned_data['data']
-            quantidade = form_cv.cleaned_data['quantidade']
             valor_total = valor * quantidade
             if tipo_investimento == 'acoes': created_class = Acoes
             elif tipo_investimento == 'fiis': created_class = Fiis
@@ -242,7 +250,10 @@ def cadastrar_dividendo(request, ticker, tipo_investimento):
     if request.method == 'POST':
         form = DividendoForm(request.POST)
         if form.is_valid() and 'dividendo' in request.POST:
-            valor = form.cleaned_data['valor']
+            if tipo_investimento == 'criptos':
+                valor = float(form.cleaned_data['valor'])
+            else:
+                valor = form.cleaned_data['valor']
             data = form.cleaned_data['data']
             novo_dividendo = HistoricoDividendo.objects.create(
                 ticker=ticker,
