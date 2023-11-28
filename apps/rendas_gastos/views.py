@@ -35,6 +35,83 @@ def gastos(request):
 
 #Executa as funções para rendas e gastos.
 def rendas_gastos(request, form_process, class_process, message, opcoes_process, tipo):
+    #Verifica a válidade dos dados a serem cadastrados e efetua o salvamento.
+    def process_form(request, form_class, created_class, success_message):
+        if request.method == 'POST':
+            form = form_class(request.POST)
+            if form.is_valid():
+                novo = created_class.objects.create(**form.cleaned_data, created_by=request.user)
+                novo.save(user=request.user)
+                messages.success(request, success_message)
+        else:
+            form = form_class()
+        return form
+    
+    #Gera os dados para os gráficos, que também são usados nas porcentagens.
+    def graph(categorias_ref, name_cadastrado):
+        totais_dict = {categoria[1]: 0.0 for categoria in categorias_ref}
+        for categoria in categorias_ref:
+            total_categoria = name_cadastrado.filter(categoria=categoria[0]).aggregate(total=Sum('valor'))['total']
+            total_categoria_formatted = round(float(total_categoria), 2) if total_categoria else 0.0
+            totais_dict[categoria[1]] = total_categoria_formatted
+        totais_dict_ordenado = {k: v for k, v in sorted(totais_dict.items(), key=lambda item: item[1], reverse=True)}
+        return totais_dict_ordenado
+    
+    #Calcula as porcentagens sobre as categorias em relação ao total analisado.
+    def porcentagem(dicionario):
+        total = sum(dicionario.values())
+        categoria_porcentagem = {}
+        for categoria, valor in dicionario.items():
+            if total > 0:
+                percentage = (valor / total) * 100
+                percentage = round(percentage, 2)
+            else:
+                percentage = 0.00
+            categoria_porcentagem[categoria] = percentage
+        return categoria_porcentagem
+    
+    #Ordena as categorias e facilita a exibição na página.
+    def ordenador_porcentagem(porcentagem_total, porcentagem_12meses, porcentagem_mes):
+        categorias_ordenadas = sorted(porcentagem_total, key=lambda x: porcentagem_total[x], reverse=True)
+        porcentagem_categorias = []
+        for categoria in categorias_ordenadas:
+            categoria_dict = {
+                'categoria': categoria,
+                'porcentagem_total': porcentagem_total[categoria],
+                'porcentagem_12meses': porcentagem_12meses.get(categoria, 0),
+                'porcentagem_mes': porcentagem_mes.get(categoria, 0),
+            }
+            porcentagem_categorias.append(categoria_dict)
+        return porcentagem_categorias
+    
+    #Gera os dados das categorias de pagamentos usadas na tabela de porcentagens.
+    def pagamentos(pagamento_ref, name_cadastrado):
+        totais_dict = {categoria[1]: 0.0 for categoria in pagamento_ref}
+        for metodo_pagamento in pagamento_ref:
+            total_pagamento = name_cadastrado.filter(metodo_pagamento=metodo_pagamento[0]).aggregate(total=Sum('valor'))['total']
+            total_pagamento_formatted = round(float(total_pagamento), 2) if total_pagamento else 0.0
+            totais_dict[metodo_pagamento[1]] = total_pagamento_formatted
+        totais_dict_pagamento_ordenado  = {k: v for k, v in sorted(totais_dict.items(), key=lambda item: item[1], reverse=True)}
+        return totais_dict_pagamento_ordenado 
+    
+    #Filtra os dados de acordo com o solicitado na página.
+    def filter_selections(request, name_cadastrado_categoria):
+        selected_month = request.GET.get('selected_month')
+        selected_category = request.GET.get('selected_category')
+        selected_payment = request.GET.get('selected_payment')
+        filters ={'created_by': request.user}
+        if selected_month:
+            selected_month_date = datetime.strptime(selected_month, '%Y-%m')
+            filters['data__year'] = selected_month_date.year
+            filters['data__month'] = selected_month_date.month
+        if selected_category:
+            filters['categoria'] = selected_category
+        if selected_payment:
+            filters['metodo_pagamento'] = selected_payment
+        name_cadastrado_categoria = name_cadastrado_categoria.filter(**filters)
+        total = name_cadastrado_categoria.aggregate(total=Sum('valor'))['total']
+        return total, name_cadastrado_categoria
+    
     form = process_form(request, form_process, class_process, message)
     dados_cadastrados = class_process.objects.filter(created_by=request.user)
     context_total = rendas_gastos_view_total(request)
@@ -82,36 +159,6 @@ def rendas_gastos(request, form_process, class_process, message, opcoes_process,
     }
     return context
 
-#Verifica a válidade dos dados a serem cadastrados e efetua o salvamento.
-def process_form(request, form_class, created_class, success_message):
-    if request.method == 'POST':
-        form = form_class(request.POST)
-        if form.is_valid():
-            novo = created_class.objects.create(**form.cleaned_data, created_by=request.user)
-            novo.save(user=request.user)
-            messages.success(request, success_message)
-    else:
-        form = form_class()
-    return form
-
-#Filtra os dados de acordo com o solicitado na página.
-def filter_selections(request, name_cadastrado_categoria):
-    selected_month = request.GET.get('selected_month')
-    selected_category = request.GET.get('selected_category')
-    selected_payment = request.GET.get('selected_payment')
-    filters ={'created_by': request.user}
-    if selected_month:
-        selected_month_date = datetime.strptime(selected_month, '%Y-%m')
-        filters['data__year'] = selected_month_date.year
-        filters['data__month'] = selected_month_date.month
-    if selected_category:
-        filters['categoria'] = selected_category
-    if selected_payment:
-        filters['metodo_pagamento'] = selected_payment
-    name_cadastrado_categoria = name_cadastrado_categoria.filter(**filters)
-    total = name_cadastrado_categoria.aggregate(total=Sum('valor'))['total']
-    return total, name_cadastrado_categoria
-
 #Calcula os valores de renda, gasto e saldo no mês corrente.
 def rendas_gastos_view(request):
     today = datetime.today()
@@ -140,53 +187,6 @@ def rendas_gastos_view_total(request):
         'Saldo': saldo_total, 
     }
     return context_total
-
-#Gera os dados para os gráficos, que também são usados nas porcentagens.
-def graph(categorias_ref, name_cadastrado):
-    totais_dict = {categoria[1]: 0.0 for categoria in categorias_ref}
-    for categoria in categorias_ref:
-        total_categoria = name_cadastrado.filter(categoria=categoria[0]).aggregate(total=Sum('valor'))['total']
-        total_categoria_formatted = round(float(total_categoria), 2) if total_categoria else 0.0
-        totais_dict[categoria[1]] = total_categoria_formatted
-    totais_dict_ordenado = {k: v for k, v in sorted(totais_dict.items(), key=lambda item: item[1], reverse=True)}
-    return totais_dict_ordenado
-
-#Gera os dados das categorias de pagamentos usadas na tabela de porcentagens.
-def pagamentos(pagamento_ref, name_cadastrado):
-    totais_dict = {categoria[1]: 0.0 for categoria in pagamento_ref}
-    for metodo_pagamento in pagamento_ref:
-        total_pagamento = name_cadastrado.filter(metodo_pagamento=metodo_pagamento[0]).aggregate(total=Sum('valor'))['total']
-        total_pagamento_formatted = round(float(total_pagamento), 2) if total_pagamento else 0.0
-        totais_dict[metodo_pagamento[1]] = total_pagamento_formatted
-    totais_dict_pagamento_ordenado  = {k: v for k, v in sorted(totais_dict.items(), key=lambda item: item[1], reverse=True)}
-    return totais_dict_pagamento_ordenado 
-
-#Calcula as porcentagens sobre as categorias em relação ao total analisado.
-def porcentagem(dicionario):
-    total = sum(dicionario.values())
-    categoria_porcentagem = {}
-    for categoria, valor in dicionario.items():
-        if total > 0:
-            percentage = (valor / total) * 100
-            percentage = round(percentage, 2)
-        else:
-            percentage = 0.00
-        categoria_porcentagem[categoria] = percentage
-    return categoria_porcentagem
-
-#Ordena as categorias e facilita a exibição na página.
-def ordenador_porcentagem(porcentagem_total, porcentagem_12meses, porcentagem_mes):
-    categorias_ordenadas = sorted(porcentagem_total, key=lambda x: porcentagem_total[x], reverse=True)
-    porcentagem_categorias = []
-    for categoria in categorias_ordenadas:
-        categoria_dict = {
-            'categoria': categoria,
-            'porcentagem_total': porcentagem_total[categoria],
-            'porcentagem_12meses': porcentagem_12meses.get(categoria, 0),
-            'porcentagem_mes': porcentagem_mes.get(categoria, 0),
-        }
-        porcentagem_categorias.append(categoria_dict)
-    return porcentagem_categorias
 
 #Limpar a seleção do filtro.
 def limpar_filtros(pagina):
