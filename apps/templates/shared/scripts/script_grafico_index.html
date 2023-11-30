@@ -47,5 +47,63 @@
             data: Data_Investimentos,
             options: chartOptions,
         });
+
+        var investimentos = {{ context_investimentos|safe }};
+        var dividendos_agrupados_por_mes = investimentos.dividendos_agrupados_por_mes;
+        var tickers = Object.keys(dividendos_agrupados_por_mes);
+        var meses = Object.keys(dividendos_agrupados_por_mes[tickers[0]]);
+        var ctx = document.getElementById('grafico-barras-empilhadas').getContext('2d');
+        var dadosGrafico = {
+            labels: meses,
+            datasets: tickers.sort(function(a, b) {
+                var somaA = meses.reduce(function(acumulador, mes) {
+                    return acumulador + (dividendos_agrupados_por_mes[a][mes] || 0);
+                }, 0);
+            
+                var somaB = meses.reduce(function(acumulador, mes) {
+                    return acumulador + (dividendos_agrupados_por_mes[b][mes] || 0);
+                }, 0);
+                return somaB - somaA;
+            }).map(function(ticker) {
+                var data = meses.map(function(mes) {
+                    var valor = dividendos_agrupados_por_mes[ticker][mes] || 0;
+                    console.log(`Ticker: ${ticker}, Mês: ${mes}, Valor: ${valor}`);
+                    return valor;
+                });
+                return {
+                    label: ticker,
+                    data: data,
+                    backgroundColor: getColor(),
+                };
+            }),
+        };
+        var meuGrafico = new Chart(ctx, {
+            type: 'bar',
+            data: dadosGrafico,
+            options: {
+                scales: {
+                    x: {
+                        stacked: true,
+                    },
+                    y: {
+                        stacked: true,
+                    },
+                },
+                plugins: {
+                    legend: {
+                        display: false,
+                    },
+                },
+            },
+        });
+        function getColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 3; i++) {
+                const channel = Math.floor(Math.random() * 256);
+                color += ('00' + channel.toString(16)).slice(-2);
+            }
+            return color;
+        }
     });
 </script>    

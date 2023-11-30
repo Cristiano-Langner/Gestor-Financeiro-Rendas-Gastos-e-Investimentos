@@ -26,7 +26,11 @@ Sinta-se a vontade em utilizar e fazer suas próprias melhorias. É um projeto q
     ```bash
     python manage.py migrate
 
-6. Agora será necessário criar o usuário. Insira o nome, email (não precisa ser real) e a senha. Caso apareça alguma mensagem de senha muito fraca ou muito parecida com o nome de usuário é só escolher "Y" ou mudar a senha a seu gosto:
+6. É preciso coletar os arquivos estáticos para que o django possa usá-los, use o comando abaixo e confirme digitando "yes" quando solicitado:
+    ```bash
+    python manage.py collectstatic
+
+7. Agora será necessário criar o usuário. Insira o nome, email (não precisa ser real) e a senha. Caso apareça alguma mensagem de senha muito fraca ou muito parecida com o nome de usuário é só escolher "Y" ou mudar a senha a seu gosto:
     ```bash
     python manage.py createsuperuser
 

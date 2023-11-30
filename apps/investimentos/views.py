@@ -2,6 +2,7 @@ from apps.investimentos.forms import AcoesForm, FiisForm, BdrsForm, CriptosForm,
 from apps.investimentos.models import Acoes, Fiis, Bdrs, Criptos, RendasFixa, HistoricoCompra, HistoricoDividendo
 from apps.investimentos.forms import OpcoesAcoes, OpcoesBdrs, OpcoesCriptos, OpcoesFiis, OpcoesRendaFixa
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models.functions import ExtractMonth, ExtractYear
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from collections import defaultdict
@@ -343,6 +344,32 @@ def investimentos_total_view(request):
         else:
             investimentos_consolidado = round(sum(float(invest.valor_mercado) * float(invest.quantidade) for invest in investimentos), 2)
             return soma_investimentos, soma_dividendos, total_investido, investimentos_consolidado
+        
+    # Função para obter o histórico de dividendos agrupado por mês e ticker
+    def get_dividendos_agrupados(request_user):
+        dividendos_agrupados = (
+            HistoricoDividendo.objects.filter(created_by=request_user)
+            .annotate(mes=ExtractMonth('data'), ano=ExtractYear('data'))
+            .values('ticker', 'ano', 'mes')
+            .annotate(total_dividendos=Sum('valor'))
+            .order_by('ano', 'mes', 'ticker')
+        )
+        dados_organizados = {}
+        for div in dividendos_agrupados:
+            mes = div['mes']
+            ano = div['ano']
+            ticker = div['ticker']
+            total_dividendos = float(round(div['total_dividendos'], 2))
+            chave_data = f"{ano}-{mes}"
+            
+            if ticker not in dados_organizados:
+                dados_organizados[ticker] = {chave_data: total_dividendos}
+            else:
+                if chave_data not in dados_organizados[ticker]:
+                    dados_organizados[ticker][chave_data] = total_dividendos
+                else:
+                    dados_organizados[ticker][chave_data] += total_dividendos
+        return dados_organizados
     
     investido_rendasfixa, dividendo_rendasfixa, total_rendasfixa = calcular_valores_investimentos(RendasFixa, request.user, True)
     investido_acoes, dividendo_acoes, total_acoes, investido_acoes_consolidado = calcular_valores_investimentos(Acoes, request.user, False)
@@ -368,6 +395,7 @@ def investimentos_total_view(request):
     total_dividendos = round(dividendo_rendasfixa + dividendo_acoes + dividendo_fiis + dividendo_bdrs + dividendo_criptos, 2)
     total_comprado = round((investido_rendasfixa + investido_acoes + investido_fiis + investido_bdrs + investido_criptos), 2)
     total_consolidado = round((investido_rendasfixa + investido_acoes_consolidado + investido_fiis_consolidado + investido_bdrs_consolidado + investido_criptos_consolidado), 2)
+    dividendos_agrupados_por_mes = get_dividendos_agrupados(request.user)
     context = {
         'investido_rendasfixa': investido_rendasfixa,
         'dividendo_rendasfixa': dividendo_rendasfixa,
@@ -398,7 +426,8 @@ def investimentos_total_view(request):
         'total_lucro': total_lucro,
         'total_dividendos': total_dividendos,
         'total_comprado': total_comprado,
-        'total_consolidado': total_consolidado
+        'total_consolidado': total_consolidado,
+        'dividendos_agrupados_por_mes': dividendos_agrupados_por_mes
     }
     return context
 
