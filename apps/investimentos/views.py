@@ -355,20 +355,27 @@ def investimentos_total_view(request):
             .order_by('ano', 'mes', 'ticker')
         )
         dados_organizados = {}
+        tickers_unicos = set()
         for div in dividendos_agrupados:
             mes = div['mes']
             ano = div['ano']
             ticker = div['ticker']
             total_dividendos = float(round(div['total_dividendos'], 2))
             chave_data = f"{ano}-{mes}"
-            
-            if ticker not in dados_organizados:
-                dados_organizados[ticker] = {chave_data: total_dividendos}
+            tickers_unicos.add(ticker)
+            if chave_data  not in dados_organizados:
+                dados_organizados[chave_data] = {ticker: total_dividendos}
             else:
-                if chave_data not in dados_organizados[ticker]:
-                    dados_organizados[ticker][chave_data] = total_dividendos
+                if ticker not in dados_organizados[chave_data]:
+                    dados_organizados[chave_data][ticker] = total_dividendos
                 else:
-                    dados_organizados[ticker][chave_data] += total_dividendos
+                    dados_organizados[chave_data][ticker] += total_dividendos
+        for chave_data in dados_organizados:
+            for ticker in tickers_unicos:
+                if ticker not in dados_organizados[chave_data]:
+                    dados_organizados[chave_data][ticker] = 0.00
+        for chave_data in dados_organizados:
+            dados_organizados[chave_data] = dict(sorted(dados_organizados[chave_data].items(), key=lambda x: x[1], reverse=True))
         return dados_organizados
     
     investido_rendasfixa, dividendo_rendasfixa, total_rendasfixa = calcular_valores_investimentos(RendasFixa, request.user, True)
