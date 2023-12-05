@@ -130,12 +130,18 @@ def investimento_paginas_views(request, form_process, class_process, message, op
     paginator = Paginator(dados_cadastrados, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    lista_tickers = set()
+    for obj in dados_cadastrados:
+        ticker = obj.ticker
+        lista_tickers.add(ticker)
+    dividendos_agrupados_por_mes = get_dividendos_agrupados(request.user, False, lista_tickers)
     context = {
         'form': form,
         'page_obj': page_obj,
         'context_view': context_view,
         'grafico': grafico,
-        'invest_ticker_dict': invest_ticker_dict
+        'invest_ticker_dict': invest_ticker_dict,
+        'dividendos_agrupados_por_mes': dividendos_agrupados_por_mes
     }
     return context
 
@@ -344,39 +350,6 @@ def investimentos_total_view(request):
         else:
             investimentos_consolidado = round(sum(float(invest.valor_mercado) * float(invest.quantidade) for invest in investimentos), 2)
             return soma_investimentos, soma_dividendos, total_investido, investimentos_consolidado
-        
-    # Função para obter o histórico de dividendos agrupado por mês e ticker
-    def get_dividendos_agrupados(request_user):
-        dividendos_agrupados = (
-            HistoricoDividendo.objects.filter(created_by=request_user)
-            .annotate(mes=ExtractMonth('data'), ano=ExtractYear('data'))
-            .values('ticker', 'ano', 'mes')
-            .annotate(total_dividendos=Sum('valor'))
-            .order_by('ano', 'mes', 'ticker')
-        )
-        dados_organizados = {}
-        tickers_unicos = set()
-        for div in dividendos_agrupados:
-            mes = div['mes']
-            ano = div['ano']
-            ticker = div['ticker']
-            total_dividendos = float(round(div['total_dividendos'], 2))
-            chave_data = f"{ano}-{mes}"
-            tickers_unicos.add(ticker)
-            if chave_data  not in dados_organizados:
-                dados_organizados[chave_data] = {ticker: total_dividendos}
-            else:
-                if ticker not in dados_organizados[chave_data]:
-                    dados_organizados[chave_data][ticker] = total_dividendos
-                else:
-                    dados_organizados[chave_data][ticker] += total_dividendos
-        for chave_data in dados_organizados:
-            for ticker in tickers_unicos:
-                if ticker not in dados_organizados[chave_data]:
-                    dados_organizados[chave_data][ticker] = 0.00
-        for chave_data in dados_organizados:
-            dados_organizados[chave_data] = dict(sorted(dados_organizados[chave_data].items(), key=lambda x: x[1], reverse=True))
-        return dados_organizados
     
     investido_rendasfixa, dividendo_rendasfixa, total_rendasfixa = calcular_valores_investimentos(RendasFixa, request.user, True)
     investido_acoes, dividendo_acoes, total_acoes, investido_acoes_consolidado = calcular_valores_investimentos(Acoes, request.user, False)
@@ -402,7 +375,7 @@ def investimentos_total_view(request):
     total_dividendos = round(dividendo_rendasfixa + dividendo_acoes + dividendo_fiis + dividendo_bdrs + dividendo_criptos, 2)
     total_comprado = round((investido_rendasfixa + investido_acoes + investido_fiis + investido_bdrs + investido_criptos), 2)
     total_consolidado = round((investido_rendasfixa + investido_acoes_consolidado + investido_fiis_consolidado + investido_bdrs_consolidado + investido_criptos_consolidado), 2)
-    dividendos_agrupados_por_mes = get_dividendos_agrupados(request.user)
+    dividendos_agrupados_por_mes = get_dividendos_agrupados(request.user, True, None)
     context = {
         'investido_rendasfixa': investido_rendasfixa,
         'dividendo_rendasfixa': dividendo_rendasfixa,
@@ -437,6 +410,47 @@ def investimentos_total_view(request):
         'dividendos_agrupados_por_mes': dividendos_agrupados_por_mes
     }
     return context
+
+# Função para obter o histórico de dividendos agrupado por mês e ticker
+def get_dividendos_agrupados(request_user, index, lista):
+    if index:
+        tickers_unicos = set()
+        dividendos_agrupados = (
+        HistoricoDividendo.objects.filter(created_by=request_user)
+        .annotate(mes=ExtractMonth('data'), ano=ExtractYear('data'))
+        .values('ticker', 'ano', 'mes')
+        .annotate(total_dividendos=Sum('valor'))
+        .order_by('ano', 'mes', 'ticker')
+        )
+    else:
+        tickers_unicos = lista
+        dividendos_agrupados = (
+            HistoricoDividendo.objects.filter(created_by=request_user, ticker__in=tickers_unicos)
+            .annotate(mes=ExtractMonth('data'), ano=ExtractYear('data'))
+            .values('ticker', 'ano', 'mes')
+            .annotate(total_dividendos=Sum('valor'))
+            .order_by('ano', 'mes', 'ticker')
+        )
+    dados_organizados = {}
+    for div in dividendos_agrupados:
+        mes, ano, ticker = div['mes'], div['ano'], div['ticker']
+        total_dividendos = float(round(div['total_dividendos'], 2))
+        chave_data = f"{ano}-{mes}"
+        if index: tickers_unicos.add(ticker)
+        if chave_data  not in dados_organizados:
+            dados_organizados[chave_data] = {ticker: total_dividendos}
+        else:
+            if ticker not in dados_organizados[chave_data]:
+                dados_organizados[chave_data][ticker] = total_dividendos
+            else:
+                dados_organizados[chave_data][ticker] += total_dividendos
+    for chave_data in dados_organizados:
+        for ticker in tickers_unicos:
+            if ticker not in dados_organizados[chave_data]:
+                dados_organizados[chave_data][ticker] = 0.00
+        dados_organizados[chave_data] = dict(sorted(dados_organizados[chave_data].items(), key=lambda x: x[1], reverse=True))
+    print("Dados: ", tickers_unicos)
+    return dados_organizados
 
 #Executa todas as funções para pegar as cotações e consolidar a carteira.
 @login_required(login_url='login')

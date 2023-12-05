@@ -62,10 +62,10 @@
         ];
         var dadosGrafico = {
             labels: meses,
-            datasets: Object.keys(dividendos_agrupados_por_mes[meses[0]]).map(function(ticker, index) {
+            datasets: Object.keys(dividendos_agrupados_por_mes[meses[0]]).map(function (ticker, index) {
                 return {
                     label: ticker,
-                    data: meses.map(function(mes) {
+                    data: meses.map(function (mes) {
                         return {
                             x: mes,
                             y: dividendos_agrupados_por_mes[mes][ticker],
@@ -75,7 +75,7 @@
                     backgroundColor: coresPadrao[index % coresPadrao.length],
                 };
             }),
-        };
+        };                                 
         var meuGrafico = new Chart(ctx, {
             type: 'bar',
             data: dadosGrafico,
