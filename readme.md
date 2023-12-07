@@ -39,3 +39,26 @@ Sinta-se a vontade em utilizar e fazer suas próprias melhorias. É um projeto q
 Execute o comando abaixo para iniciar o servidor. Em seguida acesse o aplicativo pelo link que irá aparecer no terminal:
    ```bash
     python manage.py runserver
+
+## Contribuições
+
+Contribuições são bem-vindas! Se você tiver alguma sugestão ou melhoria, sinta-se à vontade para enviar um pull request. Para enviar um pull request, siga estas etapas:
+    1. Clone o repositório.
+    2. Crie uma nova branch.
+    3. Faça suas alterações.
+    4. Teste suas alterações.
+    5. Envie um pull request.
+
+Para reportar um bug, siga estas etapas:
+    1. Abra um novo issue.
+    2. Forneça uma descrição detalhada do bug.
+    3. Forneça passos para reproduzir o bug.
+
+Para contribuir com documentação, siga estas etapas:
+    1. Edite os arquivos de documentação no repositório.
+    2. Faça um commit com suas alterações.
+    3. Envie um pull request.
+
+## Licença
+
+Este projeto é licenciado sob a licença MIT. A licença MIT é uma licença de software permissiva que permite que o código seja usado, modificado e redistribuído livremente.
