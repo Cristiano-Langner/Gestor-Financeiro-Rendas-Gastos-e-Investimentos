@@ -19,6 +19,7 @@ class OpcoesRendas(models.TextChoices):
     FREELA = "Freela"
     VENDA_ATIVOS = "Venda ativos"
     CASHBACK = "Cashback"
+    PROVENTOS = "Proventos"
     OUTROS = "Outros"
     
 class OpcoesGastos(models.TextChoices):

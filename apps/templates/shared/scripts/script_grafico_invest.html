@@ -50,6 +50,7 @@
     
     var dividendos_agrupados_por_mes = {{ dividendos_agrupados_por_mes|safe }};
     var meses = Object.keys(dividendos_agrupados_por_mes);
+    var tickers = Object.keys(dividendos_agrupados_por_mes[meses[0]]);
     var ctx = document.getElementById('grafico-barras-empilhadas').getContext('2d');
     var coresPadrao = [
         '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
@@ -61,7 +62,7 @@
     ];
     var dadosGrafico = {
         labels: meses,
-        datasets: Object.keys(dividendos_agrupados_por_mes[meses[0]]).map(function (ticker, index) {
+        datasets: tickers.map(function (ticker, index) {
             return {
                 label: ticker,
                 data: meses.map(function (mes) {
@@ -74,7 +75,7 @@
                 backgroundColor: coresPadrao[index % coresPadrao.length],
             };
         }),
-    };                                 
+    };                                
     var meuGrafico = new Chart(ctx, {
         type: 'bar',
         data: dadosGrafico,

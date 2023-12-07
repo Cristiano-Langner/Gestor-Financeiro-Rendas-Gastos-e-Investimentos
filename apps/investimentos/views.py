@@ -327,7 +327,7 @@ def cadastrar_dividendo(request, ticker, tipo_investimento):
                 ativo_cadastrado = Fiis.objects.filter(ticker=ticker, created_by=request.user).first()
             elif tipo_investimento == 'bdrs':
                 ativo_cadastrado = Bdrs.objects.filter(ticker=ticker, created_by=request.user).first()
-            elif tipo_investimento == 'rendasfixa':
+            elif tipo_investimento == 'rendafixa':
                 ativo_cadastrado = RendasFixa.objects.filter(ticker=ticker, created_by=request.user).first()
             else:
                 ativo_cadastrado = Criptos.objects.filter(ticker=ticker, created_by=request.user).first()
@@ -449,7 +449,6 @@ def get_dividendos_agrupados(request_user, index, lista):
             if ticker not in dados_organizados[chave_data]:
                 dados_organizados[chave_data][ticker] = 0.00
         dados_organizados[chave_data] = dict(sorted(dados_organizados[chave_data].items(), key=lambda x: x[1], reverse=True))
-    print("Dados: ", tickers_unicos)
     return dados_organizados
 
 #Executa todas as funções para pegar as cotações e consolidar a carteira.
