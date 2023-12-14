@@ -1,0 +1,48 @@
+<script>
+    var dividendos_agrupados_por_mes = {{ dividendos_agrupados_por_mes|safe }};
+    var meses = Object.keys(dividendos_agrupados_por_mes);
+    var ctx = document.getElementById('grafico-barras-empilhadas').getContext('2d');
+    var coresPadrao = [
+        '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
+        '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
+        '#aec7e8', '#ffbb78', '#98df8a', '#ff9896', '#c5b0d5',
+        '#c49c94', '#f7b6d2', '#c7c7c7', '#dbdb8d', '#9edae5',
+        '#393b79', '#637939', '#8c6d31', '#843c39', '#7b4173',
+        '#5254a3', '#6b6ecf', '#9c9ede', '#637939'
+    ];
+    var dadosGrafico = {
+        labels: meses,
+        datasets: Object.keys(dividendos_agrupados_por_mes[meses[0]]).map(function (ticker, index) {
+            return {
+                label: ticker,
+                data: meses.map(function (mes) {
+                    return {
+                        x: mes,
+                        y: dividendos_agrupados_por_mes[mes][ticker],
+                        ticker: ticker,
+                    };
+                }),
+                backgroundColor: coresPadrao[index % coresPadrao.length],
+            };
+        }),
+    };                                 
+    var meuGrafico = new Chart(ctx, {
+        type: 'bar',
+        data: dadosGrafico,
+        options: {
+            scales: {
+                x: {
+                    stacked: true,
+                },
+                y: {
+                    stacked: true,
+                },
+            },
+            plugins: {
+                legend: {
+                    display: false,
+                },
+            },
+        },
+    });
+</script>

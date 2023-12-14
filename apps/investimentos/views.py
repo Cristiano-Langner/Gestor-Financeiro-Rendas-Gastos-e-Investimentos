@@ -224,12 +224,14 @@ def cadastrar_cv(request, ticker, tipo_investimento):
             elif tipo_investimento == 'fiis': created_class = Fiis
             elif tipo_investimento == 'bdrs': created_class = Bdrs
             elif tipo_investimento == 'criptos': created_class = Criptos
+            elif tipo_investimento == 'rendafixa': created_class = RendasFixa
             ja_cadastrado = created_class.objects.filter(ticker=ticker, created_by=request.user).first()
             if 'compra' in request.POST:
                 if ja_cadastrado:
                     ja_cadastrado.valor += valor_total
-                    ja_cadastrado.quantidade += quantidade
-                    ja_cadastrado.preco_medio = ((ja_cadastrado.valor)/ja_cadastrado.quantidade)
+                    if not tipo_investimento == 'rendafixa':
+                        ja_cadastrado.quantidade += quantidade
+                        ja_cadastrado.preco_medio = ((ja_cadastrado.valor)/ja_cadastrado.quantidade)
                     if data < ja_cadastrado.data: ja_cadastrado.data = data
                     ja_cadastrado.save(user=request.user)
                     historico_compra = HistoricoCompra.objects.create(ticker=ticker, valor=valor_total, quantidade=quantidade,
@@ -448,7 +450,7 @@ def get_dividendos_agrupados(request_user, index, lista):
         for ticker in tickers_unicos:
             if ticker not in dados_organizados[chave_data]:
                 dados_organizados[chave_data][ticker] = 0.00
-        dados_organizados[chave_data] = dict(sorted(dados_organizados[chave_data].items(), key=lambda x: x[1], reverse=True))
+        dados_organizados[chave_data] = dict(sorted(dados_organizados[chave_data].items(), key=lambda x: x[1]))
     return dados_organizados
 
 #Executa todas as funções para pegar as cotações e consolidar a carteira.
