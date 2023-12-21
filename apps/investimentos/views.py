@@ -191,7 +191,8 @@ def detalhes_ticker(request, tipo_investimento, ticker):
     page_obj_cv = paginator_cv.get_page(page_number_cv)
     total_div = dividendos_cadastrados.aggregate(total=Sum('valor'))['total']
     total_compra = compras_cadastradas.aggregate(total=Sum('valor'))['total']
-    if total_compra < 0: total_compra = 0
+    total_quantidade = compras_cadastradas.aggregate(total=Sum('quantidade'))['total']
+    if total_compra < 0 or total_quantidade == 0: total_compra = 0
     context = {
         'tipo_investimento': tipo_investimento,
         'ticker': ticker,
