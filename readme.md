@@ -4,6 +4,16 @@ Este projeto oferece aos usuários a capacidade de registrar suas receitas, desp
 
 Sinta-se a vontade em utilizar e fazer suas próprias melhorias. É um projeto que pretendo continuar atualizando e melhorando com o tempo. Espero que aproveite!
 
+Algumas imagens do projeto, mostrando parcialmente algumas telas:
+
+![Configurações e ajuda](imagens/1.jpeg)
+
+![Investimentos](imagens/2.jpeg)
+
+![Gastos](imagens/3.jpeg)
+
+![Histórico de dividendos](imagens/4.jpeg)
+
 ## Instalação
 
 1. Certifique-se de ter o Python 3.11 ou uma versão superior instalado em seu sistema.
